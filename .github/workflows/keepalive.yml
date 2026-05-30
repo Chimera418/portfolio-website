@@ -1,0 +1,17 @@
+name: Keep Supabase Alive
+
+on:
+  schedule:
+    # Run every 5 days at midnight UTC
+    - cron: '0 0 */5 * *'
+  workflow_dispatch:
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Keep Supabase DB Live
+        uses: juansebsol/supabase-keep-db-live@v1
+        with:
+          supabase-url: ${{ secrets.SUPABASE_URL }}
+          supabase-anon-key: ${{ secrets.SUPABASE_ANON_KEY }}

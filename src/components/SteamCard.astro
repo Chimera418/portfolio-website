@@ -118,26 +118,9 @@ const { class: className, style } = Astro.props;
   }
 
   /* ── localStorage ──────────────────────────────────────────────────── */
-  function saveGame(game) {
-    try {
-      localStorage.setItem(LS_KEY, JSON.stringify({
-        name:          game.name,
-        image:         game.image,
-        detail:        game.details,
-        state:         game.state,
-        last_seen:     Date.now(),
-        session_start: game.session_start,
-        app_id:        game.application_id,
-      }));
-    } catch (_) {}
-  }
-
-  function loadGame() {
-    try {
-      const raw = localStorage.getItem(LS_KEY);
-      return raw ? JSON.parse(raw) : null;
-    } catch (_) { return null; }
-  }
+  // Left for backward compatibility if ever needed, but now we use backend cache
+  function saveGame(game) {}
+  function loadGame() { return null; }
 
   /* ── cover art ─────────────────────────────────────────────────────── */
   function setCover(src, name) {
@@ -252,8 +235,6 @@ const { class: className, style } = Astro.props;
       const detail = [game.details, game.state].filter(Boolean).join(' · ');
       subEl.textContent = detail || sessionDuration(sessionStart);
     }, 1000);
-
-    saveGame(game);
   }
 
   /* ── render: last seen ─────────────────────────────────────────────── */
@@ -281,7 +262,7 @@ const { class: className, style } = Astro.props;
       label.style.color = '';
     }
 
-    setBottomLink(cached.name, cached.app_id);
+    setBottomLink(cached.name, cached.app_id || cached.application_id);
 
     startLastSeenTick(cached.last_seen);
   }
@@ -316,9 +297,10 @@ const { class: className, style } = Astro.props;
   function handleData(data) {
     if (data && data.game) {
       renderPlaying(data.game);
+    } else if (data && data.cached) {
+      renderLastSeen(data.cached);
     } else {
-      const cached = loadGame();
-      cached ? renderLastSeen(cached) : renderEmpty();
+      renderEmpty();
     }
   }
 
@@ -333,16 +315,12 @@ const { class: className, style } = Astro.props;
       if (!res.ok) throw new Error('non-ok');
       handleData(await res.json());
     } catch (err) {
-      console.warn('[CurrentAddiction] fetch failed, using cache', err);
-      const cached = loadGame();
-      cached ? renderLastSeen(cached) : renderEmpty();
+      console.warn('[CurrentAddiction] fetch failed', err);
+      renderEmpty();
     }
   }
 
   /* ── init ──────────────────────────────────────────────────────────── */
-  const initial = loadGame();
-  if (initial) renderLastSeen(initial);
-
   poll();
   pollTimer = setInterval(poll, POLL_MS);
   document.addEventListener('visibilitychange', () => {

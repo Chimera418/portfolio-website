@@ -220,9 +220,30 @@ export const GET: APIRoute = async () => {
       );
 
     if (!gameActivity) {
-      return new Response(JSON.stringify({ game: null }), {
+      // Fetch from Upstash Redis if available
+      const UPSTASH_URL = import.meta.env.UPSTASH_REDIS_REST_URL;
+      const UPSTASH_TOKEN = import.meta.env.UPSTASH_REDIS_REST_TOKEN;
+      let cachedGame = null;
+      if (UPSTASH_URL && UPSTASH_TOKEN) {
+        try {
+          const upstashRes = await fetch(`${UPSTASH_URL}/get/last_played_game`, {
+            headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` }
+          });
+          const upstashJson = await upstashRes.json();
+          if (upstashJson.result) {
+            cachedGame = JSON.parse(upstashJson.result);
+          }
+        } catch (e) {
+          console.error("Upstash fetch error:", e);
+        }
+      }
+
+      return new Response(JSON.stringify({ game: null, cached: cachedGame }), {
         status: 200,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-store, max-age=0'
+        },
       });
     }
 
@@ -260,11 +281,26 @@ export const GET: APIRoute = async () => {
       // timestamps.start is Unix ms when the session began
       session_start: gameActivity.timestamps?.start ?? null,
       application_id: appId,
+      last_seen: Date.now()
     };
+
+    // Save to Upstash Redis globally
+    const UPSTASH_URL = import.meta.env.UPSTASH_REDIS_REST_URL;
+    const UPSTASH_TOKEN = import.meta.env.UPSTASH_REDIS_REST_TOKEN;
+    if (UPSTASH_URL && UPSTASH_TOKEN) {
+      fetch(`${UPSTASH_URL}/set/last_played_game`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` },
+        body: JSON.stringify(game)
+      }).catch(() => {});
+    }
 
     return new Response(JSON.stringify({ game }), {
       status: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store, max-age=0'
+      },
     });
   } catch (err: any) {
     console.error('Lanyard gaming error:', err);

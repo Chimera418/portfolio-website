@@ -228,10 +228,15 @@ import { VALID_WORDS } from '../../data/words';
       });
     }
 
+    // ── Utility ────────────────────────────────────────────────────────────
+    function getUTCDateString() {
+      const d = new Date();
+      return `${d.getUTCFullYear()}-${d.getUTCMonth()}-${d.getUTCDate()}`;
+    }
+
     // ── Word Selection ─────────────────────────────────────────────────────
     function getDailyWord() {
-      const today = new Date();
-      const seed  = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}`;
+      const seed = getUTCDateString();
       let hash = 0;
       for (let i = 0; i < seed.length; i++) hash = Math.imul(31, hash) + seed.charCodeAt(i) | 0;
       return dictionary[Math.abs(hash) % dictionary.length];
@@ -360,7 +365,7 @@ import { VALID_WORDS } from '../../data/words';
     function saveState() {
       if (currentMode === 'daily') {
         localStorage.setItem('wordle-daily-state', JSON.stringify({ guesses, currentGuess, isGameOver }));
-        localStorage.setItem('wordle-daily-date', new Date().toDateString());
+        localStorage.setItem('wordle-daily-date', getUTCDateString());
       }
     }
 
@@ -384,7 +389,7 @@ import { VALID_WORDS } from '../../data/words';
       if (currentMode === 'daily') {
         targetWord = getDailyWord();
         const savedDate = localStorage.getItem('wordle-daily-date');
-        const today     = new Date().toDateString();
+        const today     = getUTCDateString();
         if (savedDate === today) {
           const saved = localStorage.getItem('wordle-daily-state');
           if (saved) {
@@ -395,6 +400,7 @@ import { VALID_WORDS } from '../../data/words';
           }
         } else {
           localStorage.setItem('wordle-daily-date', today);
+          localStorage.removeItem('wordle-daily-state');
         }
       } else {
         targetWord = getRandomWord();

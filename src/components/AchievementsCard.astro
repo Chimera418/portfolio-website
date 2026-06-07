@@ -1,0 +1,33 @@
+---
+import BentoCard from "./BentoCard.astro";
+
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+
+const achievements = [
+  { year: "2026", title: "DSU National Hackathon", detail: "Top 10 Finalist" },
+  { year: "25-26", title: "CSI Student Chapter - ASEB", detail: "President" },
+];
+---
+
+<BentoCard title="Quest Log" className={className} tag="ACHIEVEMENTS">
+  <div class="flex flex-col gap-4 mt-2 h-full justify-center">
+    {
+      achievements.map((ach) => (
+        <div class="flex items-start gap-3">
+          <span class="font-pixel text-[10px] text-primary pt-1 w-14 flex-shrink-0 whitespace-nowrap">
+            {ach.year}
+          </span>
+          <div>
+            <h4 class="text-text-primary text-sm font-semibold leading-tight mb-0.5">
+              {ach.title}
+            </h4>
+            <p class="text-text-muted text-xs">{ach.detail}</p>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</BentoCard>

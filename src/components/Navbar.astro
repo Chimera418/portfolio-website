@@ -1,0 +1,79 @@
+---
+import ThemeDrawer from './ThemeDrawer.astro';
+---
+
+<header class="fixed top-0 left-0 w-full z-50 flex justify-center px-4 pt-4 pb-2">
+  <nav class="w-full max-w-7xl backdrop-blur-md bg-overlay/80 border border-highlight-med rounded-xl px-6 py-4 flex items-center justify-between shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
+    <div class="flex items-center gap-3">
+      <!-- Logo -->
+      <img src="/chimera-logo.png" alt="Chimera Logo" class="w-8 h-8 rounded-sm shadow-[2px_2px_0_var(--color-highlight-med)] object-cover bg-surface-dim" onerror="this.style.display='none'" />
+      <a href="/" class="font-bold text-lg text-text-primary tracking-tight">
+        Chimera
+      </a>
+    </div>
+
+    <div class="hidden md:flex items-center gap-8 font-pixel text-[10px] uppercase tracking-widest text-text-muted">
+      <a href="/" class="hover:text-primary transition-colors">Home</a>
+      <a href="/about" class="hover:text-primary transition-colors">About</a>
+      <a href="/projects" class="hover:text-primary transition-colors">Projects</a>
+      <a href="/devlog" class="hover:text-primary transition-colors">Devlog</a>
+      <a href="/labs" id="nav-labs-link" class="hover:text-primary transition-colors hidden">Labs</a>
+      <a href="/games" id="nav-games-link" class="hover:text-primary transition-colors hidden">Games</a>
+      <a href="/guestbook" class="hover:text-primary transition-colors">Guestbook</a>
+      <a href="/contact" class="hover:text-primary transition-colors">Contact</a>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <button id="theme-toggle-btn" class="p-2 text-text-muted hover:text-primary transition-colors cursor-pointer" aria-label="Toggle Theme Drawer">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
+          <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
+          <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
+          <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
+          <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.992 6.012 17.5 2 12 2z"/>
+        </svg>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<ThemeDrawer />
+
+<script>
+  // Drawer toggle logic
+  const toggleBtn = document.getElementById('theme-toggle-btn');
+  const drawer = document.getElementById('theme-drawer');
+  const closeBtn = document.getElementById('theme-drawer-close');
+
+  if (toggleBtn && drawer && closeBtn) {
+    toggleBtn.addEventListener('click', () => {
+      drawer.classList.remove('translate-x-full');
+    });
+
+    closeBtn.addEventListener('click', () => {
+      drawer.classList.add('translate-x-full');
+    });
+  }
+
+  // Secret page unlock logic
+  function applyNavUnlocks() {
+    const labsLink = document.getElementById('nav-labs-link');
+    const gamesLink = document.getElementById('nav-games-link');
+    if (labsLink && localStorage.getItem('chimera_labs_unlocked') === 'true') {
+      labsLink.classList.remove('hidden');
+    }
+    if (gamesLink && localStorage.getItem('chimera_games_unlocked') === 'true') {
+      gamesLink.classList.remove('hidden');
+    }
+  }
+
+  applyNavUnlocks();
+
+  (document as EventTarget).addEventListener('chimera-unlock', (e: Event) => {
+    const detail = (e as CustomEvent).detail;
+    const labsLink = document.getElementById('nav-labs-link');
+    const gamesLink = document.getElementById('nav-games-link');
+    if (detail?.page === 'labs' && labsLink) labsLink.classList.remove('hidden');
+    if (detail?.page === 'games' && gamesLink) gamesLink.classList.remove('hidden');
+  });
+</script>

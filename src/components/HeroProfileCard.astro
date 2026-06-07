@@ -1,0 +1,193 @@
+---
+import BentoCard from "./BentoCard.astro";
+
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<BentoCard className={className} glow={true}>
+  <div class="flex flex-col justify-between h-full gap-4 py-1">
+    <!-- Top: name block -->
+    <div class="space-y-4">
+      <div>
+        <p
+          class="text-text-muted font-pixel text-[10px] uppercase tracking-[0.25em] mb-3 opacity-70"
+        >
+          Aneesh Sagar Reddy
+        </p>
+        <h1
+          class="text-5xl md:text-6xl font-bold text-text-primary tracking-tight font-pixel uppercase leading-none drop-shadow-sm"
+        >
+          Chimera
+        </h1>
+        <p
+          class="text-secondary font-pixel text-[10px] uppercase tracking-widest mt-3 opacity-90"
+        >
+          Full Stack &bull; Cybersecurity &bull; AI ENGINEERING
+        </p>
+      </div>
+
+      <p class="text-text-muted text-sm leading-relaxed max-w-lg">
+        Hey, welcome to my corner of the internet. Feel free to look around,
+        explore some projects, or leave a message in the guestbook. And if
+        you're the kind of person who clicks on everything, keep an eye
+        out—there are a few easter eggs hidden around the site.
+      </p>
+    </div>
+
+    <!-- Bottom: status badges -->
+    <div
+      class="mt-4 flex items-center justify-between flex-wrap gap-2 border-t border-highlight-med/30 pt-4"
+    >
+      <div
+        class="flex items-center gap-2 text-[9px] font-pixel text-text-muted uppercase tracking-wider"
+      >
+        <span
+          class="w-1.5 h-1.5 rounded-full bg-success animate-pulse inline-block"
+        ></span>
+        Clueless about life rn
+      </div>
+      <div class="flex items-center gap-3">
+        <div class="relative group/location inline-block">
+          <span
+            class="text-[9px] font-pixel text-text-muted uppercase tracking-wider cursor-help border-b border-dashed border-text-muted/50 pb-[1px] hover:text-primary transition-colors"
+            >BLR, IN</span
+          >
+          <!-- Tooltip -->
+          <div
+            class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-max opacity-0 group-hover/location:opacity-100 transition-all duration-200 pointer-events-none z-50 translate-y-1 group-hover/location:translate-y-0"
+          >
+            <div
+              class="bg-overlay border border-highlight-med rounded-lg px-2.5 py-1.5 shadow-xl shadow-black/50 backdrop-blur-sm"
+            >
+              <div class="flex items-center gap-3">
+                <div class="flex items-center gap-1.5">
+                  <svg
+                    class="w-3.5 h-3.5 text-text-muted translate-y-[-1px]"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    ><circle cx="12" cy="12" r="10"></circle><polyline
+                      points="12 6 12 12 16 14"></polyline></svg
+                  >
+                  <span
+                    class="text-xs font-bold text-text-primary font-mono tracking-tight"
+                    id="hero-clock">--:-- --</span
+                  >
+                </div>
+                <div class="w-px h-3 bg-highlight-med/50"></div>
+                <div class="flex items-center gap-1.5">
+                  <svg
+                    class="w-3.5 h-3.5 text-secondary translate-y-[-1px]"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    ><path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                    ></path></svg
+                  >
+                  <span
+                    class="text-xs font-bold text-text-primary font-mono tracking-tight"
+                    id="hero-weather">--°C</span
+                  >
+                </div>
+              </div>
+            </div>
+            <!-- Arrow -->
+            <div
+              class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-overlay border-r border-b border-highlight-med rotate-45"
+            >
+            </div>
+          </div>
+        </div>
+
+        <span class="text-highlight-med/40">|</span>
+
+        <div class="relative group/edu inline-block">
+          <span
+            class="text-[9px] font-pixel text-text-muted uppercase tracking-wider cursor-help border-b border-dashed border-text-muted/50 pb-[1px] hover:text-primary transition-colors"
+            >CSE-AI &apos;28</span
+          >
+          <!-- Tooltip -->
+          <div
+            class="absolute bottom-full right-0 md:left-1/2 md:-translate-x-1/2 mb-3 w-max opacity-0 group-hover/edu:opacity-100 transition-all duration-200 pointer-events-none z-50 translate-y-1 group-hover/edu:translate-y-0"
+          >
+            <div
+              class="bg-overlay border border-highlight-med rounded-lg px-2.5 py-1.5 shadow-xl shadow-black/50 backdrop-blur-sm"
+            >
+              <div class="flex items-center gap-1.5">
+                <svg
+                  class="w-3.5 h-3.5 text-secondary translate-y-[-2px]"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                  <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                </svg>
+                <span
+                  class="text-[10px] font-pixel text-text-primary uppercase tracking-wide"
+                  >Amrita Vishwa Vidyapeetham</span
+                >
+              </div>
+            </div>
+            <!-- Arrow -->
+            <div
+              class="absolute -bottom-1 right-6 md:left-1/2 md:-translate-x-1/2 w-2 h-2 bg-overlay border-r border-b border-highlight-med rotate-45"
+            >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</BentoCard>
+
+<script is:inline>
+  (function () {
+    function updateHeroClock() {
+      const el = document.getElementById("hero-clock");
+      if (!el) return;
+
+      const now = new Date();
+      const ist = new Date(
+        now.toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
+      );
+
+      let hours = ist.getHours();
+      const ampm = hours >= 12 ? "PM" : "AM";
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      const mm = String(ist.getMinutes()).padStart(2, "0");
+
+      el.textContent = `${hours}:${mm} ${ampm}`;
+    }
+
+    async function updateWeather() {
+      const el = document.getElementById("hero-weather");
+      if (!el) return;
+      try {
+        const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=12.9716&longitude=77.5946&current=temperature_2m");
+        const data = await res.json();
+        const temp = Math.round(data.current.temperature_2m);
+        el.textContent = `${temp}°C`;
+      } catch (err) {
+        console.error("Failed to fetch weather:", err);
+      }
+    }
+
+    updateHeroClock();
+    updateWeather();
+    setInterval(updateHeroClock, 1000);
+    setInterval(updateWeather, 3600000); // 1 hour
+  })();
+</script>

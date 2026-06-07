@@ -1,0 +1,838 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+
+// Tool configurations
+const tools = [
+  { id: 'password-checker', name: 'Password Entropy', icon: 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z' },
+  { id: 'pathfinding', name: 'Pathfinding Vis', icon: 'M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7' },
+  { id: 'base64-hex', name: 'Base64 / Hex', icon: 'M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4' },
+  { id: 'color-palette', name: 'Color Palette', icon: 'M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01' },
+  { id: 'regex-tester', name: 'Regex Tester', icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' },
+  { id: 'json-validator', name: 'JSON Formatter', icon: 'M4 6h16M4 10h16M4 14h16M4 18h16' },
+  { id: 'ascii-art', name: 'ASCII Art Maker', icon: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z' },
+  { id: 'hash-gen', name: 'Hash Generator', icon: 'M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4' },
+  { id: 'css-gradient', name: 'CSS Gradient', icon: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z' },
+  { id: 'unix-converter', name: 'Unix Timestamp', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' }
+];
+---
+
+<Layout title="Labs | Chimera">
+  <Navbar />
+  
+  <div class="max-w-7xl mx-auto mt-24 mb-10 px-4 h-[calc(100vh-140px)] min-h-[600px]">
+    <!-- Terminal Header -->
+    <div class="bg-overlay border border-highlight-med rounded-t-xl px-4 py-3 flex items-center gap-3">
+      <div class="flex gap-2">
+        <div class="w-3 h-3 rounded-full bg-red-500/80"></div>
+        <div class="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+        <div class="w-3 h-3 rounded-full bg-green-500/80"></div>
+      </div>
+      <span class="font-mono text-xs text-text-muted">chimera@labs ~ ./run_experiments.sh</span>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="flex flex-col md:flex-row h-full border border-t-0 border-highlight-med rounded-b-xl overflow-hidden bg-surface">
+      
+      <!-- Sidebar Navigation -->
+      <div class="w-full md:w-64 bg-overlay border-b md:border-b-0 md:border-r border-highlight-med flex flex-col flex-shrink-0">
+        <div class="p-4 border-b border-highlight-med hidden md:block">
+          <h2 class="font-pixel text-primary text-[10px] uppercase tracking-widest">Laboratory</h2>
+          <p class="text-[10px] text-text-muted mt-2 font-mono">Select an experiment:</p>
+        </div>
+        
+        <nav class="md:flex-grow overflow-x-auto md:overflow-y-auto custom-scroll p-2 flex flex-row md:flex-col gap-1 items-center md:items-stretch" id="labs-sidebar">
+          {tools.map((tool, idx) => (
+            <button 
+              data-tab={tool.id}
+              class={`tab-btn flex-shrink-0 flex items-center gap-3 px-4 py-3 rounded-lg font-mono text-xs transition-all duration-200 text-left ${idx === 0 ? 'active-tab bg-primary/10 text-primary border border-primary/30' : 'inactive-tab text-text-muted hover:text-text-primary hover:bg-surface-bright border border-transparent'}`}
+            >
+              <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d={tool.icon}></path>
+              </svg>
+              <span class="whitespace-nowrap">{tool.name}</span>
+            </button>
+          ))}
+        </nav>
+      </div>
+
+      <!-- Tab Content Area -->
+      <div class="flex-grow relative bg-surface overflow-y-auto custom-scroll p-4 md:p-8" id="labs-content">
+        
+        <!-- Password Entropy Checker -->
+        <div id="password-checker" class="tab-panel animate-fade-in block">
+          <div class="max-w-2xl">
+            <h2 class="text-2xl font-bold text-text-primary mb-2">Password Entropy Checker</h2>
+            <p class="text-text-muted text-sm mb-6">Calculate the true cryptographic strength of your passwords.</p>
+            
+            <div class="bg-overlay border border-highlight-med rounded-xl p-6">
+              <input 
+                type="password" 
+                id="entropy-input"
+                placeholder="Type a password..."
+                class="w-full bg-surface border border-highlight-med rounded-lg px-4 py-3 text-text-primary focus:border-primary focus:outline-none transition-colors mb-6 font-mono"
+              />
+
+              <div class="space-y-4">
+                <div>
+                  <div class="flex justify-between text-xs font-mono text-text-muted mb-2">
+                    <span>Entropy</span>
+                    <span id="entropy-bits">0 bits</span>
+                  </div>
+                  <div class="h-2 bg-surface rounded-full overflow-hidden">
+                    <div id="entropy-bar" class="h-full bg-red-500 w-0 transition-all duration-300"></div>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 mt-6">
+                  <div class="bg-surface rounded-lg p-4 border border-highlight-med">
+                    <div class="text-[10px] text-text-muted uppercase font-pixel tracking-widest mb-2">Strength</div>
+                    <div id="entropy-strength" class="font-bold text-lg text-red-500">Very Weak</div>
+                  </div>
+                  <div class="bg-surface rounded-lg p-4 border border-highlight-med">
+                    <div class="text-[10px] text-text-muted uppercase font-pixel tracking-widest mb-2">Crack Time</div>
+                    <div id="entropy-time" class="font-bold text-lg text-text-primary">Instant</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Base64 Encoder -->
+        <div id="base64-hex" class="tab-panel animate-fade-in hidden">
+           <div class="max-w-3xl">
+            <h2 class="text-2xl font-bold text-text-primary mb-2">Base64 / Hex Encoder</h2>
+            <p class="text-text-muted text-sm mb-6">Instantly encode and decode strings to Base64 and Hexadecimal.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Input -->
+              <div class="flex flex-col gap-2">
+                <div class="flex justify-between items-center">
+                  <label class="font-pixel text-[10px] text-primary uppercase tracking-widest">Input Text</label>
+                  <button id="b64-clear" class="text-xs text-text-muted hover:text-red-400">Clear</button>
+                </div>
+                <textarea 
+                  id="b64-input"
+                  rows="10"
+                  class="w-full bg-overlay border border-highlight-med rounded-lg p-4 text-sm text-text-primary focus:border-primary focus:outline-none transition-colors font-mono resize-none custom-scroll"
+                  placeholder="Type or paste text here..."
+                ></textarea>
+              </div>
+
+              <!-- Outputs -->
+              <div class="flex flex-col gap-4">
+                <div class="flex flex-col gap-2">
+                  <div class="flex justify-between items-center">
+                    <label class="font-pixel text-[10px] text-secondary uppercase tracking-widest">Base64</label>
+                  </div>
+                  <textarea 
+                    id="b64-output"
+                    rows="4"
+                    readonly
+                    class="w-full bg-overlay border border-highlight-med rounded-lg p-4 text-sm text-secondary focus:outline-none font-mono resize-none custom-scroll"
+                  ></textarea>
+                </div>
+
+                <div class="flex flex-col gap-2">
+                  <div class="flex justify-between items-center">
+                    <label class="font-pixel text-[10px] text-tertiary uppercase tracking-widest">Hexadecimal</label>
+                  </div>
+                  <textarea 
+                    id="hex-output"
+                    rows="4"
+                    readonly
+                    class="w-full bg-overlay border border-highlight-med rounded-lg p-4 text-sm text-tertiary focus:outline-none font-mono resize-none custom-scroll"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Color Palette Generator -->
+        <div id="color-palette" class="tab-panel animate-fade-in hidden">
+          <div class="max-w-3xl">
+            <h2 class="text-2xl font-bold text-text-primary mb-2">Color Palette Generator</h2>
+            <p class="text-text-muted text-sm mb-6">Input a base color to generate harmonic palettes using HSL math.</p>
+            
+            <div class="bg-overlay border border-highlight-med rounded-xl p-6">
+              <div class="flex gap-4 mb-6 items-center">
+                <input type="color" id="cp-color-picker" class="w-12 h-12 rounded cursor-pointer bg-transparent border-0 p-0" value="#a855f7" />
+                <input type="text" id="cp-hex-input" class="bg-surface border border-highlight-med rounded-lg px-4 py-2 text-text-primary font-mono focus:border-primary focus:outline-none w-32 uppercase" value="#a855f7" maxlength="7" />
+              </div>
+
+              <div class="space-y-6">
+                <div>
+                  <h3 class="text-xs font-pixel tracking-widest text-text-muted mb-3 uppercase">Complementary</h3>
+                  <div id="cp-complementary" class="flex gap-2 h-16"></div>
+                </div>
+                <div>
+                  <h3 class="text-xs font-pixel tracking-widest text-text-muted mb-3 uppercase">Analogous</h3>
+                  <div id="cp-analogous" class="flex gap-2 h-16"></div>
+                </div>
+                <div>
+                  <h3 class="text-xs font-pixel tracking-widest text-text-muted mb-3 uppercase">Triadic</h3>
+                  <div id="cp-triadic" class="flex gap-2 h-16"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Regex Tester -->
+        <div id="regex-tester" class="tab-panel animate-fade-in hidden">
+          <div class="max-w-3xl">
+            <h2 class="text-2xl font-bold text-text-primary mb-2">Regex Tester</h2>
+            <p class="text-text-muted text-sm mb-6">Test regular expressions against target strings with live highlighting.</p>
+            
+            <div class="space-y-4">
+              <div class="flex gap-2 items-center bg-overlay border border-highlight-med rounded-lg px-4 py-2">
+                <span class="text-primary font-mono text-xl">/</span>
+                <input type="text" id="rx-pattern" placeholder="pattern" class="flex-grow bg-transparent border-none focus:outline-none text-text-primary font-mono" value="[A-Z]\\w+" />
+                <span class="text-primary font-mono text-xl">/</span>
+                <input type="text" id="rx-flags" placeholder="gm" value="g" class="w-12 bg-transparent border-none focus:outline-none text-tertiary font-mono" />
+              </div>
+
+              <div class="relative h-64 border border-highlight-med rounded-xl overflow-hidden bg-overlay">
+                <div id="rx-highlight" class="absolute inset-0 p-4 font-mono text-sm text-transparent pointer-events-none whitespace-pre-wrap break-words custom-scroll overflow-hidden"></div>
+                <textarea id="rx-input" class="absolute inset-0 w-full h-full p-4 text-sm text-text-primary focus:outline-none font-mono resize-none custom-scroll bg-transparent caret-text-primary z-10" spellcheck="false" placeholder="Target string...">Hello World! Testing Regex functionality in the Chimera Lab.</textarea>
+              </div>
+
+              <div class="flex justify-between text-xs font-mono text-text-muted px-2">
+                <span id="rx-count">0 matches</span>
+                <span id="rx-error" class="text-red-500 hidden">Invalid Regex</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- JSON Formatter / Validator -->
+        <div id="json-validator" class="tab-panel animate-fade-in hidden">
+          <div class="max-w-4xl h-full flex flex-col min-h-[500px]">
+            <div class="flex justify-between items-end mb-4">
+              <div>
+                <h2 class="text-2xl font-bold text-text-primary mb-2">JSON Formatter</h2>
+                <p class="text-text-muted text-sm">Validate, format, and minify JSON data.</p>
+              </div>
+              <div class="flex gap-2">
+                <button id="json-format" class="px-3 py-1.5 bg-surface border border-highlight-med hover:bg-highlight-med rounded text-xs font-mono text-text-primary transition-colors">Format</button>
+                <button id="json-minify" class="px-3 py-1.5 bg-surface border border-highlight-med hover:bg-highlight-med rounded text-xs font-mono text-text-primary transition-colors">Minify</button>
+              </div>
+            </div>
+            
+            <div class="flex-grow relative border border-highlight-med rounded-xl bg-overlay flex flex-col">
+               <textarea id="json-input" class="flex-grow w-full bg-transparent p-4 text-sm font-mono text-text-primary focus:outline-none resize-none custom-scroll" placeholder="Paste JSON here..." spellcheck="false">{"name":"Chimera","version":"1.0","modules":["labs","games","guestbook"]}</textarea>
+               <div id="json-status" class="px-4 py-2 border-t border-highlight-med text-xs font-mono bg-surface rounded-b-xl">
+                 <span class="text-green-400">✓ Valid JSON</span>
+               </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Hash Generator -->
+        <div id="hash-gen" class="tab-panel animate-fade-in hidden">
+          <div class="max-w-3xl">
+            <h2 class="text-2xl font-bold text-text-primary mb-2">Hash Generator</h2>
+            <p class="text-text-muted text-sm mb-6">Instantly generate cryptographic hashes from text.</p>
+            
+            <div class="flex flex-col gap-6">
+              <textarea id="hash-input" class="w-full h-32 bg-overlay border border-highlight-med rounded-xl p-4 text-sm font-mono text-text-primary focus:border-primary focus:outline-none resize-none custom-scroll" placeholder="Type text to hash..."></textarea>
+              
+              <div class="space-y-4">
+                <div class="bg-surface border border-highlight-med rounded-lg p-4">
+                  <div class="flex justify-between items-center mb-2">
+                    <span class="text-[10px] text-primary uppercase font-pixel tracking-widest">SHA-256</span>
+                  </div>
+                  <div id="hash-sha256" class="font-mono text-sm text-text-primary break-all">--</div>
+                </div>
+                <div class="bg-surface border border-highlight-med rounded-lg p-4">
+                  <div class="flex justify-between items-center mb-2">
+                    <span class="text-[10px] text-secondary uppercase font-pixel tracking-widest">SHA-384</span>
+                  </div>
+                  <div id="hash-sha384" class="font-mono text-sm text-text-primary break-all">--</div>
+                </div>
+                <div class="bg-surface border border-highlight-med rounded-lg p-4">
+                  <div class="flex justify-between items-center mb-2">
+                    <span class="text-[10px] text-tertiary uppercase font-pixel tracking-widest">SHA-512</span>
+                  </div>
+                  <div id="hash-sha512" class="font-mono text-sm text-text-primary break-all">--</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CSS Gradient Builder -->
+        <div id="css-gradient" class="tab-panel animate-fade-in hidden">
+          <div class="max-w-4xl h-full flex flex-col">
+            <div class="mb-4">
+              <h2 class="text-2xl font-bold text-text-primary mb-2">CSS Gradient Builder</h2>
+              <p class="text-text-muted text-sm">Design smooth gradients and generate the CSS code.</p>
+            </div>
+            
+            <div class="flex flex-col md:flex-row gap-6 flex-grow">
+              <!-- Controls -->
+              <div class="w-full md:w-64 bg-overlay border border-highlight-med rounded-xl p-4 flex flex-col gap-6">
+                <div>
+                  <label class="block text-xs font-pixel tracking-widest text-text-muted mb-3 uppercase">Colors</label>
+                  <div class="flex gap-2">
+                    <input type="color" id="grad-color-1" class="w-10 h-10 rounded cursor-pointer bg-transparent border-0 p-0 flex-grow" value="#a855f7" />
+                    <input type="color" id="grad-color-2" class="w-10 h-10 rounded cursor-pointer bg-transparent border-0 p-0 flex-grow" value="#ec4899" />
+                  </div>
+                </div>
+                
+                <div>
+                  <label class="block text-xs font-pixel tracking-widest text-text-muted mb-3 uppercase">Angle (<span id="grad-angle-val">90</span>°)</label>
+                  <input type="range" id="grad-angle" min="0" max="360" value="90" class="w-full accent-primary" />
+                </div>
+                
+                <div>
+                  <label class="block text-xs font-pixel tracking-widest text-text-muted mb-3 uppercase">Type</label>
+                  <select id="grad-type" class="w-full bg-surface border border-highlight-med rounded px-3 py-2 text-sm text-text-primary focus:outline-none">
+                    <option value="linear-gradient">Linear</option>
+                    <option value="radial-gradient">Radial</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Preview & Code -->
+              <div class="flex-grow flex flex-col gap-4">
+                <div id="grad-preview" class="flex-grow rounded-xl border border-highlight-med min-h-[200px]" style="background: linear-gradient(90deg, #a855f7, #ec4899);"></div>
+                <div class="relative">
+                  <textarea id="grad-code" class="w-full bg-overlay border border-highlight-med rounded-xl p-4 text-sm font-mono text-text-primary focus:outline-none resize-none" rows="2" readonly>background: linear-gradient(90deg, #a855f7, #ec4899);</textarea>
+                  <button id="grad-copy" class="absolute right-3 top-3 px-3 py-1 bg-surface border border-highlight-med hover:bg-highlight-med rounded text-xs font-mono text-text-primary transition-colors">Copy</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Unix Timestamp Converter -->
+        <div id="unix-converter" class="tab-panel animate-fade-in hidden">
+          <div class="max-w-3xl">
+            <h2 class="text-2xl font-bold text-text-primary mb-2">Unix Timestamp Converter</h2>
+            <p class="text-text-muted text-sm mb-6">Convert between Unix timestamps and human-readable dates.</p>
+            
+            <div class="bg-overlay border border-highlight-med rounded-xl p-6 space-y-6">
+              <div class="flex gap-4 items-end">
+                <div class="flex-grow">
+                  <label class="block text-xs font-pixel tracking-widest text-text-muted mb-2 uppercase">Timestamp or Date String</label>
+                  <input type="text" id="unix-input" class="w-full bg-surface border border-highlight-med rounded-lg px-4 py-3 text-text-primary font-mono focus:border-primary focus:outline-none" placeholder="e.g. 1672531200 or 2023-01-01" />
+                </div>
+                <button id="unix-now" class="px-4 py-3 bg-primary/20 text-primary border border-primary/30 rounded-lg hover:bg-primary/30 transition-colors font-mono text-sm whitespace-nowrap">Current Time</button>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-surface border border-highlight-med rounded-lg p-4">
+                  <div class="text-[10px] text-text-muted uppercase font-pixel tracking-widest mb-1">Local Time</div>
+                  <div id="unix-local" class="text-lg text-text-primary font-mono font-bold">--</div>
+                </div>
+                <div class="bg-surface border border-highlight-med rounded-lg p-4">
+                  <div class="text-[10px] text-text-muted uppercase font-pixel tracking-widest mb-1">UTC Time</div>
+                  <div id="unix-utc" class="text-lg text-secondary font-mono font-bold">--</div>
+                </div>
+                <div class="bg-surface border border-highlight-med rounded-lg p-4">
+                  <div class="text-[10px] text-text-muted uppercase font-pixel tracking-widest mb-1">Relative</div>
+                  <div id="unix-relative" class="text-lg text-tertiary font-mono font-bold">--</div>
+                </div>
+                <div class="bg-surface border border-highlight-med rounded-lg p-4">
+                  <div class="text-[10px] text-text-muted uppercase font-pixel tracking-widest mb-1">Seconds (Epoch)</div>
+                  <div id="unix-seconds" class="text-lg text-text-primary font-mono font-bold">--</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Placeholders for others -->
+        {tools.filter(t => !['password-checker', 'base64-hex', 'color-palette', 'regex-tester', 'json-validator', 'hash-gen', 'css-gradient', 'unix-converter'].includes(t.id)).map(t => (
+          <div id={t.id} class="tab-panel animate-fade-in hidden">
+             <div class="flex flex-col items-center justify-center h-64 border-2 border-dashed border-highlight-med rounded-xl text-center">
+               <svg class="w-10 h-10 text-text-muted mb-4 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                 <path d={t.icon}></path>
+               </svg>
+               <h3 class="font-pixel text-text-primary mb-2 uppercase tracking-widest">{t.name}</h3>
+               <p class="text-xs text-text-muted font-mono">Status: Under Construction 🚧</p>
+             </div>
+          </div>
+        ))}
+
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  
+  .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+  .custom-scroll::-webkit-scrollbar-track { background: var(--overlay); }
+  .custom-scroll::-webkit-scrollbar-thumb { background: var(--highlight-med); border-radius: 3px; }
+  .custom-scroll::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+</style>
+
+<script>
+  // ── Tab Switching Logic ──────────────────────────────────────────────────
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+
+  const activeClasses = ['bg-primary/10', 'text-primary', 'border-primary/30'];
+  const inactiveClasses = ['text-text-muted', 'hover:text-text-primary', 'hover:bg-surface-bright', 'border-transparent'];
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Deactivate all
+      tabBtns.forEach(b => {
+        b.classList.remove(...activeClasses);
+        b.classList.add(...inactiveClasses);
+      });
+      tabPanels.forEach(p => {
+        p.classList.remove('block');
+        p.classList.add('hidden');
+      });
+
+      // Activate clicked
+      btn.classList.remove(...inactiveClasses);
+      btn.classList.add(...activeClasses);
+      
+      const targetId = btn.dataset.tab;
+      const targetPanel = document.getElementById(targetId || '');
+      if (targetPanel) {
+        targetPanel.classList.remove('hidden');
+        targetPanel.classList.add('block');
+      }
+    });
+  });
+
+  // ── Tool 1: Password Entropy ─────────────────────────────────────────────
+  const entropyInput = document.getElementById('entropy-input');
+  const entropyBits = document.getElementById('entropy-bits');
+  const entropyBar = document.getElementById('entropy-bar');
+  const entropyStrength = document.getElementById('entropy-strength');
+  const entropyTime = document.getElementById('entropy-time');
+
+  function calculateEntropy(pwd) {
+    if (!pwd) return 0;
+    let pool = 0;
+    if (/[a-z]/.test(pwd)) pool += 26;
+    if (/[A-Z]/.test(pwd)) pool += 26;
+    if (/[0-9]/.test(pwd)) pool += 10;
+    if (/[^a-zA-Z0-9]/.test(pwd)) pool += 32;
+    
+    // E = L * log2(R)
+    return pwd.length * Math.log2(pool);
+  }
+
+  function formatCrackTime(guesses) {
+    const guessesPerSecond = 1e10; // Assuming 10 billion guesses/sec
+    const seconds = guesses / guessesPerSecond;
+    if (seconds < 1) return "Instant";
+    if (seconds < 60) return "Seconds";
+    if (seconds < 3600) return "Minutes";
+    if (seconds < 86400) return "Hours";
+    if (seconds < 31536000) return "Days";
+    if (seconds < 3153600000) return "Years";
+    return "Centuries";
+  }
+
+  entropyInput?.addEventListener('input', (e) => {
+    const pwd = e.target.value;
+    if (!pwd) {
+      if(entropyBits) entropyBits.textContent = '0 bits';
+      if(entropyBar) { entropyBar.style.width = '0%'; entropyBar.className = 'h-full transition-all duration-300 bg-red-500'; }
+      if(entropyStrength) { entropyStrength.textContent = 'Very Weak'; entropyStrength.style.color = '#ef4444'; }
+      if(entropyTime) entropyTime.textContent = 'Instant';
+      return;
+    }
+
+    const entropy = calculateEntropy(pwd);
+    const guesses = Math.pow(2, entropy);
+    
+    if(entropyBits) entropyBits.textContent = `${Math.round(entropy)} bits`;
+    if(entropyTime) entropyTime.textContent = formatCrackTime(guesses);
+
+    let strength = 'Very Weak';
+    let color = '#ef4444'; // red
+    let pct = Math.min((entropy / 128) * 100, 100);
+
+    if (entropy > 100) {
+      strength = 'Unbreakable';
+      color = 'var(--secondary)'; // teal
+    } else if (entropy > 80) {
+      strength = 'Strong';
+      color = 'var(--primary)'; // rose/pink
+    } else if (entropy > 60) {
+      strength = 'Moderate';
+      color = 'var(--tertiary)'; // gold
+    } else if (entropy > 40) {
+      strength = 'Weak';
+      color = '#f97316'; // orange
+    }
+
+    if(entropyStrength) {
+      entropyStrength.textContent = strength;
+      entropyStrength.style.color = color;
+    }
+    
+    if(entropyBar) {
+      entropyBar.style.width = `${pct}%`;
+      entropyBar.style.backgroundColor = color;
+    }
+  });
+
+  // ── Tool 2: Base64 / Hex Encoder ─────────────────────────────────────────
+  const b64Input = document.getElementById('b64-input');
+  const b64Output = document.getElementById('b64-output');
+  const hexOutput = document.getElementById('hex-output');
+  const b64Clear = document.getElementById('b64-clear');
+
+  function toHex(str) {
+    return Array.from(str).map(c => c.charCodeAt(0).toString(16).padStart(2, '0')).join(' ');
+  }
+
+  b64Input?.addEventListener('input', (e) => {
+    const val = e.target.value;
+    if (!val) {
+      if(b64Output) b64Output.value = '';
+      if(hexOutput) hexOutput.value = '';
+      return;
+    }
+    try {
+      if(b64Output) b64Output.value = btoa(val);
+    } catch {
+      if(b64Output) b64Output.value = 'Error encoding to Base64';
+    }
+    if(hexOutput) hexOutput.value = toHex(val);
+  });
+
+  // ── Tool 3: Color Palette Generator ──────────────────────────────────────
+  const cpPicker = document.getElementById('cp-color-picker');
+  const cpHex = document.getElementById('cp-hex-input');
+  const cpComp = document.getElementById('cp-complementary');
+  const cpAnal = document.getElementById('cp-analogous');
+  const cpTri = document.getElementById('cp-triadic');
+
+  function hexToHSL(hex) {
+    let r = parseInt(hex.slice(1,3), 16) / 255;
+    let g = parseInt(hex.slice(3,5), 16) / 255;
+    let b = parseInt(hex.slice(5,7), 16) / 255;
+    let max = Math.max(r, g, b), min = Math.min(r, g, b);
+    let h = 0, s = 0, l = (max + min) / 2;
+    if (max !== min) {
+      let d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch(max) {
+        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+        case g: h = (b - r) / d + 2; break;
+        case b: h = (r - g) / d + 4; break;
+      }
+      h /= 6;
+    }
+    return [h * 360, s * 100, l * 100];
+  }
+
+  function hslToHex(h, s, l) {
+    l /= 100;
+    const a = s * Math.min(l, 1 - l) / 100;
+    const f = (n) => {
+      const k = (n + h / 30) % 12;
+      const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+      return Math.round(255 * color).toString(16).padStart(2, '0');
+    };
+    return `#${f(0)}${f(8)}${f(4)}`;
+  }
+
+  function renderSwatches(container, hexColors) {
+    if (!container) return;
+    container.innerHTML = hexColors.map(c => `
+      <div class="flex-1 rounded-lg cursor-pointer transition-transform hover:scale-105 active:scale-95 group relative flex items-center justify-center shadow-lg" style="background-color: ${c}" onclick="navigator.clipboard.writeText('${c}')">
+        <span class="opacity-0 group-hover:opacity-100 transition-opacity bg-surface/80 text-text-primary text-[10px] font-mono px-2 py-1 rounded backdrop-blur-sm pointer-events-none">${c}</span>
+      </div>
+    `).join('');
+  }
+
+  function generatePalette(baseHex) {
+    if (!/^#[0-9A-Fa-f]{6}$/.test(baseHex)) return;
+    cpPicker.value = baseHex;
+    cpHex.value = baseHex.toUpperCase();
+    const [h, s, l] = hexToHSL(baseHex);
+    
+    // Complementary
+    renderSwatches(cpComp, [baseHex, hslToHex((h + 180) % 360, s, l)]);
+    // Analogous
+    renderSwatches(cpAnal, [hslToHex((h - 30 + 360) % 360, s, l), baseHex, hslToHex((h + 30) % 360, s, l)]);
+    // Triadic
+    renderSwatches(cpTri, [baseHex, hslToHex((h + 120) % 360, s, l), hslToHex((h + 240) % 360, s, l)]);
+  }
+
+  cpPicker?.addEventListener('input', (e) => generatePalette(e.target.value));
+  cpHex?.addEventListener('input', (e) => {
+    let val = e.target.value;
+    if (!val.startsWith('#')) val = '#' + val;
+    if (/^#[0-9A-Fa-f]{6}$/.test(val)) generatePalette(val);
+  });
+  
+  generatePalette('#a855f7'); // Init
+
+  // ── Tool 4: Regex Tester ─────────────────────────────────────────────────
+  const rxPattern = document.getElementById('rx-pattern');
+  const rxFlags = document.getElementById('rx-flags');
+  const rxInput = document.getElementById('rx-input');
+  const rxHighlight = document.getElementById('rx-highlight');
+  const rxCount = document.getElementById('rx-count');
+  const rxError = document.getElementById('rx-error');
+
+  function escapeHTML(str) {
+    return str.replace(/[&<>'"]/g, 
+      tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+    );
+  }
+
+  function updateRegex() {
+    if (!rxHighlight || !rxCount || !rxError) return;
+    
+    const pattern = rxPattern?.value;
+    const flags = rxFlags?.value;
+    const text = rxInput?.value || '';
+    
+    rxHighlight.scrollTop = rxInput.scrollTop;
+
+    if (!pattern) {
+      rxHighlight.innerHTML = '';
+      rxCount.textContent = '0 matches';
+      rxError.classList.add('hidden');
+      return;
+    }
+
+    try {
+      new RegExp(pattern, flags); // Test validity
+      rxError.classList.add('hidden');
+      
+      let matches = 0;
+      let resultHTML = '';
+      let lastIdx = 0;
+      
+      const globalFlags = flags.includes('g') ? flags : flags + 'g';
+      const globalRegex = new RegExp(pattern, globalFlags);
+      
+      let match;
+      while ((match = globalRegex.exec(text)) !== null) {
+        if (match[0].length === 0) {
+           globalRegex.lastIndex++; 
+           continue;
+        }
+        matches++;
+        
+        const before = text.substring(lastIdx, match.index);
+        const matched = match[0];
+        
+        resultHTML += escapeHTML(before);
+        resultHTML += `<mark class="bg-primary/30 text-transparent rounded px-0.5 border border-primary/50">${escapeHTML(matched)}</mark>`;
+        
+        lastIdx = globalRegex.lastIndex;
+        if (!flags.includes('g')) break; 
+      }
+      
+      resultHTML += escapeHTML(text.substring(lastIdx));
+      rxHighlight.innerHTML = resultHTML;
+      rxCount.textContent = `${matches} match${matches === 1 ? '' : 'es'}`;
+      
+    } catch (e) {
+      rxError.classList.remove('hidden');
+      rxHighlight.innerHTML = escapeHTML(text);
+      rxCount.textContent = '0 matches';
+    }
+  }
+
+  rxPattern?.addEventListener('input', updateRegex);
+  rxFlags?.addEventListener('input', updateRegex);
+  rxInput?.addEventListener('input', updateRegex);
+  rxInput?.addEventListener('scroll', () => { if(rxHighlight) rxHighlight.scrollTop = rxInput.scrollTop; });
+  updateRegex(); // Init
+
+  // ── Tool 5: JSON Formatter ───────────────────────────────────────────────
+  const jsonInput = document.getElementById('json-input');
+  const jsonStatus = document.getElementById('json-status');
+  const btnFormat = document.getElementById('json-format');
+  const btnMinify = document.getElementById('json-minify');
+
+  function validateJson() {
+    if(!jsonInput || !jsonStatus) return;
+    const val = jsonInput.value.trim();
+    if (!val) {
+      jsonStatus.innerHTML = '<span class="text-text-muted">Waiting for input...</span>';
+      return;
+    }
+    
+    try {
+      JSON.parse(val);
+      jsonStatus.innerHTML = '<span class="text-green-400">✓ Valid JSON</span>';
+    } catch (e) {
+      jsonStatus.innerHTML = `<span class="text-red-500">✗ Invalid JSON: ${escapeHTML(e.message)}</span>`;
+    }
+  }
+
+  jsonInput?.addEventListener('input', validateJson);
+  
+  btnFormat?.addEventListener('click', () => {
+    try {
+      const obj = JSON.parse(jsonInput.value);
+      jsonInput.value = JSON.stringify(obj, null, 2);
+      validateJson();
+    } catch (e) {}
+  });
+
+  btnMinify?.addEventListener('click', () => {
+    try {
+      const obj = JSON.parse(jsonInput.value);
+      jsonInput.value = JSON.stringify(obj);
+      validateJson();
+    } catch (e) {}
+  });
+
+  // ── Tool 6: Hash Generator ───────────────────────────────────────────────
+  const hashInput = document.getElementById('hash-input');
+  const hash256 = document.getElementById('hash-sha256');
+  const hash384 = document.getElementById('hash-sha384');
+  const hash512 = document.getElementById('hash-sha512');
+
+  async function generateHashes() {
+    if(!hashInput || !hash256) return;
+    const text = hashInput.value;
+    if(!text) {
+      hash256.textContent = '--';
+      hash384!.textContent = '--';
+      hash512!.textContent = '--';
+      return;
+    }
+
+    const encoder = new TextEncoder();
+    const data = encoder.encode(text);
+    
+    const hashBuffer256 = await crypto.subtle.digest('SHA-256', data);
+    const hashBuffer384 = await crypto.subtle.digest('SHA-384', data);
+    const hashBuffer512 = await crypto.subtle.digest('SHA-512', data);
+    
+    const hex256 = Array.from(new Uint8Array(hashBuffer256)).map(b => b.toString(16).padStart(2, '0')).join('');
+    const hex384 = Array.from(new Uint8Array(hashBuffer384)).map(b => b.toString(16).padStart(2, '0')).join('');
+    const hex512 = Array.from(new Uint8Array(hashBuffer512)).map(b => b.toString(16).padStart(2, '0')).join('');
+
+    hash256.textContent = hex256;
+    hash384!.textContent = hex384;
+    hash512!.textContent = hex512;
+  }
+
+  hashInput?.addEventListener('input', generateHashes);
+
+  // ── Tool 7: CSS Gradient Builder ─────────────────────────────────────────
+  const gradC1 = document.getElementById('grad-color-1');
+  const gradC2 = document.getElementById('grad-color-2');
+  const gradAngle = document.getElementById('grad-angle');
+  const gradAngleVal = document.getElementById('grad-angle-val');
+  const gradType = document.getElementById('grad-type');
+  const gradPreview = document.getElementById('grad-preview');
+  const gradCode = document.getElementById('grad-code');
+  const gradCopy = document.getElementById('grad-copy');
+
+  function updateGradient() {
+    if(!gradC1 || !gradPreview) return;
+    const c1 = gradC1.value;
+    const c2 = gradC2.value;
+    const angle = gradAngle.value;
+    const type = gradType.value;
+    
+    if(gradAngleVal) gradAngleVal.textContent = angle;
+    
+    let css = '';
+    if (type === 'linear-gradient') {
+      css = `linear-gradient(${angle}deg, ${c1}, ${c2})`;
+    } else {
+      css = `radial-gradient(circle, ${c1}, ${c2})`;
+    }
+    
+    gradPreview.style.background = css;
+    const rule = `background: ${css};`;
+    if(gradCode) gradCode.value = rule;
+  }
+
+  [gradC1, gradC2, gradAngle, gradType].forEach(el => el?.addEventListener('input', updateGradient));
+  
+  gradCopy?.addEventListener('click', () => {
+    if(gradCode) {
+      navigator.clipboard.writeText(gradCode.value);
+      gradCopy.textContent = 'Copied!';
+      setTimeout(() => gradCopy.textContent = 'Copy', 2000);
+    }
+  });
+
+  // ── Tool 8: Unix Timestamp Converter ─────────────────────────────────────
+  const unixInput = document.getElementById('unix-input');
+  const unixNow = document.getElementById('unix-now');
+  const unixLocal = document.getElementById('unix-local');
+  const unixUtc = document.getElementById('unix-utc');
+  const unixRelative = document.getElementById('unix-relative');
+  const unixSeconds = document.getElementById('unix-seconds');
+
+  function updateUnix() {
+    if(!unixInput || !unixLocal) return;
+    const val = unixInput.value.trim();
+    if(!val) {
+      unixLocal.textContent = '--'; unixUtc!.textContent = '--'; unixRelative!.textContent = '--'; unixSeconds!.textContent = '--';
+      return;
+    }
+    
+    let d;
+    if (/^\d+$/.test(val)) {
+       const num = parseInt(val, 10);
+       d = new Date(num * (val.length <= 10 ? 1000 : 1));
+    } else {
+       d = new Date(val);
+    }
+
+    if(isNaN(d.getTime())) {
+      unixLocal.textContent = 'Invalid Date';
+      unixUtc!.textContent = '--';
+      unixRelative!.textContent = '--';
+      unixSeconds!.textContent = '--';
+      return;
+    }
+
+    unixLocal.textContent = d.toLocaleString();
+    unixUtc!.textContent = d.toUTCString();
+    unixSeconds!.textContent = Math.floor(d.getTime() / 1000).toString();
+
+    const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
+    const diffDays = Math.round((d.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+    
+    if (Math.abs(diffDays) < 1) {
+       const diffHrs = Math.round((d.getTime() - Date.now()) / (1000 * 60 * 60));
+       if (Math.abs(diffHrs) < 1) {
+          const diffMins = Math.round((d.getTime() - Date.now()) / (1000 * 60));
+          unixRelative!.textContent = rtf.format(diffMins, 'minute');
+       } else {
+          unixRelative!.textContent = rtf.format(diffHrs, 'hour');
+       }
+    } else if (Math.abs(diffDays) > 365) {
+       unixRelative!.textContent = rtf.format(Math.round(diffDays / 365), 'year');
+    } else if (Math.abs(diffDays) > 30) {
+       unixRelative!.textContent = rtf.format(Math.round(diffDays / 30), 'month');
+    } else {
+       unixRelative!.textContent = rtf.format(diffDays, 'day');
+    }
+  }
+
+  unixInput?.addEventListener('input', updateUnix);
+  unixNow?.addEventListener('click', () => {
+    if(unixInput) {
+       unixInput.value = Math.floor(Date.now() / 1000).toString();
+       updateUnix();
+    }
+  });
+</script>

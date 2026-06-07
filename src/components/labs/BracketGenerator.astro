@@ -1,0 +1,210 @@
+---
+---
+<div id="bracket-generator" class="tab-panel hidden h-full flex flex-col font-mono text-sm">
+  <div class="mb-4 flex flex-col sm:flex-row gap-4">
+    <div class="flex-grow">
+      <label class="block text-primary text-xs uppercase tracking-widest mb-2">Participants (One per line)</label>
+      <textarea id="bracket-input" class="w-full h-32 bg-surface-dim border border-highlight-med rounded p-3 text-text-primary focus:border-primary outline-none resize-none" placeholder="Team A&#10;Team B&#10;Team C&#10;Team D"></textarea>
+    </div>
+    <div class="flex flex-col justify-end">
+      <button id="bracket-generate-btn" class="px-6 py-3 bg-primary text-surface-dim font-bold rounded hover:bg-primary/90 transition-colors uppercase tracking-wider shadow-lg shadow-primary/20">Generate Bracket</button>
+    </div>
+  </div>
+
+  <div class="flex-grow overflow-auto bg-surface-dim border border-highlight-med rounded p-4 relative" id="bracket-output">
+    <div class="text-text-muted text-center mt-10">Enter participants and click generate to see the bracket.</div>
+  </div>
+</div>
+
+<style>
+  #bracket-output {
+    overflow: auto;
+  }
+  .bracket-team-box {
+    height: 28px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    border: 1px solid var(--highlight-med);
+    background: var(--overlay);
+    border-radius: 4px;
+    font-size: 0.78rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 160px;
+    box-sizing: border-box;
+    transition: border-color 0.2s;
+  }
+  .bracket-team-box.bye {
+    opacity: 0.35;
+    font-style: italic;
+  }
+  .bracket-winner-box {
+    height: 36px;
+    display: flex;
+    align-items: center;
+    padding: 0 14px;
+    border: 1.5px solid var(--primary);
+    background: var(--overlay);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary);
+    white-space: nowrap;
+    letter-spacing: 0.03em;
+  }
+  .bracket-round-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    text-align: center;
+    font-weight: 600;
+    opacity: 0.7;
+  }
+</style>
+
+<script>
+  const inputEl = document.getElementById('bracket-input') as HTMLTextAreaElement;
+  const generateBtn = document.getElementById('bracket-generate-btn');
+  const outputEl = document.getElementById('bracket-output');
+
+  function getRoundName(rIdx: number, totalRounds: number): string {
+    const remaining = totalRounds - rIdx;
+    if (remaining === 1) return 'Final';
+    if (remaining === 2) return 'Semifinal';
+    if (remaining === 3) return 'Quarterfinal';
+    return `Round ${rIdx + 1}`;
+  }
+
+  function generateBracket() {
+    if (!inputEl || !outputEl) return;
+
+    const participants = inputEl.value
+      .split('\n')
+      .map((p) => p.trim())
+      .filter((p) => p.length > 0);
+
+    if (participants.length < 2) {
+      outputEl.innerHTML =
+        '<div style="color:var(--rose,#eb6f92);text-align:center;padding:2.5rem 1rem">Please enter at least 2 participants.</div>';
+      return;
+    }
+
+    // Fisher-Yates shuffle
+    const teams: (string | null)[] = [...participants];
+    for (let i = teams.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [teams[i], teams[j]] = [teams[j], teams[i]];
+    }
+
+    // Pad to nearest power of 2 with null (BYE) slots
+    const totalSlots = Math.pow(2, Math.ceil(Math.log2(teams.length)));
+    while (teams.length < totalSlots) teams.push(null);
+
+    // Build all rounds
+    type Match = [string | null, string | null];
+    const rounds: Match[][] = [];
+
+    let currentRound: Match[] = [];
+    for (let i = 0; i < totalSlots; i += 2) {
+      currentRound.push([teams[i], teams[i + 1]]);
+    }
+    rounds.push(currentRound);
+
+    while (currentRound.length > 1) {
+      const nextRound: Match[] = [];
+      for (let i = 0; i < currentRound.length; i += 2) {
+        const m1 = currentRound[i];
+        const m2 = currentRound[i + 1];
+        // Auto-advance bye winners to next round
+        const adv1 = m1[1] === null ? m1[0] : null;
+        const adv2 = m2[1] === null ? m2[0] : null;
+        nextRound.push([adv1, adv2]);
+      }
+      rounds.push(nextRound);
+      currentRound = nextRound;
+    }
+
+    // Layout constants
+    const MATCH_H = 80;   // px per match slot in round 1
+    const TEAM_H  = 28;   // px per team name box
+    const GAP     = 2;    // px gap between team boxes
+    const CONN_W  = 40;   // px width for connector SVG columns
+    const LABEL_H = 28;   // px for round name labels
+
+    const numR1Matches   = rounds[0].length;
+    const bracketH       = numR1Matches * MATCH_H; // total height of the match area
+    const connColor      = 'var(--highlight-med, #403d52)';
+
+    // ── Build HTML ────────────────────────────────────────────────────────────
+    let html = `<div style="display:flex;align-items:flex-start;min-width:max-content;padding:4px 8px 8px;">`;
+
+    rounds.forEach((round, rIdx) => {
+      const matchSlotH = MATCH_H * Math.pow(2, rIdx); // height of one slot in this round
+      const roundName  = getRoundName(rIdx, rounds.length);
+      const nextRound  = rounds[rIdx + 1];
+
+      // ── Round column ───────────────────────────────────────────────────────
+      html += `<div style="display:flex;flex-direction:column;flex-shrink:0;width:160px;">`;
+
+      // Round label
+      html += `<div class="bracket-round-label" style="height:${LABEL_H}px;display:flex;align-items:center;justify-content:center;">${roundName}</div>`;
+
+      // Matches
+      round.forEach(([p1, p2]) => {
+        const isBye1 = p1 === null;
+        const isBye2 = p2 === null;
+
+        html += `<div style="height:${matchSlotH}px;display:flex;flex-direction:column;justify-content:center;padding:0 4px;box-sizing:border-box;">`;
+        html += `<div style="display:flex;flex-direction:column;gap:${GAP}px;">`;
+        html += `<div class="bracket-team-box${isBye1 ? ' bye' : ''}">${isBye1 ? 'BYE' : p1}</div>`;
+        html += `<div class="bracket-team-box${isBye2 ? ' bye' : ''}">${isBye2 ? 'BYE' : (p2 ?? 'TBD')}</div>`;
+        html += `</div></div>`;
+      });
+
+      html += `</div>`; // end round column
+
+      // ── Connector SVG column ───────────────────────────────────────────────
+      // Always emit a connector column (even after the last round → goes to winner)
+      html += `<div style="width:${CONN_W}px;flex-shrink:0;padding-top:${LABEL_H}px;box-sizing:border-box;">`;
+      html += `<svg width="${CONN_W}" height="${bracketH}" xmlns="http://www.w3.org/2000/svg" style="display:block;overflow:visible;">`;
+
+      if (nextRound) {
+        // Draw bracket connectors for every pair of feeders → next-round match
+        const nextMatchH = matchSlotH * 2;
+        nextRound.forEach((_, nIdx) => {
+          const upperY = nIdx * nextMatchH + matchSlotH / 2;       // center of upper feeder
+          const lowerY = nIdx * nextMatchH + matchSlotH * 3 / 2;   // center of lower feeder
+          const midY   = nIdx * nextMatchH + nextMatchH / 2;        // center of next-round match
+          const halfW  = CONN_W / 2;
+
+          // ─ upper feeder horizontal stub
+          html += `<line x1="0" y1="${upperY}" x2="${halfW}" y2="${upperY}" stroke="${connColor}" stroke-width="1.5" stroke-linecap="round"/>`;
+          // ─ lower feeder horizontal stub
+          html += `<line x1="0" y1="${lowerY}" x2="${halfW}" y2="${lowerY}" stroke="${connColor}" stroke-width="1.5" stroke-linecap="round"/>`;
+          // │ vertical bridge
+          html += `<line x1="${halfW}" y1="${upperY}" x2="${halfW}" y2="${lowerY}" stroke="${connColor}" stroke-width="1.5" stroke-linecap="round"/>`;
+          // ─ output horizontal stub to next round
+          html += `<line x1="${halfW}" y1="${midY}" x2="${CONN_W}" y2="${midY}" stroke="${connColor}" stroke-width="1.5" stroke-linecap="round"/>`;
+        });
+      } else {
+        // Final connector: straight line to winner slot
+        html += `<line x1="0" y1="${bracketH / 2}" x2="${CONN_W}" y2="${bracketH / 2}" stroke="${connColor}" stroke-width="1.5" stroke-linecap="round"/>`;
+      }
+
+      html += `</svg></div>`;
+    });
+
+    // ── Winner slot ────────────────────────────────────────────────────────
+    html += `<div style="flex-shrink:0;display:flex;align-items:center;height:${bracketH}px;padding-top:${LABEL_H}px;box-sizing:content-box;">`;
+    html += `<div class="bracket-winner-box">🏆 Winner</div>`;
+    html += `</div>`;
+
+    html += `</div>`;
+    outputEl.innerHTML = html;
+  }
+
+  generateBtn?.addEventListener('click', generateBracket);
+</script>

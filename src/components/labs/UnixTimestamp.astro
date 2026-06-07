@@ -1,0 +1,199 @@
+<!-- Unix Timestamp Converter -->
+<div id="unix-converter" class="tab-panel animate-fade-in hidden">
+  <div class="max-w-3xl">
+    <h2 class="text-2xl font-bold text-text-primary mb-2">
+      Unix Timestamp Converter
+    </h2>
+    <p class="text-text-muted text-sm mb-6">
+      Convert between Unix timestamps and human-readable dates.
+    </p>
+
+    <div
+      class="bg-overlay border border-highlight-med rounded-xl p-6 space-y-6"
+    >
+      <div class="flex gap-4 items-end">
+        <div class="flex-grow">
+          <label
+            class="block text-xs font-pixel tracking-widest text-text-muted mb-2 uppercase"
+            >Unix Timestamp or Date String</label
+          >
+          <input
+            type="text"
+            id="unix-input"
+            class="w-full bg-surface border border-highlight-med rounded-lg px-4 py-3 text-text-primary font-mono focus:border-primary focus:outline-none"
+            placeholder="e.g. 1672531200 or 2023-01-01"
+          />
+        </div>
+        <button
+          id="unix-now"
+          class="px-4 py-3 bg-primary/20 text-primary border border-primary/30 rounded-lg hover:bg-primary/30 transition-colors font-mono text-sm whitespace-nowrap"
+          >Current Time</button
+        >
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-surface border border-highlight-med rounded-lg p-4">
+          <div
+            class="text-[10px] text-text-muted uppercase font-pixel tracking-widest mb-1"
+          >
+            Local Time
+          </div>
+          <div
+            id="unix-local"
+            class="text-lg text-text-primary font-mono font-bold"
+          >
+            --
+          </div>
+        </div>
+        <div class="bg-surface border border-highlight-med rounded-lg p-4">
+          <div
+            class="text-[10px] text-text-muted uppercase font-pixel tracking-widest mb-1"
+          >
+            UTC Time
+          </div>
+          <div
+            id="unix-utc"
+            class="text-lg text-text-primary font-mono font-bold"
+          >
+            --
+          </div>
+        </div>
+        <div class="bg-surface border border-highlight-med rounded-lg p-4">
+          <div
+            class="text-[10px] text-text-muted uppercase font-pixel tracking-widest mb-1"
+          >
+            Relative
+          </div>
+          <div
+            id="unix-relative"
+            class="text-lg text-text-primary font-mono font-bold"
+          >
+            --
+          </div>
+        </div>
+        <div class="bg-surface border border-highlight-med rounded-lg p-4">
+          <div
+            class="text-[10px] text-text-muted uppercase font-pixel tracking-widest mb-1"
+          >
+            Seconds (Epoch)
+          </div>
+          <div
+            id="unix-seconds"
+            class="text-lg text-text-primary font-mono font-bold"
+          >
+            --
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Tool 8: Unix Timestamp Converter ─────────────────────────────────────
+  const unixInput = document.getElementById("unix-input") as HTMLInputElement;
+  const unixNow = document.getElementById("unix-now");
+  const unixLocal = document.getElementById("unix-local");
+  const unixUtc = document.getElementById("unix-utc");
+  const unixRelative = document.getElementById("unix-relative");
+  const unixSeconds = document.getElementById("unix-seconds");
+
+  function updateUnix() {
+    if (!unixInput || !unixLocal) return;
+    const val = unixInput.value.trim();
+    if (!val) {
+      unixLocal.textContent = "--";
+      if (unixUtc) unixUtc.textContent = "--";
+      if (unixRelative) unixRelative.textContent = "--";
+      if (unixSeconds) unixSeconds.textContent = "--";
+      return;
+    }
+
+    let d;
+    if (/^\d+$/.test(val)) {
+      const num = parseInt(val, 10);
+      d = new Date(num * (val.length <= 10 ? 1000 : 1));
+    } else {
+      // Handle DD/MM/YYYY or MM/DD/YYYY based on the user's local system format
+      const match = val.match(
+        /^(\d{1,2})[\/\-\.]+(\d{1,2})[\/\-\.]+(\d{4})(.*)$/,
+      );
+      if (match) {
+        // Detect if the user's browser uses US date formats (MM/DD/YYYY)
+        const isUS = Intl.DateTimeFormat().resolvedOptions().locale === 'en-US';
+        
+        const first = match[1];
+        const second = match[2];
+        const year = match[3];
+        const time = match[4];
+
+        // Assign month and day based on locale
+        const mm = isUS ? first : second;
+        const dd = isUS ? second : first;
+
+        d = new Date(`${mm}/${dd}/${year}${time}`);
+        
+        // If the resulting date is invalid (e.g., someone in the UK typed a US date like 05/15/2023)
+        // Swap them and try one more time as a smart fallback!
+        if (isNaN(d.getTime())) {
+          d = new Date(`${dd}/${mm}/${year}${time}`);
+          if (isNaN(d.getTime())) d = new Date(val);
+        }
+      } else {
+        d = new Date(val);
+      }
+    }
+
+    if (isNaN(d.getTime())) {
+      unixLocal.textContent = "Invalid Date";
+      if (unixUtc) unixUtc.textContent = "--";
+      if (unixRelative) unixRelative.textContent = "--";
+      if (unixSeconds) unixSeconds.textContent = "--";
+      return;
+    }
+
+    unixLocal.textContent = d.toLocaleString();
+    if (unixUtc) unixUtc.textContent = d.toUTCString();
+    if (unixSeconds)
+      unixSeconds.textContent = Math.floor(d.getTime() / 1000).toString();
+
+    if (unixRelative) {
+      const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+      const diffDays = Math.round(
+        (d.getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+      );
+
+      if (Math.abs(diffDays) < 1) {
+        const diffHrs = Math.round(
+          (d.getTime() - Date.now()) / (1000 * 60 * 60),
+        );
+        if (Math.abs(diffHrs) < 1) {
+          const diffMins = Math.round((d.getTime() - Date.now()) / (1000 * 60));
+          unixRelative.textContent = rtf.format(diffMins, "minute");
+        } else {
+          unixRelative.textContent = rtf.format(diffHrs, "hour");
+        }
+      } else if (Math.abs(diffDays) > 365) {
+        unixRelative.textContent = rtf.format(
+          Math.round(diffDays / 365),
+          "year",
+        );
+      } else if (Math.abs(diffDays) > 30) {
+        unixRelative.textContent = rtf.format(
+          Math.round(diffDays / 30),
+          "month",
+        );
+      } else {
+        unixRelative.textContent = rtf.format(diffDays, "day");
+      }
+    }
+  }
+
+  unixInput?.addEventListener("input", updateUnix);
+  unixNow?.addEventListener("click", () => {
+    if (unixInput) {
+      unixInput.value = Math.floor(Date.now() / 1000).toString();
+      updateUnix();
+    }
+  });
+</script>

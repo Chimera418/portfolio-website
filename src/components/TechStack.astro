@@ -1,0 +1,21 @@
+---
+interface Props {
+  category: string;
+  skills: string[];
+}
+const { category, skills } = Astro.props;
+---
+<div class="mb-8 last:mb-0">
+  <h3 class="font-pixel text-xs text-secondary uppercase tracking-widest mb-4 flex items-center gap-3">
+    <span class="w-8 h-px bg-highlight-med"></span>
+    {category}
+    <span class="flex-grow h-px bg-highlight-med"></span>
+  </h3>
+  <div class="flex flex-wrap gap-2">
+    {skills.map(skill => (
+      <span class="px-3 py-1.5 bg-surface-bright border border-highlight-med text-text-primary text-sm rounded-md hover:border-secondary hover:text-secondary transition-colors cursor-default">
+        {skill}
+      </span>
+    ))}
+  </div>
+</div>

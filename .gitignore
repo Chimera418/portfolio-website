@@ -1,0 +1,11 @@
+scratch/
+.astro/
+.vscode/
+.cursor/
+misc/
+.env
+node_modules/
+dist/
+.DS_Store
+*.local
+*.log

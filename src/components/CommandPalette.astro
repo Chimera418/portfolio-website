@@ -1,0 +1,485 @@
+---
+
+---
+
+<div
+  id="command-palette-backdrop"
+  class="fixed inset-0 z-[10000] bg-surface/80 backdrop-blur-sm hidden items-start justify-center pt-[15vh] px-4 opacity-0 transition-opacity duration-200"
+>
+  <div
+    id="command-palette"
+    class="w-full max-w-2xl bg-surface-dim border border-highlight-med rounded-xl shadow-2xl overflow-hidden flex flex-col transform scale-95 transition-transform duration-200"
+    role="dialog"
+    aria-modal="true"
+  >
+    <div
+      class="flex items-center px-4 py-4 border-b border-highlight-med bg-overlay"
+    >
+      <svg
+        class="w-5 h-5 text-primary mr-3 flex-shrink-0"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        ><path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="m8.25 4.5 7.5 7.5-7.5 7.5"></path></svg
+      >
+      <input
+        type="text"
+        id="command-input"
+        class="flex-grow bg-transparent border-none outline-none text-text-primary text-lg font-mono placeholder:text-text-muted/50"
+        placeholder="Type a command or search..."
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <div
+        class="text-xs text-text-muted font-mono ml-3 px-2 py-1 bg-surface border border-highlight-med rounded hidden sm:block"
+      >
+        ESC
+      </div>
+    </div>
+    <div
+      id="command-results"
+      class="max-h-[50vh] overflow-y-auto custom-scroll p-2 flex flex-col gap-1"
+    >
+      <!-- Options injected by JS -->
+    </div>
+    <div
+      class="px-4 py-3 border-t border-highlight-med bg-overlay text-xs text-text-muted font-mono flex items-center justify-between hidden sm:flex"
+    >
+      <div class="flex items-center gap-4">
+        <span
+          ><kbd
+            class="px-1.5 py-0.5 bg-surface border border-highlight-med rounded mr-1"
+            >↑</kbd
+          ><kbd
+            class="px-1.5 py-0.5 bg-surface border border-highlight-med rounded mr-1"
+            >↓</kbd
+          > navigate</span
+        >
+        <span
+          ><kbd
+            class="px-1.5 py-0.5 bg-surface border border-highlight-med rounded mr-1"
+            >↵</kbd
+          > select</span
+        >
+      </div>
+      <div
+        class="font-pixel text-[8px] uppercase tracking-widest text-highlight-high"
+      >
+        Chimera OS
+      </div>
+    </div>
+  </div>
+</div>
+
+<style is:global>
+  #command-palette-backdrop:not(.hidden) {
+    display: flex;
+  }
+  #command-palette-backdrop.is-open {
+    opacity: 1;
+  }
+  #command-palette-backdrop.is-open #command-palette {
+    transform: scale(1);
+  }
+
+  /* Active item styling */
+  .cmd-item.active {
+    background-color: var(--surface-bright) !important;
+    border-color: var(--highlight-med) !important;
+  }
+  .cmd-item.active .text-text-primary,
+  .cmd-item.active svg {
+    color: var(--primary) !important;
+  }
+  .cmd-item.active .text-text-muted {
+    color: var(--text-primary) !important;
+  }
+</style>
+
+<script>
+  const commands = [
+    {
+      id: "nav-home",
+      title: "Home",
+      subtitle: "Go to dashboard",
+      icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6",
+      action: () => (window.location.href = "/"),
+    },
+    {
+      id: "nav-about",
+      title: "About",
+      subtitle: "Read my story",
+      icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z",
+      action: () => (window.location.href = "/about"),
+    },
+    {
+      id: "nav-projects",
+      title: "Projects",
+      subtitle: "View my work",
+      icon: "M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
+      action: () => (window.location.href = "/projects"),
+    },
+    {
+      id: "nav-devlog",
+      title: "Blog",
+      subtitle: "Technical writeups",
+      icon: "M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z",
+      action: () => (window.location.href = "/devlog"),
+    },
+    {
+      id: "nav-guestbook",
+      title: "Guestbook",
+      subtitle: "Leave a message",
+      icon: "M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z",
+      action: () => (window.location.href = "/guestbook"),
+    },
+    {
+      id: "nav-contact",
+      title: "Contact",
+      subtitle: "Get in touch",
+      icon: "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
+      action: () => (window.location.href = "/contact"),
+    },
+    {
+      id: "theme-toggle",
+      title: "Toggle Theme Drawer",
+      subtitle: "Change appearance",
+      icon: "M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z",
+      action: () => {
+        document.dispatchEvent(new CustomEvent("toggle-theme-drawer"));
+      },
+    },
+    {
+      id: "crt-toggle",
+      title: "Toggle CRT Mode",
+      subtitle: "Retro scanlines",
+      icon: "M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
+      action: () => {
+        const isCRT =
+          document.documentElement.getAttribute("data-crt-mode") === "true";
+        const newVal = !isCRT;
+        document.documentElement.setAttribute("data-crt-mode", String(newVal));
+        localStorage.setItem("crtMode", String(newVal));
+
+        const crtToggle = document.getElementById(
+          "crt-mode-toggle",
+        ) as HTMLInputElement;
+        if (crtToggle) crtToggle.checked = newVal;
+        const bgLabel = document.getElementById("bg-effect-label");
+        if (bgLabel) {
+          bgLabel.textContent = newVal ? "on" : "off";
+          bgLabel.className = newVal ? "text-text-primary" : "text-text-muted";
+        }
+      },
+    },
+    {
+      id: "pixel-toggle",
+      title: "Toggle Pixel Mode",
+      subtitle: "Blocky fonts everywhere",
+      icon: "M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z",
+      action: () => {
+        const isPixel =
+          document.documentElement.getAttribute("data-pixel-mode") === "true";
+        const newVal = !isPixel;
+        document.documentElement.setAttribute(
+          "data-pixel-mode",
+          String(newVal),
+        );
+        localStorage.setItem("pixelMode", String(newVal));
+
+        const pixelToggle = document.getElementById(
+          "pixel-mode-toggle",
+        ) as HTMLInputElement;
+        if (pixelToggle) pixelToggle.checked = newVal;
+        const pLabel = document.getElementById("pixel-mode-label");
+        if (pLabel) {
+          pLabel.textContent = newVal ? "on" : "off";
+          pLabel.className = newVal ? "text-text-primary" : "text-text-muted";
+        }
+      },
+    },
+    {
+      id: "easter-confetti",
+      title: "🎉 Confetti",
+      subtitle: "you found it",
+      icon: "M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z",
+      action: () => fireConfetti(),
+    },
+  ];
+
+  const backdrop = document.getElementById("command-palette-backdrop");
+  const input = document.getElementById("command-input") as HTMLInputElement;
+  const resultsContainer = document.getElementById("command-results");
+
+  // Remove locked pages from commands on init; add back when unlocked
+  const LABS_CMD = {
+    id: "nav-labs",
+    title: "Labs",
+    subtitle: "Experiments & tools",
+    icon: "M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z",
+    action: () => (window.location.href = "/labs"),
+  };
+  const GAMES_CMD = {
+    id: "nav-games",
+    title: "Games",
+    subtitle: "Browser arcade",
+    icon: "M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+    action: () => (window.location.href = "/games"),
+  };
+
+  // Strip the placeholder entries; actual unlock adds them with emoji title
+  let activeCommands = commands.filter(
+    (c) => c.id !== "nav-labs" && c.id !== "nav-games",
+  );
+
+  if (localStorage.getItem("chimera_labs_unlocked") === "true") {
+    const insertAt = activeCommands.findIndex((c) => c.id === "nav-guestbook");
+    activeCommands.splice(insertAt, 0, LABS_CMD);
+  }
+  if (localStorage.getItem("chimera_games_unlocked") === "true") {
+    const insertAt = activeCommands.findIndex((c) => c.id === "nav-guestbook");
+    activeCommands.splice(insertAt, 0, GAMES_CMD);
+  }
+
+  // Listen for runtime unlocks (same session)
+  (document as EventTarget).addEventListener("chimera-unlock", (e: Event) => {
+    const detail = (e as CustomEvent).detail;
+    if (
+      detail?.page === "labs" &&
+      !activeCommands.find((c) => c.id === "nav-labs")
+    ) {
+      const insertAt = activeCommands.findIndex(
+        (c) => c.id === "nav-guestbook",
+      );
+      activeCommands.splice(insertAt, 0, LABS_CMD);
+    }
+    if (
+      detail?.page === "games" &&
+      !activeCommands.find((c) => c.id === "nav-games")
+    ) {
+      const insertAt = activeCommands.findIndex(
+        (c) => c.id === "nav-guestbook",
+      );
+      activeCommands.splice(insertAt, 0, GAMES_CMD);
+    }
+  });
+
+  let isOpen = false;
+  let activeIndex = 0;
+  let filteredCommands = [...activeCommands];
+
+  function openPalette() {
+    isOpen = true;
+    backdrop?.classList.remove("hidden");
+    // small delay to allow display:flex to apply before transition
+    setTimeout(() => {
+      backdrop?.classList.add("is-open");
+      input?.focus();
+      input.value = "";
+      filterCommands("");
+    }, 10);
+  }
+
+  function closePalette() {
+    isOpen = false;
+    backdrop?.classList.remove("is-open");
+    setTimeout(() => {
+      backdrop?.classList.add("hidden");
+    }, 200);
+  }
+
+  function scrollToActive() {
+    if (!resultsContainer) return;
+    const activeEl = resultsContainer.children[activeIndex] as HTMLElement;
+    if (activeEl) {
+      const containerTop = resultsContainer.scrollTop;
+      const containerBottom = containerTop + resultsContainer.clientHeight;
+      const elTop = activeEl.offsetTop;
+      const elBottom = elTop + activeEl.clientHeight;
+
+      if (elTop < containerTop) {
+        resultsContainer.scrollTop = elTop;
+      } else if (elBottom > containerBottom) {
+        resultsContainer.scrollTop = elBottom - resultsContainer.clientHeight;
+      }
+    }
+  }
+
+  function updateActiveStyles() {
+    if (!resultsContainer) return;
+    const items = resultsContainer.children;
+    for (let i = 0; i < items.length; i++) {
+      const el = items[i] as HTMLElement;
+      if (i === activeIndex) {
+        el.className =
+          "cmd-item w-full text-left flex items-center px-4 py-3 rounded-lg border border-transparent transition-colors duration-100 active";
+      } else {
+        el.className =
+          "cmd-item w-full text-left flex items-center px-4 py-3 rounded-lg border border-transparent transition-colors duration-100 hover:bg-surface-bright hover:border-highlight-med";
+      }
+    }
+    scrollToActive();
+  }
+
+  function renderResults() {
+    if (!resultsContainer) return;
+
+    resultsContainer.innerHTML = "";
+
+    if (filteredCommands.length === 0) {
+      resultsContainer.innerHTML = `
+        <div class="px-4 py-8 text-center text-text-muted font-mono text-sm">
+          No commands found
+        </div>
+      `;
+      return;
+    }
+
+    filteredCommands.forEach((cmd, idx) => {
+      const el = document.createElement("button");
+      el.className = `cmd-item w-full text-left flex items-center px-4 py-3 rounded-lg border border-transparent transition-colors duration-100 ${idx === activeIndex ? "active" : "hover:bg-surface-bright hover:border-highlight-med"}`;
+      el.innerHTML = `
+        <svg class="w-5 h-5 text-text-muted mr-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="${cmd.icon}" /></svg>
+        <div class="flex flex-col">
+          <span class="font-mono text-sm text-text-primary">${cmd.title}</span>
+          <span class="font-mono text-[10px] text-text-muted">${cmd.subtitle}</span>
+        </div>
+      `;
+
+      el.addEventListener("click", () => {
+        closePalette();
+        cmd.action();
+      });
+
+      el.addEventListener("mouseenter", () => {
+        if (activeIndex !== idx) {
+          activeIndex = idx;
+          updateActiveStyles();
+        }
+      });
+
+      resultsContainer.appendChild(el);
+    });
+
+    scrollToActive();
+  }
+
+  function filterCommands(query: string) {
+    const q = query.toLowerCase();
+    filteredCommands = activeCommands.filter(
+      (c) =>
+        c.title.toLowerCase().includes(q) ||
+        c.subtitle.toLowerCase().includes(q),
+    );
+    activeIndex = 0;
+    renderResults();
+  }
+
+  // Keyboard shortcut (Ctrl+K or Cmd+K)
+  document.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+      e.preventDefault();
+      if (isOpen) closePalette();
+      else openPalette();
+    }
+
+    if (e.key === "Escape" && isOpen) {
+      closePalette();
+    }
+
+    if (isOpen) {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        activeIndex = (activeIndex + 1) % Math.max(1, filteredCommands.length);
+        updateActiveStyles();
+      }
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        activeIndex =
+          (activeIndex - 1 + filteredCommands.length) %
+          Math.max(1, filteredCommands.length);
+        updateActiveStyles();
+      }
+      if (e.key === "Enter" && filteredCommands.length > 0) {
+        e.preventDefault();
+        const cmd = filteredCommands[activeIndex];
+        closePalette();
+        cmd.action();
+      }
+    }
+  });
+
+  input?.addEventListener("input", (e) => {
+    filterCommands((e.target as HTMLInputElement).value);
+  });
+
+  // Close on click outside
+  backdrop?.addEventListener("click", (e) => {
+    if (e.target === backdrop) closePalette();
+  });
+
+  // Open programmatically via event (e.g. from footer)
+  document.addEventListener("open-command-palette", () => {
+    if (!isOpen) openPalette();
+  });
+
+  // ── Confetti helper ────────────────────────────────────────────────────────
+  async function fireConfetti() {
+    if (!(window as any).confetti) {
+      await new Promise<void>((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src =
+          "https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js";
+        s.onload = () => resolve();
+        s.onerror = () => reject();
+        document.head.appendChild(s);
+      });
+    }
+    const confetti = (window as any).confetti;
+    confetti({
+      particleCount: 80,
+      angle: 60,
+      spread: 55,
+      origin: { x: 0, y: 0.65 },
+    });
+    confetti({
+      particleCount: 80,
+      angle: 120,
+      spread: 55,
+      origin: { x: 1, y: 0.65 },
+    });
+  }
+
+  // ── Konami Code easter egg ─────────────────────────────────────────────────
+  const KONAMI = [
+    "ArrowUp",
+    "ArrowUp",
+    "ArrowDown",
+    "ArrowDown",
+    "ArrowLeft",
+    "ArrowRight",
+    "ArrowLeft",
+    "ArrowRight",
+    "b",
+    "a",
+  ];
+  let konamiProgress = 0;
+
+  document.addEventListener("keydown", (e) => {
+    // Don't eat keys while palette is open (handled separately above)
+    if (isOpen) return;
+    if (e.key === KONAMI[konamiProgress]) {
+      konamiProgress++;
+      if (konamiProgress === KONAMI.length) {
+        konamiProgress = 0;
+        fireConfetti();
+      }
+    } else {
+      konamiProgress = e.key === KONAMI[0] ? 1 : 0;
+    }
+  });
+</script>

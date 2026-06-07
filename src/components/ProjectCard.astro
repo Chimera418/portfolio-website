@@ -1,0 +1,52 @@
+---
+import BentoCard from './BentoCard.astro';
+import Button from './Button.astro';
+
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+<BentoCard title="Featured Project" className={className} tag="HIGHLIGHT">
+  <div class="flex flex-col h-full justify-between">
+    <div class="space-y-4">
+      <a href="/projects/cmra" class="block aspect-video w-full rounded bg-overlay border border-highlight-med overflow-hidden relative group cursor-pointer">
+        <img 
+          src="/images/projects/cmra.jpg" 
+          alt="CMRA Language" 
+          class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+          <span class="font-pixel text-primary text-[10px] uppercase tracking-widest">
+            Execute cmra.exe
+          </span>
+        </div>
+      </a>
+      
+      <div>
+        <div class="flex justify-between items-start gap-2">
+          <a href="/projects/cmra" class="text-text-primary font-bold text-lg hover:text-primary transition-colors leading-tight">CMRA Language</a>
+          <span class="text-text-muted text-[10px] font-mono whitespace-nowrap pt-1">April 2026</span>
+        </div>
+        <p class="text-text-muted text-sm mt-1.5">An esoteric programming language where code breathes fire and flows like flame.</p>
+        
+        <div class="flex flex-wrap gap-2 mt-3">
+          <span class="px-2 py-0.5 text-[9px] uppercase tracking-wider font-pixel rounded border border-current/20 text-blue-400 bg-blue-400/10">Python</span>
+          <span class="px-2 py-0.5 text-[9px] uppercase tracking-wider font-pixel rounded border border-current/20 text-yellow-400 bg-yellow-400/10">TypeScript</span>
+          <span class="px-2 py-0.5 text-[9px] uppercase tracking-wider font-pixel rounded border border-current/20 text-purple-400 bg-purple-400/10">Esoteric</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="mt-4 pt-4 border-t border-highlight-med/30 flex justify-between items-center">
+      <a href="/projects" class="text-text-muted hover:text-primary text-[10px] font-pixel uppercase tracking-wider transition-colors flex items-center gap-1 group/link">
+        <svg class="w-3 h-3 transition-transform duration-300 group-hover/link:-translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        Projects
+      </a>
+      <a href="/projects/cmra" class="text-text-muted hover:text-primary text-[10px] font-pixel uppercase tracking-wider transition-colors flex items-center gap-1 group/link2">
+        Details
+        <svg class="w-3 h-3 transition-transform duration-300 group-hover/link2:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </a>
+    </div>
+  </div>
+</BentoCard>

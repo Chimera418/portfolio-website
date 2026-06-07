@@ -1,0 +1,31 @@
+---
+interface Props {
+  className?: string;
+  style?: string | Record<string, any>;
+  glow?: boolean;
+  title?: string;
+  tag?: string;
+}
+
+const { className = '', style, glow = false, title, tag } = Astro.props;
+
+const glowClass = glow 
+  ? 'shadow-[0_0_40px_rgba(var(--color-secondary),0.15)] hover:border-secondary' 
+  : 'hover:border-secondary';
+---
+
+<div class={`relative bg-surface border border-highlight-med rounded-xl p-6 transition-all duration-300 flex flex-col gap-4 ${glowClass} ${className}`} style={style}>
+  {(title || tag) && (
+    <div class="flex justify-between items-start mb-2">
+      {title && <h3 class="text-xl font-semibold text-text-primary">{title}</h3>}
+      {tag && (
+        <span class="font-pixel text-[10px] text-secondary bg-overlay border border-highlight-med px-2 py-1 rounded">
+          {tag}
+        </span>
+      )}
+    </div>
+  )}
+  <div class="flex-grow flex flex-col">
+    <slot />
+  </div>
+</div>

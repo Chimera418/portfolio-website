@@ -1,0 +1,225 @@
+---
+---
+
+<div id="theme-drawer" class="fixed top-0 right-0 h-full w-80 bg-surface border-l border-highlight-med shadow-2xl transform translate-x-full transition-transform duration-300 z-50 overflow-y-auto">
+  <div class="p-6">
+    <div class="flex justify-between items-center mb-8">
+      <h2 class="font-bold text-xl text-text-primary tracking-tight">Navigation</h2>
+      <button id="theme-drawer-close" class="text-text-muted hover:text-primary transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Navigation Links for Mobile -->
+    <div class="md:hidden flex flex-col gap-4 font-mono text-sm uppercase tracking-widest text-text-muted mb-8 pb-8 border-b border-highlight-med">
+      <a href="/" class="hover:text-primary transition-colors">Home</a>
+      <a href="/about" class="hover:text-primary transition-colors">About</a>
+      <a href="/projects" class="hover:text-primary transition-colors">Projects</a>
+      <a href="/labs" class="hover:text-primary transition-colors">Labs</a>
+      <a href="/games" class="hover:text-primary transition-colors">Games</a>
+    </div>
+
+    <!-- Theme Config -->
+    <div class="mb-6">
+      <div class="flex items-center gap-2 mb-4">
+        <svg class="w-5 h-5 text-text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
+          <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
+          <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
+          <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
+          <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.992 6.012 17.5 2 12 2z"/>
+        </svg>
+        <h3 class="font-bold text-text-primary text-lg">Theme</h3>
+      </div>
+
+      <!-- Flavors -->
+      <div class="border border-highlight-med rounded-xl p-2 mb-4 font-mono text-sm">
+        <div class="grid grid-cols-3 gap-1 mb-1">
+          <button class="flavor-btn py-1.5 text-text-muted hover:bg-highlight-med/30 rounded-lg transition-colors" data-theme-val="latte">Latte</button>
+          <button class="flavor-btn py-1.5 text-text-muted hover:bg-highlight-med/30 rounded-lg transition-colors" data-theme-val="frappe">Frappe</button>
+          <button class="flavor-btn py-1.5 text-text-muted hover:bg-highlight-med/30 rounded-lg transition-colors" data-theme-val="macchiato">Macchiato</button>
+        </div>
+        <button class="flavor-btn w-full py-1.5 text-text-muted hover:bg-highlight-med/30 rounded-lg transition-colors" data-theme-val="mocha">Mocha</button>
+      </div>
+
+      <!-- Accents -->
+      <div class="grid grid-cols-7 gap-2 mb-6" id="accent-grid">
+        <!-- Buttons injected by JS -->
+      </div>
+
+      <!-- Toggles -->
+      <div class="flex flex-col gap-4 font-mono text-sm text-text-muted">
+        <label class="flex items-center gap-3 cursor-pointer group w-fit">
+          <div class="relative flex items-center justify-center w-5 h-5 bg-overlay border border-highlight-med rounded group-hover:border-primary transition-colors">
+            <input type="checkbox" id="crt-mode-toggle" class="peer sr-only">
+            <div class="absolute inset-0 bg-primary opacity-0 peer-checked:opacity-100 transition-opacity rounded-[2px] m-[3px]"></div>
+          </div>
+          <span class="select-none">CRT effect: <span id="bg-effect-label" class="text-text-primary">off</span></span>
+        </label>
+        
+        <!-- Pixel Mode is kept for functional completeness but matched to new style -->
+        <label class="flex items-center gap-3 cursor-pointer group w-fit">
+          <div class="relative flex items-center justify-center w-5 h-5 bg-overlay border border-highlight-med rounded group-hover:border-primary transition-colors">
+            <input type="checkbox" id="pixel-mode-toggle" class="peer sr-only">
+            <div class="absolute inset-0 bg-primary opacity-0 peer-checked:opacity-100 transition-opacity rounded-[2px] m-[3px]"></div>
+          </div>
+          <span class="select-none">Pixel mode: <span id="pixel-mode-label" class="text-text-primary">off</span></span>
+        </label>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+  .flavor-btn.active {
+    border: 1px solid var(--color-highlight-med);
+    color: var(--color-text-primary);
+  }
+</style>
+
+<script>
+  const accents = [
+    'rosewater', 'flamingo', 'pink', 'mauve', 'red', 'maroon', 
+    'peach', 'yellow', 'green', 'teal', 'sky', 'sapphire', 'blue', 'lavender'
+  ];
+
+  const grid = document.getElementById('accent-grid');
+  const savedAccent = localStorage.getItem('secondaryAccentColor');
+  let currentAccent = savedAccent || 'mauve'; // default to mauve if none saved
+
+  if (currentAccent) {
+    document.documentElement.style.setProperty('--primary', `var(--${currentAccent})`);
+    document.documentElement.style.setProperty('--secondary', `var(--${currentAccent})`);
+  }
+
+  if (grid) {
+    grid.innerHTML = accents.map(acc => {
+      const isActive = currentAccent === acc;
+      const activeClasses = isActive ? 'outline outline-2 outline-offset-2 outline-text-primary border-transparent scale-110' : 'border-highlight-med';
+      return `
+      <button 
+        class="accent-btn w-6 h-6 rounded-md transition-all border hover:scale-110 ${activeClasses}" 
+        style="background-color: var(--${acc});"
+        data-color="${acc}"
+        aria-label="${acc}"
+      ></button>
+      `;
+    }).join('');
+
+    const accentBtns = document.querySelectorAll('.accent-btn');
+    accentBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const colorName = (e.target as HTMLButtonElement).getAttribute('data-color');
+        if (colorName) {
+          document.documentElement.style.setProperty('--primary', `var(--${colorName})`);
+          document.documentElement.style.setProperty('--secondary', `var(--${colorName})`);
+          localStorage.setItem('secondaryAccentColor', colorName);
+          
+          accentBtns.forEach(b => {
+            b.classList.remove('outline', 'outline-2', 'outline-offset-2', 'outline-text-primary', 'border-transparent', 'scale-110');
+            b.classList.add('border-highlight-med');
+          });
+          const target = e.target as HTMLButtonElement;
+          target.classList.remove('border-highlight-med');
+          target.classList.add('outline', 'outline-2', 'outline-offset-2', 'outline-text-primary', 'border-transparent', 'scale-110');
+        }
+      });
+    });
+  }
+
+  // Drawer toggle logic
+  const toggleBtn = document.getElementById('theme-toggle-btn');
+  const drawer = document.getElementById('theme-drawer');
+  const closeBtn = document.getElementById('theme-drawer-close');
+
+  if (toggleBtn && drawer && closeBtn) {
+    toggleBtn.addEventListener('click', () => {
+      drawer.classList.remove('translate-x-full');
+    });
+
+    closeBtn.addEventListener('click', () => {
+      drawer.classList.add('translate-x-full');
+    });
+  }
+
+  document.addEventListener('toggle-theme-drawer', () => {
+    if (drawer) {
+      if (drawer.classList.contains('translate-x-full')) {
+        drawer.classList.remove('translate-x-full');
+      } else {
+        drawer.classList.add('translate-x-full');
+      }
+    }
+  });
+
+  // Flavors logic
+  const flavorBtns = document.querySelectorAll('.flavor-btn');
+  const currentTheme = document.documentElement.getAttribute('data-theme') || 'mocha';
+
+  const updateFlavorUI = (themeStr: string) => {
+    flavorBtns.forEach(btn => {
+      if (btn.getAttribute('data-theme-val') === themeStr) {
+        btn.classList.add('active');
+        // also set bg to surface-dim or similar so it looks like a selected tab
+        btn.classList.add('bg-surface-dim');
+      } else {
+        btn.classList.remove('active', 'bg-surface-dim');
+      }
+    });
+  };
+
+  updateFlavorUI(currentTheme);
+
+  flavorBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const t = btn.getAttribute('data-theme-val');
+      if (t) {
+        document.documentElement.setAttribute('data-theme', t);
+        localStorage.setItem('theme', t);
+        updateFlavorUI(t);
+      }
+    });
+  });
+
+  // Toggles logic
+  const crtToggle = document.getElementById('crt-mode-toggle') as HTMLInputElement;
+  const bgEffectLabel = document.getElementById('bg-effect-label');
+  
+  const pixelToggle = document.getElementById('pixel-mode-toggle') as HTMLInputElement;
+  const pixelModeLabel = document.getElementById('pixel-mode-label');
+
+  const isCrt = document.documentElement.getAttribute('data-crt-mode') === 'true';
+  const isPixel = document.documentElement.getAttribute('data-pixel-mode') === 'true';
+
+  if (crtToggle && bgEffectLabel) {
+    crtToggle.checked = isCrt;
+    bgEffectLabel.textContent = isCrt ? 'on' : 'off';
+    bgEffectLabel.className = isCrt ? 'text-text-primary' : 'text-text-muted';
+    
+    crtToggle.addEventListener('change', (e) => {
+      const val = (e.target as HTMLInputElement).checked;
+      document.documentElement.setAttribute('data-crt-mode', String(val));
+      localStorage.setItem('crtMode', String(val));
+      bgEffectLabel.textContent = val ? 'on' : 'off';
+      bgEffectLabel.className = val ? 'text-text-primary' : 'text-text-muted';
+    });
+  }
+
+  if (pixelToggle && pixelModeLabel) {
+    pixelToggle.checked = isPixel;
+    pixelModeLabel.textContent = isPixel ? 'on' : 'off';
+    pixelModeLabel.className = isPixel ? 'text-text-primary' : 'text-text-muted';
+    
+    pixelToggle.addEventListener('change', (e) => {
+      const val = (e.target as HTMLInputElement).checked;
+      document.documentElement.setAttribute('data-pixel-mode', String(val));
+      localStorage.setItem('pixelMode', String(val));
+      pixelModeLabel.textContent = val ? 'on' : 'off';
+      pixelModeLabel.className = val ? 'text-text-primary' : 'text-text-muted';
+    });
+  }
+</script>

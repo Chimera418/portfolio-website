@@ -1,0 +1,76 @@
+---
+import fs from 'fs';
+import path from 'path';
+
+interface Props {
+  title: string;
+  description: string;
+  tags: string[];
+  link?: string;
+  github?: string;
+  slug: string;
+  date?: string;
+}
+const { title, description, tags, link, github, slug, date } = Astro.props;
+
+// Tag colors for pills
+const colors = ['text-red-400 bg-red-400/10', 'text-blue-400 bg-blue-400/10', 'text-green-400 bg-green-400/10', 'text-yellow-400 bg-yellow-400/10', 'text-purple-400 bg-purple-400/10', 'text-pink-400 bg-pink-400/10', 'text-cyan-400 bg-cyan-400/10'];
+const getTagColor = (tag: string) => {
+  let hash = 0;
+  for (let i = 0; i < tag.length; i++) hash = tag.charCodeAt(i) + ((hash << 5) - hash);
+  return colors[Math.abs(hash) % colors.length];
+};
+
+const imagePath = `/images/projects/${slug}.jpg`;
+const absoluteImagePath = path.join(process.cwd(), 'public', 'images', 'projects', `${slug}.jpg`);
+const hasImage = fs.existsSync(absoluteImagePath);
+---
+<div class="bg-surface-dim border border-highlight-med rounded-xl overflow-hidden hover:border-primary transition-colors flex flex-col group h-full relative">
+  <!-- Main Link covering the card -->
+  <a href={`/projects/${slug}`} class="absolute inset-0 z-10" aria-label={`View details for ${title}`}></a>
+
+  <!-- Image/Banner -->
+  <div class="aspect-video w-full bg-overlay relative overflow-hidden flex items-center justify-center border-b border-highlight-med/50">
+    {hasImage ? (
+      <img src={imagePath} alt={title} class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
+    ) : (
+      <div class="absolute inset-0 bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+        <span class="font-pixel text-text-muted text-[10px] uppercase opacity-50 group-hover:opacity-100 transition-opacity">
+          {title}.exe
+        </span>
+      </div>
+    )}
+  </div>
+  
+  <div class="p-5 flex flex-col flex-grow relative z-0">
+    <div class="flex justify-between items-start gap-2">
+      <h3 class="text-text-primary font-bold text-lg group-hover:text-primary transition-colors leading-tight">{title}</h3>
+      {date && <span class="text-text-muted text-xs font-mono whitespace-nowrap pt-1">{date}</span>}
+    </div>
+    <p class="text-text-muted text-sm mt-3 flex-grow">{description}</p>
+    
+    <!-- Tags -->
+    <div class="flex flex-wrap gap-2 mt-4">
+      {tags.map(tag => (
+        <span class={`px-2 py-1 text-[10px] uppercase tracking-wider font-pixel rounded border border-current/20 ${getTagColor(tag)}`}>{tag}</span>
+      ))}
+    </div>
+    
+    <!-- Links -->
+    <div class="flex items-center gap-5 mt-6 pt-4 border-t border-highlight-med relative z-20">
+      {link && (
+        <a href={link} target="_blank" rel="noopener noreferrer" class="group/btn flex items-center gap-1 text-sm font-semibold text-primary hover:text-secondary transition-colors">
+          Live Demo
+          <svg class="w-3.5 h-3.5 transition-transform duration-300 group-hover/btn:-translate-y-0.5 group-hover/btn:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 7l-10 10M17 7H7M17 7v10"/></svg>
+        </a>
+      )}
+      {github && (
+        <a href={github} target="_blank" rel="noopener noreferrer" class="group/btn flex items-center gap-1.5 text-sm font-semibold text-text-primary hover:text-secondary transition-colors">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+          GitHub
+          <svg class="w-3.5 h-3.5 transition-transform duration-300 group-hover/btn:-translate-y-0.5 group-hover/btn:translate-x-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 7l-10 10M17 7H7M17 7v10"/></svg>
+        </a>
+      )}
+    </div>
+  </div>
+</div>

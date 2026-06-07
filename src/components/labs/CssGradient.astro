@@ -1,0 +1,278 @@
+<!-- CSS Gradient Builder -->
+<div id="css-gradient" class="tab-panel animate-fade-in hidden">
+  <div class="max-w-4xl h-full flex flex-col">
+    <div class="mb-4">
+      <h2 class="text-2xl font-bold text-text-primary mb-2">CSS Gradient Builder</h2>
+      <p class="text-text-muted text-sm">Design smooth gradients and generate the CSS code.</p>
+    </div>
+    
+    <div class="flex flex-col md:flex-row gap-6 flex-grow">
+      <!-- Controls -->
+      <div class="w-full md:w-64 bg-overlay border border-highlight-med rounded-xl p-4 flex flex-col gap-6">
+        <div>
+          <label class="block text-xs font-pixel tracking-widest text-text-muted mb-3 uppercase">Colors</label>
+          <div class="flex gap-2 mb-4 items-center">
+            <div id="swatch-1" class="w-10 h-10 rounded cursor-pointer flex-grow border-2 border-white shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-all" style="background-color: #a855f7;"></div>
+            
+            <button id="grad-swap" class="w-8 h-8 flex-shrink-0 flex items-center justify-center bg-surface border border-highlight-med rounded hover:bg-highlight-med transition-colors text-text-muted hover:text-text-primary" title="Swap Colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3L4 7l4 4M4 7h16M16 21l4-4-4-4M20 17H4"/></svg>
+            </button>
+
+            <div id="swatch-2" class="w-10 h-10 rounded cursor-pointer flex-grow border-2 border-transparent transition-all opacity-60 hover:opacity-100" style="background-color: #ec4899;"></div>
+          </div>
+          
+          <!-- Shared Custom Picker -->
+          <div id="grad-sat-val" class="w-full h-32 rounded-lg relative cursor-crosshair overflow-hidden mb-4 shadow-inner" style="background-color: hsl(270, 100%, 50%)">
+            <div class="absolute inset-0 bg-gradient-to-r from-white to-transparent pointer-events-none"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent pointer-events-none"></div>
+            <div id="grad-thumb" class="absolute w-4 h-4 border-2 border-white rounded-full shadow-[0_0_4px_rgba(0,0,0,0.5)] pointer-events-none -ml-2 -mt-2 bg-transparent transition-none"></div>
+          </div>
+          <div id="grad-hue-track" class="w-full h-3 rounded-full relative cursor-pointer mb-4 shadow-inner" style="background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000)">
+            <div id="grad-hue-thumb" class="absolute w-4 h-4 border-2 border-white rounded-full shadow-[0_0_4px_rgba(0,0,0,0.5)] pointer-events-none -ml-2 -mt-0.5 transition-none" style="top: 0; left: 75%;"></div>
+          </div>
+
+          <!-- Hex Input -->
+          <div class="flex items-center">
+            <input type="text" id="grad-hex-input" class="bg-surface border border-highlight-med rounded px-3 py-2 text-sm text-text-primary font-mono focus:border-primary focus:outline-none w-full uppercase shadow-inner" value="#A855F7" maxlength="7" />
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-xs font-pixel tracking-widest text-text-muted mb-3 uppercase">Angle (<span id="grad-angle-val">90</span>°)</label>
+          <input type="range" id="grad-angle" min="0" max="360" value="90" class="w-full accent-primary" />
+        </div>
+        
+        <div>
+          <label class="block text-xs font-pixel tracking-widest text-text-muted mb-3 uppercase">Type</label>
+          <select id="grad-type" class="w-full bg-surface border border-highlight-med rounded px-3 py-2 text-sm text-text-primary focus:outline-none">
+            <option value="linear-gradient">Linear</option>
+            <option value="radial-gradient">Radial</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Preview & Code -->
+      <div class="flex-grow flex flex-col gap-4">
+        <div id="grad-preview" class="flex-grow rounded-xl border border-highlight-med min-h-[200px]" style="background: linear-gradient(90deg, #a855f7, #ec4899);"></div>
+        <div class="relative">
+          <textarea id="grad-code" class="w-full bg-overlay border border-highlight-med rounded-xl p-4 text-sm font-mono text-text-primary focus:outline-none resize-none" rows="2" readonly>background: linear-gradient(90deg, #a855f7, #ec4899);</textarea>
+          <button id="grad-copy" class="absolute right-3 top-3 px-3 py-1 bg-surface border border-highlight-med hover:bg-highlight-med rounded text-xs font-mono text-text-primary transition-colors">Copy</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Tool 7: CSS Gradient Builder ─────────────────────────────────────────
+  const swatch1 = document.getElementById('swatch-1');
+  const swatch2 = document.getElementById('swatch-2');
+  const gradSatVal = document.getElementById('grad-sat-val');
+  const gradThumb = document.getElementById('grad-thumb');
+  const gradHueTrack = document.getElementById('grad-hue-track');
+  const gradHueThumb = document.getElementById('grad-hue-thumb');
+  const gradSwap = document.getElementById('grad-swap');
+  const gradHex = document.getElementById('grad-hex-input') as HTMLInputElement;
+  
+  const gradAngle = document.getElementById('grad-angle') as HTMLInputElement;
+  const gradAngleVal = document.getElementById('grad-angle-val');
+  const gradType = document.getElementById('grad-type') as HTMLSelectElement;
+  const gradPreview = document.getElementById('grad-preview');
+  const gradCode = document.getElementById('grad-code') as HTMLTextAreaElement;
+  const gradCopy = document.getElementById('grad-copy');
+
+  let activeSwatch = 1;
+  let colors = ['#A855F7', '#EC4899'];
+  let curH = 270, curS = 0.65, curV = 0.97;
+
+  // --- Color Math ---
+  function hsvToRgb(h: number, s: number, v: number) {
+    let f = (n: number, k=(n+h/60)%6) => v - v*s*Math.max(Math.min(k, 4-k, 1), 0);
+    return [Math.round(f(5)*255), Math.round(f(3)*255), Math.round(f(1)*255)];
+  }
+  function rgbToHsv(r: number, g: number, b: number) {
+    r/=255; g/=255; b/=255;
+    let max=Math.max(r,g,b), min=Math.min(r,g,b), d=max-min;
+    let h = 0, s = max === 0 ? 0 : d/max, v = max;
+    if (d!==0) {
+      switch(max) {
+        case r: h = (g-b)/d + (g<b?6:0); break;
+        case g: h = (b-r)/d + 2; break;
+        case b: h = (r-g)/d + 4; break;
+      }
+      h/=6;
+    }
+    return [h*360, s, v];
+  }
+  function rgbToHex(r: number, g: number, b: number) {
+    return "#" + [r,g,b].map(x=>x.toString(16).padStart(2,'0')).join('');
+  }
+  function hexToRgb(hex: string) {
+    let r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+    return [r,g,b];
+  }
+
+  function setActiveSwatch(num: number) {
+    activeSwatch = num;
+    if (swatch1 && swatch2) {
+      if (num === 1) {
+        swatch1.className = "w-10 h-10 rounded cursor-pointer flex-grow border-2 border-white shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-all";
+        swatch2.className = "w-10 h-10 rounded cursor-pointer flex-grow border-2 border-transparent transition-all opacity-60 hover:opacity-100";
+      } else {
+        swatch2.className = "w-10 h-10 rounded cursor-pointer flex-grow border-2 border-white shadow-[0_0_8px_rgba(255,255,255,0.5)] transition-all";
+        swatch1.className = "w-10 h-10 rounded cursor-pointer flex-grow border-2 border-transparent transition-all opacity-60 hover:opacity-100";
+      }
+    }
+    
+    // Load color into picker
+    const rgb = hexToRgb(colors[num - 1]);
+    const hsv = rgbToHsv(rgb[0], rgb[1], rgb[2]);
+    curH = hsv[0]; curS = hsv[1]; curV = hsv[2];
+    updatePickerUI();
+  }
+
+  function updatePickerUI(updateInput = true) {
+    const hex = colors[activeSwatch - 1];
+    if (gradSatVal) gradSatVal.style.backgroundColor = `hsl(${curH}, 100%, 50%)`;
+    if (gradThumb) {
+      gradThumb.style.left = `${curS * 100}%`;
+      gradThumb.style.top = `${(1 - curV) * 100}%`;
+      gradThumb.style.backgroundColor = hex;
+    }
+    if (gradHueThumb) {
+      gradHueThumb.style.left = `${(curH / 360) * 100}%`;
+      gradHueThumb.style.backgroundColor = `hsl(${curH}, 100%, 50%)`;
+    }
+    if (updateInput && gradHex) {
+      gradHex.value = hex;
+    }
+  }
+
+  function updateActiveColor(updateInput = true) {
+    const rgb = hsvToRgb(curH, curS, curV);
+    const hex = rgbToHex(rgb[0], rgb[1], rgb[2]);
+    colors[activeSwatch - 1] = hex.toUpperCase();
+    
+    if (activeSwatch === 1 && swatch1) swatch1.style.backgroundColor = hex;
+    if (activeSwatch === 2 && swatch2) swatch2.style.backgroundColor = hex;
+    
+    updatePickerUI(updateInput);
+    updateGradient();
+  }
+
+  // --- Interactions ---
+  swatch1?.addEventListener('click', () => setActiveSwatch(1));
+  swatch2?.addEventListener('click', () => setActiveSwatch(2));
+
+  gradSwap?.addEventListener('click', () => {
+    // Swap colors
+    const temp = colors[0];
+    colors[0] = colors[1];
+    colors[1] = temp;
+    
+    // Update dom swatches
+    if (swatch1) swatch1.style.backgroundColor = colors[0];
+    if (swatch2) swatch2.style.backgroundColor = colors[1];
+    
+    // Reload active swatch
+    const rgb = hexToRgb(colors[activeSwatch - 1]);
+    const hsv = rgbToHsv(rgb[0], rgb[1], rgb[2]);
+    curH = hsv[0]; curS = hsv[1]; curV = hsv[2];
+    
+    updatePickerUI();
+    updateGradient();
+  });
+
+  gradHex?.addEventListener('input', (e) => {
+    let val = (e.target as HTMLInputElement).value;
+    if (!val.startsWith('#')) val = '#' + val;
+    if (/^#[0-9A-Fa-f]{6}$/i.test(val)) {
+      colors[activeSwatch - 1] = val.toUpperCase();
+      
+      if (activeSwatch === 1 && swatch1) swatch1.style.backgroundColor = val;
+      if (activeSwatch === 2 && swatch2) swatch2.style.backgroundColor = val;
+      
+      const rgb = hexToRgb(val);
+      const hsv = rgbToHsv(rgb[0], rgb[1], rgb[2]);
+      curH = hsv[0]; curS = hsv[1]; curV = hsv[2];
+      
+      updatePickerUI(false); // Don't overwrite the input we are typing in
+      updateGradient();
+    }
+  });
+
+  let isDraggingSv = false;
+  let isDraggingHue = false;
+
+  function updateSv(e: MouseEvent | TouchEvent) {
+    if (!gradSatVal) return;
+    const rect = gradSatVal.getBoundingClientRect();
+    let clientX = e.type.startsWith('touch') ? (e as TouchEvent).touches[0].clientX : (e as MouseEvent).clientX;
+    let clientY = e.type.startsWith('touch') ? (e as TouchEvent).touches[0].clientY : (e as MouseEvent).clientY;
+    
+    let x = Math.max(0, Math.min(clientX - rect.left, rect.width));
+    let y = Math.max(0, Math.min(clientY - rect.top, rect.height));
+    
+    curS = x / rect.width;
+    curV = 1 - (y / rect.height);
+    updateActiveColor();
+  }
+
+  function updateHue(e: MouseEvent | TouchEvent) {
+    if (!gradHueTrack) return;
+    const rect = gradHueTrack.getBoundingClientRect();
+    let clientX = e.type.startsWith('touch') ? (e as TouchEvent).touches[0].clientX : (e as MouseEvent).clientX;
+    let x = Math.max(0, Math.min(clientX - rect.left, rect.width));
+    curH = (x / rect.width) * 360;
+    updateActiveColor();
+  }
+
+  gradSatVal?.addEventListener('mousedown', (e) => { isDraggingSv = true; updateSv(e); });
+  gradSatVal?.addEventListener('touchstart', (e) => { isDraggingSv = true; updateSv(e); if (e.cancelable) e.preventDefault(); }, { passive: false });
+  
+  gradHueTrack?.addEventListener('mousedown', (e) => { isDraggingHue = true; updateHue(e); });
+  gradHueTrack?.addEventListener('touchstart', (e) => { isDraggingHue = true; updateHue(e); if (e.cancelable) e.preventDefault(); }, { passive: false });
+
+  window.addEventListener('mousemove', (e) => {
+    if (isDraggingSv) updateSv(e);
+    if (isDraggingHue) updateHue(e);
+  });
+  window.addEventListener('touchmove', (e) => {
+    if (isDraggingSv) updateSv(e);
+    if (isDraggingHue) updateHue(e);
+  }, { passive: false });
+
+  window.addEventListener('mouseup', () => { isDraggingSv = false; isDraggingHue = false; });
+  window.addEventListener('touchend', () => { isDraggingSv = false; isDraggingHue = false; });
+
+  function updateGradient() {
+    if(!gradPreview) return;
+    const c1 = colors[0];
+    const c2 = colors[1];
+    const angle = gradAngle.value;
+    const type = gradType.value;
+    
+    if(gradAngleVal) gradAngleVal.textContent = angle;
+    
+    let css = type === 'linear-gradient' 
+      ? `linear-gradient(${angle}deg, ${c1}, ${c2})`
+      : `radial-gradient(circle, ${c1}, ${c2})`;
+    
+    gradPreview.style.background = css;
+    if(gradCode) gradCode.value = `background: ${css};`;
+  }
+
+  [gradAngle, gradType].forEach(el => el?.addEventListener('input', updateGradient));
+  
+  gradCopy?.addEventListener('click', () => {
+    if(gradCode) {
+      navigator.clipboard.writeText(gradCode.value);
+      if(gradCopy) gradCopy.textContent = 'Copied!';
+      setTimeout(() => { if(gradCopy) gradCopy.textContent = 'Copy'; }, 2000);
+    }
+  });
+
+  // Init
+  setActiveSwatch(1);
+  updateGradient();
+</script>

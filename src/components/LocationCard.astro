@@ -1,0 +1,97 @@
+---
+import BentoCard from "./BentoCard.astro";
+
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<BentoCard title="Current Spawn Point" className={className} tag="LOC">
+  <div class="flex flex-col h-full gap-3 -mt-2">
+    <!-- Map -->
+    <div
+      class="relative flex-1 rounded-lg overflow-hidden border border-highlight-med min-h-[130px] z-0"
+    >
+      <div id="location-map" class="absolute inset-0 z-0" style="background: transparent;"></div>
+    </div>
+
+    <!-- Bottom row: city -->
+    <div class="flex items-center justify-between gap-2 pt-0.5">
+      <span
+        class="flex items-center gap-1.5 text-text-primary text-[10px] font-pixel uppercase tracking-wide whitespace-nowrap"
+      >
+        <svg
+          class="w-3 h-3 text-secondary flex-shrink-0"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          ><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"></path><circle
+            cx="12"
+            cy="10"
+            r="3"></circle></svg
+        >
+        Bengaluru, IN
+      </span>
+    </div>
+  </div>
+</BentoCard>
+
+<!-- Leaflet CSS -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" is:inline
+></script>
+
+<script is:inline>
+  (function () {
+    // Leaflet dark map — Hyderabad coords
+    function initMap() {
+      if (typeof L === "undefined") {
+        setTimeout(initMap, 200);
+        return;
+      }
+      const mapEl = document.getElementById("location-map");
+      if (!mapEl || mapEl._leaflet_id) return; // already initialised
+
+      const map = L.map("location-map", {
+        center: [12.9716, 77.5946],
+        zoom: 11,
+        zoomControl: false,
+        scrollWheelZoom: false,
+        dragging: false,
+        doubleClickZoom: false,
+        touchZoom: false,
+        attributionControl: false,
+      });
+
+      // Dark tile layer (CartoDB dark)
+      L.tileLayer(
+        "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+        {
+          maxZoom: 19,
+        },
+      ).addTo(map);
+
+      // Pin marker
+      const icon = L.divIcon({
+        html: '<div style="width:10px;height:10px;background:#eb6f92;border-radius:50%;box-shadow:0 0 8px #eb6f92;border:2px solid #fff;"></div>',
+        iconSize: [10, 10],
+        iconAnchor: [5, 5],
+        className: "",
+      });
+      L.marker([12.9716, 77.5946], { icon }).addTo(map);
+      
+      // Ensure the map is perfectly centered after initial render
+      setTimeout(() => {
+        map.invalidateSize();
+        map.setView([12.9716, 77.5946], 11, { animate: false });
+      }, 100);
+    }
+    initMap();
+  })();
+</script>

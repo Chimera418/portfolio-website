@@ -1,0 +1,83 @@
+<!-- Base64 Encoder -->
+<div id="base64-hex" class="tab-panel animate-fade-in hidden">
+   <div class="max-w-3xl">
+    <h2 class="text-2xl font-bold text-text-primary mb-2">Base64 / Hex Encoder</h2>
+    <p class="text-text-muted text-sm mb-6">Instantly encode and decode strings to Base64 and Hexadecimal.</p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Input -->
+      <div class="flex flex-col gap-2">
+        <div class="flex justify-between items-center">
+          <label class="font-pixel text-[10px] text-primary uppercase tracking-widest">Input Text</label>
+          <button id="b64-clear" class="text-xs text-text-muted hover:text-red-400">Clear</button>
+        </div>
+        <textarea 
+          id="b64-input"
+          rows="10"
+          class="w-full bg-overlay border border-highlight-med rounded-lg p-4 text-sm text-text-primary focus:border-primary focus:outline-none transition-colors font-mono resize-none custom-scroll"
+          placeholder="Type or paste text here..."
+        ></textarea>
+      </div>
+
+      <!-- Outputs -->
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-col gap-2">
+          <div class="flex justify-between items-center">
+            <label class="font-pixel text-[10px] text-secondary uppercase tracking-widest">Base64</label>
+          </div>
+          <textarea 
+            id="b64-output"
+            rows="4"
+            readonly
+            class="w-full bg-overlay border border-highlight-med rounded-lg p-4 text-sm text-text-primary focus:outline-none font-mono resize-none custom-scroll"
+          ></textarea>
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <div class="flex justify-between items-center">
+            <label class="font-pixel text-[10px] text-tertiary uppercase tracking-widest">Hexadecimal</label>
+          </div>
+          <textarea 
+            id="hex-output"
+            rows="4"
+            readonly
+            class="w-full bg-overlay border border-highlight-med rounded-lg p-4 text-sm text-text-primary focus:outline-none font-mono resize-none custom-scroll"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Tool 2: Base64 / Hex Encoder ─────────────────────────────────────────
+  const b64Input = document.getElementById('b64-input') as HTMLTextAreaElement;
+  const b64Output = document.getElementById('b64-output') as HTMLTextAreaElement;
+  const hexOutput = document.getElementById('hex-output') as HTMLTextAreaElement;
+  const b64Clear = document.getElementById('b64-clear');
+
+  function toHex(str: string) {
+    return Array.from(str).map(c => c.charCodeAt(0).toString(16).padStart(2, '0')).join(' ');
+  }
+
+  b64Input?.addEventListener('input', (e) => {
+    const val = (e.target as HTMLTextAreaElement).value;
+    if (!val) {
+      if(b64Output) b64Output.value = '';
+      if(hexOutput) hexOutput.value = '';
+      return;
+    }
+    try {
+      if(b64Output) b64Output.value = btoa(val);
+    } catch {
+      if(b64Output) b64Output.value = 'Error encoding to Base64';
+    }
+    if(hexOutput) hexOutput.value = toHex(val);
+  });
+  
+  b64Clear?.addEventListener('click', () => {
+     if(b64Input) b64Input.value = '';
+     if(b64Output) b64Output.value = '';
+     if(hexOutput) hexOutput.value = '';
+  });
+</script>

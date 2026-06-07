@@ -1,0 +1,377 @@
+---
+// PathfindingVis.astro
+---
+
+<div id="pathfinding" class="tab-panel hidden animate-fade-in">
+  <div class="max-w-4xl">
+    <h2 class="text-2xl font-bold text-text-primary mb-2">
+      Pathfinding Visualizer
+    </h2>
+    <p class="text-text-muted text-sm mb-6">
+      Draw walls and visualize how algorithms find the shortest path.
+    </p>
+
+    <div class="bg-overlay border border-highlight-med rounded-xl p-6">
+      <div class="flex flex-wrap gap-4 mb-6">
+        <button
+          id="pf-start-bfs"
+          class="px-4 py-2 bg-primary/10 border border-primary/30 hover:bg-primary/20 text-primary rounded-lg font-medium transition-colors flex items-center space-x-2 text-sm uppercase tracking-wider font-pixel"
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            ><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+            ></path><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg
+          >
+          <span>Run BFS</span>
+        </button>
+
+        <button
+          id="pf-start-dfs"
+          class="px-4 py-2 bg-secondary/10 border border-secondary/30 hover:bg-secondary/20 text-secondary rounded-lg font-medium transition-colors flex items-center space-x-2 text-sm uppercase tracking-wider font-pixel"
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            ><path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg
+          >
+          <span>Run DFS</span>
+        </button>
+
+        <button
+          id="pf-clear-path"
+          class="px-4 py-2 bg-surface border border-highlight-med hover:border-highlight-high hover:bg-surface-bright text-text-primary rounded-lg font-medium transition-colors text-sm uppercase tracking-wider font-pixel"
+        >
+          Clear Path
+        </button>
+
+        <button
+          id="pf-clear-walls"
+          class="px-4 py-2 bg-surface border border-highlight-med hover:border-highlight-high hover:bg-surface-bright text-text-primary rounded-lg font-medium transition-colors text-sm uppercase tracking-wider font-pixel"
+        >
+          Clear Walls
+        </button>
+      </div>
+
+      <!-- Grid Legend -->
+      <div
+        class="flex flex-wrap gap-4 mb-4 text-[10px] uppercase font-pixel tracking-widest text-text-muted"
+      >
+        <div class="flex items-center space-x-2">
+          <div class="w-4 h-4 bg-[#10b981] rounded-sm"></div><span>Start</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <div class="w-4 h-4 bg-[#ef4444] rounded-sm"></div><span>Target</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <div
+            class="w-4 h-4 bg-highlight-med rounded-sm border border-highlight-high"
+          >
+          </div><span>Wall</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <div class="w-4 h-4 bg-primary/50 rounded-sm"></div><span
+            >Visited</span
+          >
+        </div>
+        <div class="flex items-center space-x-2">
+          <div class="w-4 h-4 bg-primary rounded-sm"></div><span>Path</span>
+        </div>
+      </div>
+
+      <!-- Grid Container -->
+      <div class="overflow-x-auto pb-4 custom-scroll">
+        <div
+          id="pf-grid"
+          class="inline-grid gap-0.5 bg-surface p-1.5 rounded-lg border border-highlight-med select-none"
+        >
+          <!-- Cells injected by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const ROWS = 16;
+  const COLS = 32;
+
+  let startNode = { r: 7, c: 2 };
+  let targetNode = { r: 7, c: 26 };
+  let isDragging = false;
+  let dragType = null; // 'wall', 'empty', 'start', 'target'
+
+  const gridElement = document.getElementById("pf-grid");
+  let gridNodes = [];
+
+  // Initialize Grid
+  function initGrid() {
+    if (!gridElement) return;
+    gridElement.style.gridTemplateColumns = `repeat(${COLS}, max-content)`;
+    gridElement.innerHTML = "";
+    gridNodes = [];
+
+    for (let r = 0; r < ROWS; r++) {
+      const rowNodes = [];
+      for (let c = 0; c < COLS; c++) {
+        const cell = document.createElement("div");
+        cell.className =
+          "w-4 h-4 sm:w-5 sm:h-5 rounded-sm transition-colors cursor-pointer bg-overlay hover:bg-surface-bright";
+        cell.dataset.r = r.toString();
+        cell.dataset.c = c.toString();
+
+        // Setup initial nodes
+        let isStart = r === startNode.r && c === startNode.c;
+        let isTarget = r === targetNode.r && c === targetNode.c;
+
+        rowNodes.push({
+          r,
+          c,
+          isWall: false,
+          isStart,
+          isTarget,
+          element: cell,
+        });
+
+        if (isStart) setNodeType(cell, "start");
+        else if (isTarget) setNodeType(cell, "target");
+
+        // Events
+        cell.addEventListener("mousedown", (e) => handleMouseDown(e, r, c));
+        cell.addEventListener("mouseenter", (e) => handleMouseEnter(e, r, c));
+
+        gridElement.appendChild(cell);
+      }
+      gridNodes.push(rowNodes);
+    }
+
+    // Stop dragging when mouse leaves grid or releases
+    document.addEventListener("mouseup", () => {
+      isDragging = false;
+      dragType = null;
+    });
+  }
+
+  function setNodeType(cell, type) {
+    // Reset classes
+    cell.className =
+      "w-4 h-4 sm:w-5 sm:h-5 rounded-sm transition-colors cursor-pointer";
+
+    if (type === "start") {
+      cell.classList.add("bg-[#10b981]", "hover:bg-[#059669]", "scale-110");
+    } else if (type === "target") {
+      cell.classList.add("bg-[#ef4444]", "hover:bg-[#dc2626]", "scale-110");
+    } else if (type === "wall") {
+      cell.classList.add(
+        "bg-highlight-med",
+        "hover:bg-highlight-high",
+        "border",
+        "border-highlight-high",
+      );
+    } else if (type === "visited") {
+      cell.classList.add("bg-primary/50");
+    } else if (type === "path") {
+      cell.classList.add("bg-primary");
+    } else {
+      // Empty
+      cell.classList.add("bg-overlay", "hover:bg-surface-bright");
+    }
+  }
+
+  function handleMouseDown(e, r, c) {
+    e.preventDefault(); // Prevent text selection
+    isDragging = true;
+    const node = gridNodes[r][c];
+
+    if (node.isStart) {
+      dragType = "start";
+    } else if (node.isTarget) {
+      dragType = "target";
+    } else {
+      node.isWall = !node.isWall;
+      dragType = node.isWall ? "wall" : "empty";
+      setNodeType(node.element, dragType);
+    }
+  }
+
+  function handleMouseEnter(e, r, c) {
+    if (!isDragging) return;
+
+    const node = gridNodes[r][c];
+    if (dragType === "start") {
+      if (node.isTarget) return;
+      // Clear old start
+      gridNodes[startNode.r][startNode.c].isStart = false;
+      setNodeType(gridNodes[startNode.r][startNode.c].element, "empty");
+      // Set new start
+      startNode = { r, c };
+      node.isStart = true;
+      node.isWall = false;
+      setNodeType(node.element, "start");
+    } else if (dragType === "target") {
+      if (node.isStart) return;
+      // Clear old target
+      gridNodes[targetNode.r][targetNode.c].isTarget = false;
+      setNodeType(gridNodes[targetNode.r][targetNode.c].element, "empty");
+      // Set new target
+      targetNode = { r, c };
+      node.isTarget = true;
+      node.isWall = false;
+      setNodeType(node.element, "target");
+    } else if (dragType === "wall" || dragType === "empty") {
+      if (node.isStart || node.isTarget) return;
+      node.isWall = dragType === "wall";
+      setNodeType(node.element, dragType);
+    }
+  }
+
+  function clearPath() {
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        const node = gridNodes[r][c];
+        if (!node.isWall && !node.isStart && !node.isTarget) {
+          setNodeType(node.element, "empty");
+        } else if (node.isStart) {
+          setNodeType(node.element, "start");
+        } else if (node.isTarget) {
+          setNodeType(node.element, "target");
+        }
+      }
+    }
+  }
+
+  function clearWalls() {
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        const node = gridNodes[r][c];
+        node.isWall = false;
+        if (!node.isStart && !node.isTarget) {
+          setNodeType(node.element, "empty");
+        }
+      }
+    }
+  }
+
+  // Pathfinding Algorithms
+  const getNeighbors = (r, c) => {
+    const neighbors = [];
+    if (r > 0) neighbors.push({ r: r - 1, c }); // Up
+    if (c < COLS - 1) neighbors.push({ r, c: c + 1 }); // Right
+    if (r < ROWS - 1) neighbors.push({ r: r + 1, c }); // Down
+    if (c > 0) neighbors.push({ r, c: c - 1 }); // Left
+    return neighbors.filter((n) => !gridNodes[n.r][n.c].isWall);
+  };
+
+  async function animateSearch(visitedNodes, path) {
+    const isRunning = gridElement.classList.contains("pointer-events-none");
+    if (isRunning) return;
+    gridElement.classList.add("pointer-events-none");
+
+    // Animate visited
+    for (let i = 0; i < visitedNodes.length; i++) {
+      const node = visitedNodes[i];
+      if (
+        !gridNodes[node.r][node.c].isStart &&
+        !gridNodes[node.r][node.c].isTarget
+      ) {
+        setNodeType(gridNodes[node.r][node.c].element, "visited");
+      }
+      await new Promise((res) => setTimeout(res, 10)); // Speed
+    }
+
+    // Animate path
+    for (let i = 0; i < path.length; i++) {
+      const node = path[i];
+      if (
+        !gridNodes[node.r][node.c].isStart &&
+        !gridNodes[node.r][node.c].isTarget
+      ) {
+        setNodeType(gridNodes[node.r][node.c].element, "path");
+      }
+      await new Promise((res) => setTimeout(res, 20)); // Speed
+    }
+
+    gridElement.classList.remove("pointer-events-none");
+  }
+
+  function runBFS() {
+    clearPath();
+    const queue = [{ node: startNode, path: [] }];
+    const visited = new Set([`${startNode.r},${startNode.c}`]);
+    const visitedNodes = [];
+
+    while (queue.length > 0) {
+      const { node, path } = queue.shift();
+      visitedNodes.push(node);
+
+      if (node.r === targetNode.r && node.c === targetNode.c) {
+        animateSearch(visitedNodes, path);
+        return;
+      }
+
+      for (const neighbor of getNeighbors(node.r, node.c)) {
+        const key = `${neighbor.r},${neighbor.c}`;
+        if (!visited.has(key)) {
+          visited.add(key);
+          queue.push({ node: neighbor, path: [...path, neighbor] });
+        }
+      }
+    }
+    animateSearch(visitedNodes, []); // No path found
+  }
+
+  function runDFS() {
+    clearPath();
+    const stack = [{ node: startNode, path: [] }];
+    const visited = new Set([`${startNode.r},${startNode.c}`]);
+    const visitedNodes = [];
+
+    while (stack.length > 0) {
+      const { node, path } = stack.pop();
+      visitedNodes.push(node);
+
+      if (node.r === targetNode.r && node.c === targetNode.c) {
+        animateSearch(visitedNodes, path);
+        return;
+      }
+
+      for (const neighbor of getNeighbors(node.r, node.c).reverse()) {
+        const key = `${neighbor.r},${neighbor.c}`;
+        if (!visited.has(key)) {
+          visited.add(key);
+          stack.push({ node: neighbor, path: [...path, neighbor] });
+        }
+      }
+    }
+    animateSearch(visitedNodes, []); // No path found
+  }
+
+  // Event Listeners
+  document.getElementById("pf-start-bfs")?.addEventListener("click", runBFS);
+  document.getElementById("pf-start-dfs")?.addEventListener("click", runDFS);
+  document
+    .getElementById("pf-clear-path")
+    ?.addEventListener("click", clearPath);
+  document
+    .getElementById("pf-clear-walls")
+    ?.addEventListener("click", clearWalls);
+
+  // Init
+  initGrid();
+</script>

@@ -1,0 +1,74 @@
+<!-- JSON Formatter / Validator -->
+<div id="json-validator" class="tab-panel animate-fade-in hidden">
+  <div class="max-w-4xl h-full flex flex-col min-h-[500px]">
+    <div class="flex justify-between items-end mb-4">
+      <div>
+        <h2 class="text-2xl font-bold text-text-primary mb-2">JSON Formatter</h2>
+        <p class="text-text-muted text-sm">Validate, format, and minify JSON data.</p>
+      </div>
+      <div class="flex gap-2">
+        <button id="json-format" class="px-3 py-1.5 bg-surface border border-highlight-med hover:bg-highlight-med rounded text-xs font-mono text-text-primary transition-colors">Format</button>
+        <button id="json-minify" class="px-3 py-1.5 bg-surface border border-highlight-med hover:bg-highlight-med rounded text-xs font-mono text-text-primary transition-colors">Minify</button>
+      </div>
+    </div>
+    
+    <div class="flex-grow relative border border-highlight-med rounded-xl bg-overlay flex flex-col">
+       <textarea id="json-input" class="flex-grow w-full bg-transparent p-4 text-sm font-mono text-text-primary focus:outline-none resize-none custom-scroll" placeholder="Paste JSON here..." spellcheck="false">{`{"name":"Chimera","version":"1.0","modules":["labs","games","guestbook"]}`}</textarea>
+       <div id="json-status" class="px-4 py-2 border-t border-highlight-med text-xs font-mono bg-surface rounded-b-xl">
+         <span class="text-green-400">✓ Valid JSON</span>
+       </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Tool 5: JSON Formatter ───────────────────────────────────────────────
+  const jsonInput = document.getElementById('json-input') as HTMLTextAreaElement;
+  const jsonStatus = document.getElementById('json-status');
+  const btnFormat = document.getElementById('json-format');
+  const btnMinify = document.getElementById('json-minify');
+
+  function escapeHTML(str: string) {
+    return str.replace(/[&<>'"]/g, 
+      (tag: string) => (({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }) as any)[tag] || tag
+    );
+  }
+
+  function validateJson() {
+    if(!jsonInput || !jsonStatus) return;
+    const val = jsonInput.value.trim();
+    if (!val) {
+      jsonStatus.innerHTML = '<span class="text-text-muted">Waiting for input...</span>';
+      return;
+    }
+    
+    try {
+      JSON.parse(val);
+      jsonStatus.innerHTML = '<span class="text-green-400">✓ Valid JSON</span>';
+    } catch (e: any) {
+      jsonStatus.innerHTML = `<span class="text-red-500">✗ Invalid JSON: ${escapeHTML(e.message)}</span>`;
+    }
+  }
+
+  jsonInput?.addEventListener('input', validateJson);
+  
+  btnFormat?.addEventListener('click', () => {
+    try {
+      if(jsonInput) {
+        const obj = JSON.parse(jsonInput.value);
+        jsonInput.value = JSON.stringify(obj, null, 2);
+        validateJson();
+      }
+    } catch (e) {}
+  });
+
+  btnMinify?.addEventListener('click', () => {
+    try {
+      if(jsonInput) {
+        const obj = JSON.parse(jsonInput.value);
+        jsonInput.value = JSON.stringify(obj);
+        validateJson();
+      }
+    } catch (e) {}
+  });
+</script>

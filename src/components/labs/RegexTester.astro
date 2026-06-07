@@ -1,0 +1,143 @@
+<!-- Regex Tester -->
+<div id="regex-tester" class="tab-panel animate-fade-in hidden">
+  <div class="max-w-3xl">
+    <h2 class="text-2xl font-bold text-text-primary mb-2">Regex Tester</h2>
+    <p class="text-text-muted text-sm mb-6">
+      Test regular expressions against target strings with live highlighting.
+    </p>
+
+    <div class="space-y-4">
+      <div
+        class="flex gap-2 items-center bg-overlay border border-highlight-med rounded-lg px-4 py-2"
+      >
+        <span class="text-primary font-mono text-xl">/</span>
+        <input
+          type="text"
+          id="rx-pattern"
+          placeholder="pattern"
+          class="flex-grow bg-transparent border-none focus:outline-none text-text-primary font-mono"
+          value="[A-Z]\\w+"
+        />
+        <span class="text-primary font-mono text-xl">/</span>
+        <input
+          type="text"
+          id="rx-flags"
+          placeholder="gm"
+          value="g"
+          class="w-12 bg-transparent border-none focus:outline-none text-tertiary font-mono"
+        />
+      </div>
+
+      <div
+        class="relative h-64 border border-highlight-med rounded-xl overflow-hidden bg-overlay"
+      >
+        <div
+          id="rx-highlight"
+          class="absolute inset-0 w-full h-full p-4 m-0 border-none font-mono text-sm leading-6 text-transparent pointer-events-none whitespace-pre-wrap break-words overflow-auto"
+        >
+        </div>
+        <!-- prettier-ignore -->
+        <textarea
+          id="rx-input"
+          class="absolute inset-0 w-full h-full p-4 m-0 border-none font-mono text-sm leading-6 text-text-primary focus:outline-none resize-none custom-scroll bg-transparent caret-text-primary whitespace-pre-wrap break-words z-10"
+          spellcheck="false"
+          placeholder="Target string..."
+>The quick Brown fox jumps over Python_3 and JavaScript engines. Learning regex is Fun2026, but Hello World is too simple. Why not try matching User_123 or Alpha? Remember that A fails, but Go works perfectly.</textarea>
+      </div>
+
+      <div class="flex justify-between text-xs font-mono text-text-muted px-2">
+        <span id="rx-count">0 matches</span>
+        <span id="rx-error" class="text-red-500 hidden">Invalid Regex</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Tool 4: Regex Tester ─────────────────────────────────────────────────
+  const rxPattern = document.getElementById("rx-pattern") as HTMLInputElement;
+  const rxFlags = document.getElementById("rx-flags") as HTMLInputElement;
+  const rxInput = document.getElementById("rx-input") as HTMLTextAreaElement;
+  const rxHighlight = document.getElementById("rx-highlight");
+  const rxCount = document.getElementById("rx-count");
+  const rxError = document.getElementById("rx-error");
+
+  function escapeHTML(str: string) {
+    return str.replace(
+      /[&<>'"]/g,
+      (tag: string) =>
+        (
+          ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            "'": "&#39;",
+            '"': "&quot;",
+          }) as any
+        )[tag] || tag,
+    );
+  }
+
+  function updateRegex() {
+    if (!rxHighlight || !rxCount || !rxError) return;
+
+    const pattern = rxPattern?.value;
+    const flags = rxFlags?.value;
+    const text = rxInput?.value || "";
+
+    rxHighlight.scrollTop = rxInput.scrollTop;
+
+    if (!pattern) {
+      rxHighlight.innerHTML = "";
+      rxCount.textContent = "0 matches";
+      rxError.classList.add("hidden");
+      return;
+    }
+
+    try {
+      new RegExp(pattern, flags); // Test validity
+      rxError.classList.add("hidden");
+
+      let matches = 0;
+      let resultHTML = "";
+      let lastIdx = 0;
+
+      const globalFlags = flags.includes("g") ? flags : flags + "g";
+      const globalRegex = new RegExp(pattern, globalFlags);
+
+      let match;
+      while ((match = globalRegex.exec(text)) !== null) {
+        if (match[0].length === 0) {
+          globalRegex.lastIndex++;
+          continue;
+        }
+        matches++;
+
+        const before = text.substring(lastIdx, match.index);
+        const matched = match[0];
+
+        resultHTML += escapeHTML(before);
+        resultHTML += `<mark class="text-transparent rounded box-decoration-clone" style="background-color: color-mix(in oklab, var(--color-primary) 20%, transparent); box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-primary) 20%, transparent), 0 0 0 2px color-mix(in oklab, var(--color-primary) 40%, transparent);">${escapeHTML(matched)}</mark>`;
+
+        lastIdx = globalRegex.lastIndex;
+        if (!flags.includes("g")) break;
+      }
+
+      resultHTML += escapeHTML(text.substring(lastIdx));
+      rxHighlight.innerHTML = resultHTML;
+      rxCount.textContent = `${matches} match${matches === 1 ? "" : "es"}`;
+    } catch (e) {
+      rxError.classList.remove("hidden");
+      rxHighlight.innerHTML = escapeHTML(text);
+      rxCount.textContent = "0 matches";
+    }
+  }
+
+  rxPattern?.addEventListener("input", updateRegex);
+  rxFlags?.addEventListener("input", updateRegex);
+  rxInput?.addEventListener("input", updateRegex);
+  rxInput?.addEventListener("scroll", () => {
+    if (rxHighlight) rxHighlight.scrollTop = rxInput.scrollTop;
+  });
+  updateRegex(); // Init
+</script>

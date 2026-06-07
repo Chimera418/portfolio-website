@@ -1,0 +1,68 @@
+<!-- Hash Generator -->
+<div id="hash-gen" class="tab-panel animate-fade-in hidden">
+  <div class="max-w-3xl">
+    <h2 class="text-2xl font-bold text-text-primary mb-2">Hash Generator</h2>
+    <p class="text-text-muted text-sm mb-6">Instantly generate cryptographic hashes from text.</p>
+    
+    <div class="flex flex-col gap-6">
+      <textarea id="hash-input" class="w-full h-32 bg-overlay border border-highlight-med rounded-xl p-4 text-sm font-mono text-text-primary focus:border-primary focus:outline-none resize-none custom-scroll" placeholder="Type text to hash..."></textarea>
+      
+      <div class="space-y-4">
+        <div class="bg-surface border border-highlight-med rounded-lg p-4">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-[10px] text-primary uppercase font-pixel tracking-widest">SHA-256</span>
+          </div>
+          <div id="hash-sha256" class="font-mono text-sm text-text-primary break-all">--</div>
+        </div>
+        <div class="bg-surface border border-highlight-med rounded-lg p-4">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-[10px] text-secondary uppercase font-pixel tracking-widest">SHA-384</span>
+          </div>
+          <div id="hash-sha384" class="font-mono text-sm text-text-primary break-all">--</div>
+        </div>
+        <div class="bg-surface border border-highlight-med rounded-lg p-4">
+          <div class="flex justify-between items-center mb-2">
+            <span class="text-[10px] text-tertiary uppercase font-pixel tracking-widest">SHA-512</span>
+          </div>
+          <div id="hash-sha512" class="font-mono text-sm text-text-primary break-all">--</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Tool 6: Hash Generator ───────────────────────────────────────────────
+  const hashInput = document.getElementById('hash-input') as HTMLTextAreaElement;
+  const hash256 = document.getElementById('hash-sha256');
+  const hash384 = document.getElementById('hash-sha384');
+  const hash512 = document.getElementById('hash-sha512');
+
+  async function generateHashes() {
+    if(!hashInput || !hash256) return;
+    const text = hashInput.value;
+    if(!text) {
+      hash256.textContent = '--';
+      if(hash384) hash384.textContent = '--';
+      if(hash512) hash512.textContent = '--';
+      return;
+    }
+
+    const encoder = new TextEncoder();
+    const data = encoder.encode(text);
+    
+    const hashBuffer256 = await crypto.subtle.digest('SHA-256', data);
+    const hashBuffer384 = await crypto.subtle.digest('SHA-384', data);
+    const hashBuffer512 = await crypto.subtle.digest('SHA-512', data);
+    
+    const hex256 = Array.from(new Uint8Array(hashBuffer256)).map(b => b.toString(16).padStart(2, '0')).join('');
+    const hex384 = Array.from(new Uint8Array(hashBuffer384)).map(b => b.toString(16).padStart(2, '0')).join('');
+    const hex512 = Array.from(new Uint8Array(hashBuffer512)).map(b => b.toString(16).padStart(2, '0')).join('');
+
+    hash256.textContent = hex256;
+    if(hash384) hash384.textContent = hex384;
+    if(hash512) hash512.textContent = hex512;
+  }
+
+  hashInput?.addEventListener('input', generateHashes);
+</script>

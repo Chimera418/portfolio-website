@@ -1,0 +1,345 @@
+---
+import BentoCard from "./BentoCard.astro";
+
+interface Props {
+  class?: string;
+  style?: string;
+}
+const { class: className, style } = Astro.props;
+
+const supabaseUrl = import.meta.env.SUPABASE_URL;
+const supabaseKey = import.meta.env.SUPABASE_ANON_KEY;
+---
+
+<BentoCard
+  title="Clicker.exe"
+  className={className}
+  style={style}
+  tag="MINI_GAME"
+>
+  <div
+    class="flex flex-col h-full items-center justify-center gap-4 py-2 relative overflow-hidden"
+    id="clicker-container"
+    data-supabase-url={supabaseUrl}
+    data-supabase-key={supabaseKey}
+  >
+    <div
+      class="font-pixel text-primary text-4xl transition-transform duration-200 z-10"
+      id="clicker-score"
+    >
+      0
+    </div>
+    <button
+      id="clicker-btn"
+      class="px-6 py-2 bg-overlay hover:bg-surface-bright border-2 border-highlight-med hover:border-primary text-text-primary font-bold rounded-lg transition-all active:scale-95 active:bg-primary/20 cursor-pointer flex items-center justify-center font-pixel text-xs z-10"
+    >
+      CLICK
+    </button>
+    <p
+      class="text-text-muted mt-2 text-[10px] font-pixel text-center z-10"
+      id="personal-count"
+    >
+      you've clicked 0 times
+    </p>
+  </div>
+</BentoCard>
+
+<style>
+  @keyframes sparkle {
+    0% {
+      opacity: 0;
+      transform: translateY(0) scale(0);
+    }
+    20% {
+      opacity: 1;
+      transform: translateY(-10px) scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-40px) scale(0.5);
+    }
+  }
+
+  :global(.animate-sparkle) {
+    animation: sparkle 2s ease-out forwards;
+    position: absolute;
+    pointer-events: none;
+    font-size: 0.75rem;
+    font-family:
+      "Pixelify Sans", monospace; /* Adjust to match project's pixel font */
+    color: var(--primary);
+    z-index: 5;
+  }
+
+  :global(.unlock-toast) {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%) translateY(30px) scale(0.9);
+    background: var(--surface-dim, #1e1e2e);
+    border: 2px solid var(--primary, #cba6f7);
+    color: var(--primary, #cba6f7);
+    font-family: "Press Start 2P", monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    padding: 14px 28px;
+    border-radius: 10px;
+    box-shadow:
+      0 0 20px var(--primary, #cba6f7),
+      0 0 40px color-mix(in srgb, var(--primary, #cba6f7) 30%, transparent),
+      0 8px 32px rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    transition:
+      opacity 0.25s ease,
+      transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 99999;
+    white-space: nowrap;
+    pointer-events: none;
+    text-shadow: 0 0 12px var(--primary, #cba6f7);
+  }
+
+  :global(.unlock-toast--visible) {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+</style>
+
+<script>
+  import { createClient } from "@supabase/supabase-js";
+
+  if (typeof window !== "undefined") {
+    const scoreEl = document.getElementById("clicker-score");
+    const btn = document.getElementById("clicker-btn");
+    const container = document.getElementById("clicker-container");
+    const personalCountEl = document.getElementById("personal-count");
+
+    if (scoreEl && btn && container) {
+      let score = parseInt(
+        localStorage.getItem("chimera_clicker_score") || "0",
+        10,
+      );
+      let personalScore = parseInt(
+        localStorage.getItem("chimera_personal_score") || "0",
+        10,
+      );
+      let pendingClicks = 0;
+      let isSyncing = false;
+      let syncInterval: any = null;
+
+      const supabaseUrl = container.dataset.supabaseUrl;
+      const supabaseKey = container.dataset.supabaseKey;
+      let clickChannel: any = null;
+
+      if (supabaseUrl && supabaseKey) {
+        const supabase = createClient(supabaseUrl, supabaseKey);
+        clickChannel = supabase.channel("clicker_room");
+
+        clickChannel
+          .on("broadcast", { event: "click" }, (payload: any) => {
+            const receivedClicks = payload.payload.clicks || 1;
+
+            // Only update score if the server hasn't already accounted for this
+            score += receivedClicks;
+            scoreEl.textContent = score.toString();
+
+            // Visual feedback for remote clicks
+            triggerSparkle();
+
+            // Pulse animation
+            scoreEl.classList.remove("text-primary");
+            scoreEl.classList.add("text-secondary");
+            scoreEl.style.transform = "scale(1.15)";
+            setTimeout(() => {
+              scoreEl.classList.add("text-primary");
+              scoreEl.classList.remove("text-secondary");
+              scoreEl.style.transform = "scale(1)";
+            }, 150);
+          })
+          .subscribe();
+      }
+
+      const updatePersonalCountUI = () => {
+        if (personalCountEl) {
+          const times = personalScore === 1 ? "time" : "times";
+          personalCountEl.textContent = `you've clicked ${personalScore} ${times}`;
+        }
+      };
+
+      const triggerSparkle = () => {
+        if (!container) return;
+
+        const activeSparkles = container.querySelectorAll(".animate-sparkle");
+        if (activeSparkles.length < 15) {
+          const sparkle = document.createElement("div");
+          sparkle.className = "animate-sparkle";
+          sparkle.textContent = "+1";
+
+          // Random position around the center
+          const x = (Math.random() - 0.5) * 80;
+          const y = (Math.random() - 0.5) * 80;
+          sparkle.style.left = `calc(50% + ${x}%)`;
+          sparkle.style.top = `calc(50% + ${y}%)`;
+
+          container.appendChild(sparkle);
+
+          setTimeout(() => {
+            if (sparkle.parentNode) {
+              sparkle.parentNode.removeChild(sparkle);
+            }
+          }, 2000);
+        }
+      };
+
+      // Optimistically display local score initially
+      scoreEl.textContent = score.toString();
+      updatePersonalCountUI();
+
+      const fetchGlobalScore = () => {
+        fetch("/api/clicker")
+          .then((res) => res.json())
+          .then((data) => {
+            if (typeof data.score === "number") {
+              // Drift correction: if server score is larger than local
+              if (data.score > score - pendingClicks) {
+                score = data.score + pendingClicks;
+                scoreEl.textContent = score.toString();
+                localStorage.setItem("chimera_clicker_score", score.toString());
+              }
+            }
+          })
+          .catch((err) => console.error("Failed to load global score:", err));
+      };
+
+      // Fetch global score on mount
+      fetchGlobalScore();
+
+      // Recalibrate every 30s to prevent drift (very low bandwidth)
+      setInterval(fetchGlobalScore, 30000);
+
+      const syncClicks = async () => {
+        if (pendingClicks === 0) return;
+
+        const clicksToSend = pendingClicks;
+        pendingClicks = 0; // reset local pending
+        isSyncing = true;
+
+        try {
+          const res = await fetch("/api/clicker", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ clicks: clicksToSend }),
+          });
+
+          if (res.status === 429) {
+            console.warn("Rate limited! Reverting clicks...");
+            pendingClicks += clicksToSend;
+            return;
+          }
+
+          const data = await res.json();
+          if (typeof data.score === "number") {
+            // Re-sync local score with server truth
+            score = data.score + pendingClicks;
+            scoreEl.textContent = score.toString();
+            localStorage.setItem("chimera_clicker_score", score.toString());
+          }
+        } catch (error) {
+          console.error("Failed to sync clicks:", error);
+          // return clicks if request failed
+          pendingClicks += clicksToSend;
+        } finally {
+          isSyncing = false;
+        }
+      };
+
+      // Sync clicks to Server every 1000ms
+      // @ts-ignore
+      syncInterval = setInterval(() => {
+        if (!isSyncing && pendingClicks > 0) {
+          syncClicks();
+        }
+      }, 1000);
+
+      // Batch broadcasts to prevent Supabase Realtime spam
+      let pendingBroadcasts = 0;
+      setInterval(() => {
+        if (pendingBroadcasts > 0 && clickChannel) {
+          clickChannel
+            .send({
+              type: "broadcast",
+              event: "click",
+              payload: { clicks: pendingBroadcasts },
+            })
+            .catch(() => {});
+          pendingBroadcasts = 0;
+        }
+      }, 400); // 400ms broadcast batching (fast enough to feel real-time, slow enough to prevent rate limits)
+
+      // Toast notification for unlocks
+      function showUnlockToast(message: string) {
+        const toast = document.createElement("div");
+        toast.className = "unlock-toast";
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        // Trigger animation
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() =>
+            toast.classList.add("unlock-toast--visible"),
+          );
+        });
+        setTimeout(() => {
+          toast.classList.remove("unlock-toast--visible");
+          setTimeout(() => toast.remove(), 400);
+        }, 3000);
+      }
+
+      btn.addEventListener("click", () => {
+        score++;
+        personalScore++;
+        pendingClicks++;
+        pendingBroadcasts++;
+        scoreEl.textContent = score.toString();
+
+        localStorage.setItem(
+          "chimera_personal_score",
+          personalScore.toString(),
+        );
+        updatePersonalCountUI();
+        triggerSparkle();
+
+        // Small animation effect
+        scoreEl.classList.remove("text-primary");
+        scoreEl.classList.add("text-secondary");
+        scoreEl.style.transform = "scale(1.15)";
+
+        setTimeout(() => {
+          scoreEl.classList.add("text-primary");
+          scoreEl.classList.remove("text-secondary");
+          scoreEl.style.transform = "scale(1)";
+        }, 150);
+
+        // Secret unlocks
+        if (
+          personalScore === 10 &&
+          localStorage.getItem("chimera_labs_unlocked") !== "true"
+        ) {
+          localStorage.setItem("chimera_labs_unlocked", "true");
+          document.dispatchEvent(
+            new CustomEvent("chimera-unlock", { detail: { page: "labs" } }),
+          );
+          showUnlockToast("/labs unlocked");
+        }
+        if (
+          personalScore === 30 &&
+          localStorage.getItem("chimera_games_unlocked") !== "true"
+        ) {
+          localStorage.setItem("chimera_games_unlocked", "true");
+          document.dispatchEvent(
+            new CustomEvent("chimera-unlock", { detail: { page: "games" } }),
+          );
+          showUnlockToast("/games unlocked");
+        }
+      });
+    }
+  }
+</script>

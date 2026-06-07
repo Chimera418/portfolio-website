@@ -1,0 +1,233 @@
+const prerender = false;
+const LANYARD_USER_ID = "736465046317563915";
+const LANYARD_API = `https://api.lanyard.rest/v1/users/${LANYARD_USER_ID}`;
+const NON_GAME_NAMES = /* @__PURE__ */ new Set([
+  "spotify",
+  "discord",
+  "visual studio code",
+  "vscode",
+  "cursor",
+  "google chrome",
+  "chrome",
+  "firefox",
+  "brave",
+  "brave browser",
+  "obsidian",
+  "postman",
+  "insomnia",
+  "figma",
+  "slack",
+  "notion",
+  "steam",
+  // Steam client itself
+  "origin",
+  "epic games",
+  "battle.net",
+  "ubisoft connect",
+  "ea app",
+  "windows explorer",
+  "explorer",
+  "task manager",
+  "obs studio",
+  "obs",
+  "vlc",
+  "winrar",
+  "7-zip",
+  "notepad",
+  "powershell",
+  "cmd",
+  "terminal",
+  "warp",
+  "hyper",
+  "iterm",
+  "sublime text",
+  "vim",
+  "neovim",
+  "emacs",
+  "jetbrains",
+  "intellij",
+  "webstorm",
+  "pycharm",
+  "rider",
+  "clion",
+  "datagrip",
+  "github desktop",
+  "gitkraken",
+  "sourcetree",
+  "docker desktop",
+  "linear",
+  "jira",
+  "zoom",
+  "teams",
+  "microsoft teams",
+  "skype",
+  "telegram",
+  "whatsapp",
+  "signal",
+  "twitter",
+  "x",
+  "youtube",
+  "twitch"
+]);
+function isNonGame(name) {
+  const lower = name.toLowerCase().trim();
+  for (const blocked of NON_GAME_NAMES) {
+    if (lower === blocked || lower.startsWith(blocked + " ") || lower.includes(blocked)) {
+      return true;
+    }
+  }
+  return false;
+}
+function buildImageUrl(activity) {
+  const largeImage = activity.assets?.large_image;
+  if (!largeImage) return null;
+  if (largeImage.startsWith("mp:external/")) {
+    return `https://media.discordapp.net/${largeImage.replace("mp:", "")}`;
+  }
+  if (largeImage.startsWith("https://")) return largeImage;
+  const appId = activity.application_id;
+  if (appId) {
+    return `https://cdn.discordapp.com/app-assets/${appId}/${largeImage}.png`;
+  }
+  return null;
+}
+let cachedIgdbToken = null;
+let tokenExpiresAt = 0;
+const coverCache = /* @__PURE__ */ new Map();
+const CACHE_TTL = 1e3 * 60 * 60 * 24;
+function normalizeGameName(name) {
+  return name.replace(/ \((.*?)\)$/, "").replace(/ - (.*?)$/, "").trim();
+}
+async function getIgdbToken(clientId, clientSecret) {
+  if (cachedIgdbToken && Date.now() < tokenExpiresAt) {
+    return cachedIgdbToken;
+  }
+  try {
+    const res = await fetch(`https://id.twitch.tv/oauth2/token?client_id=${clientId}&client_secret=${clientSecret}&grant_type=client_credentials`, { method: "POST" });
+    if (!res.ok) return null;
+    const data = await res.json();
+    cachedIgdbToken = data.access_token;
+    tokenExpiresAt = Date.now() + (data.expires_in - 60) * 1e3;
+    return cachedIgdbToken;
+  } catch (e) {
+    console.error("Failed to get IGDB token", e);
+    return null;
+  }
+}
+async function getIgdbCover(gameName, clientId, token) {
+  const normalized = normalizeGameName(gameName);
+  if (coverCache.has(normalized)) {
+    const cached = coverCache.get(normalized);
+    if (Date.now() - cached.timestamp < CACHE_TTL) {
+      return cached.url;
+    } else {
+      coverCache.delete(normalized);
+    }
+  }
+  const query = `
+    search "${normalized.replace(/"/g, '\\"')}";
+    fields name, cover.url, cover.image_id;
+    limit 1;
+  `;
+  try {
+    const res = await fetch("https://api.igdb.com/v4/games", {
+      method: "POST",
+      headers: {
+        "Client-ID": clientId,
+        "Authorization": `Bearer ${token}`
+      },
+      body: query
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const game = data[0];
+    if (game?.cover?.image_id) {
+      const url = `https://images.igdb.com/igdb/image/upload/t_cover_big/${game.cover.image_id}.jpg`;
+      coverCache.set(normalized, {
+        igdbId: game.id,
+        url,
+        timestamp: Date.now()
+      });
+      return url;
+    } else if (game?.cover?.url) {
+      let url = game.cover.url;
+      if (url.startsWith("//")) url = "https:" + url;
+      url = url.replace("t_thumb", "t_cover_big");
+      coverCache.set(normalized, {
+        igdbId: game.id,
+        url,
+        timestamp: Date.now()
+      });
+      return url;
+    }
+  } catch (e) {
+    console.error("IGDB fetch error", e);
+  }
+  return null;
+}
+const GET = async () => {
+  try {
+    const res = await fetch(LANYARD_API);
+    if (!res.ok) throw new Error(`Lanyard returned ${res.status}`);
+    const json = await res.json();
+    if (!json.success || !json.data) throw new Error("Bad Lanyard response");
+    const activities = json.data.activities ?? [];
+    const gameActivity = activities.find(
+      (a) => a.type === 0 && a.name && !isNonGame(a.name) && !!a.assets
+    ) ?? activities.find(
+      (a) => a.type === 0 && a.name && !isNonGame(a.name)
+    );
+    if (!gameActivity) {
+      return new Response(JSON.stringify({ game: null }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+    const appId = gameActivity.application_id ?? null;
+    let image = null;
+    const igdbClientId = "yug05anlr7rdb90mcn7f2qbwya9til";
+    const igdbClientSecret = "0e3by3hhj2u2z125nzrf6iacrzgcun";
+    if (igdbClientId && igdbClientSecret && igdbClientId !== "your_client_id_here") {
+      const token = await getIgdbToken(igdbClientId, igdbClientSecret);
+      if (token) {
+        image = await getIgdbCover(gameActivity.name, igdbClientId, token);
+      }
+    }
+    if (!image) {
+      image = buildImageUrl(gameActivity);
+    }
+    if (!image && appId) {
+      image = `https://dcdn.dstn.to/app-icons/${appId}`;
+    }
+    const game = {
+      name: gameActivity.name,
+      details: gameActivity.details ?? null,
+      state: gameActivity.state ?? null,
+      image,
+      large_text: gameActivity.assets?.large_text ?? null,
+      // timestamps.start is Unix ms when the session began
+      session_start: gameActivity.timestamps?.start ?? null,
+      application_id: appId
+    };
+    return new Response(JSON.stringify({ game }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" }
+    });
+  } catch (err) {
+    console.error("Lanyard gaming error:", err);
+    return new Response(
+      JSON.stringify({ game: null, error: err.message }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
+};
+
+const _page = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.defineProperty({
+  __proto__: null,
+  GET,
+  prerender
+}, Symbol.toStringTag, { value: 'Module' }));
+
+const page = () => _page;
+
+export { page };

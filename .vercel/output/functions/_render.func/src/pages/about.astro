@@ -1,0 +1,313 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import TimelineItem from "../components/TimelineItem.astro";
+import TechStack from "../components/TechStack.astro";
+
+const timeline = [
+  {
+    date: "2024 — Present",
+    title: "Tech Team Member — ACM Student Chapter ASEB",
+    description:
+      "Joined the tech team. Mostly broke things first, then figured out how to fix them. Sometimes in that order.",
+  },
+  {
+    date: "2024 - Present",
+    title: "Senior Executive — FORGE",
+    description:
+      "Forum of Game Engineering. Yes, the name is cool. Yes, that mattered when I joined.",
+  },
+  {
+    date: "2025 — Present",
+    title: "CTF Player — BI0S",
+    description:
+      "Started breaking into things legally. Cybersecurity competitions where sleep is optional and caffeine is currency.",
+  },
+  {
+    date: "2025 — 2026",
+    title: "President — CSI Student Chapter ASEB",
+    description:
+      "Somehow became the person in charge. Still figuring out how that happened.",
+  },
+];
+
+const languages = [
+  "Python",
+  "C",
+  "C++",
+  "JavaScript",
+  "TypeScript",
+  "SQL",
+  "Bash",
+];
+const frontend = ["React.js", "Next.js", "Astro", "Tailwind CSS", "Vite"];
+const backend = ["Node.js", "Express.js", "FastAPI", "Flask"];
+const security = ["Burp Suite", "Wireshark", "Nmap", "SQLi", "XSS", "CSRF"];
+const tools = ["Git", "Linux", "Docker", "MATLAB", "Figma", "Canva"];
+const spokenLanguages = [
+  "English",
+  "Kannada",
+  "Telugu",
+  "Hindi (basic)",
+  "Tamil (basic)",
+];
+
+const facts = [
+  {
+    chip: "PARTY TRICK",
+    chipColor: "text-primary",
+    borderColor: "hover:border-primary/50",
+    title: "Sub-30 Rubik's Cube",
+    subtitle:
+      "Not world record, but enough to make someone's jaw drop at a party.",
+  },
+  {
+    chip: "COLLECTOR",
+    chipColor: "text-tertiary",
+    borderColor: "hover:border-tertiary/50",
+    title: "Random Stuff",
+    subtitle:
+      "I get obsessed with collecting the most random things like guitar picks, stickers, etc.",
+  },
+  {
+    chip: "FUEL",
+    chipColor: "text-rosewater",
+    borderColor: "hover:border-rosewater/50",
+    title: "Chocolate, obviously",
+    subtitle:
+      "Not coffee, not energy drinks, not tea. Just chocolate. Every time.",
+  },
+  {
+    chip: "MEDIA",
+    chipColor: "text-primary",
+    borderColor: "hover:border-primary/50",
+    title: "JJK & The Silent Patient",
+    subtitle: "Anime, manga, novels — I consume it all.",
+  },
+  {
+    chip: "SCHEDULE",
+    chipColor: "text-secondary",
+    borderColor: "hover:border-secondary/50",
+    title: "Night owl. Or early bird.",
+    subtitle:
+      "Depends on deadlines, vibes, and what YouTube recommended at 2am.",
+  },
+];
+---
+
+<Layout title="About | Chimera">
+  <Navbar />
+
+  <div class="mt-8 max-w-4xl mx-auto space-y-20 animate-fade-in pb-20">
+    <!-- Header -->
+    <section>
+      <p class="font-pixel text-xs text-primary mb-4 tracking-widest">
+        WHO AM I
+      </p>
+      <h1
+        class="text-4xl md:text-5xl font-bold text-text-primary mb-6 leading-tight"
+      >
+        I am<br />
+        <span class="text-primary">Aneesh Sagar Reddy.</span>
+      </h1>
+      <div class="text-lg text-text-muted leading-relaxed space-y-4 max-w-2xl">
+        <p>
+          A <span class="text-primary">Computer Science (AI)</span> student at <span
+            class="text-primary">Amrita Vishwa Vidyapeetam, Bengaluru</span
+          >, who sits somewhere between an introvert and an extrovert, with a
+          strong interest in full-stack development, cybersecurity, and building
+          things that solve real problems—or sometimes just satisfy my
+          curiosity.
+        </p>
+        <p>
+          I enjoy developing web applications, exploring how systems work under
+          the hood, and automating tasks that take 5 seconds or 5 hours, just
+          because I can. Most of my projects start with a question, a random
+          idea, a minor inconvenience that refuses to leave my head, or a bit of
+          inspiration borrowed from something I came across online.
+        </p>
+        <p>
+          I spend most of my time building, breaking (legally), and improving
+          things. Most of my projects start as experiments; some become useful,
+          and a few even get finished. On quieter weekends, you'll usually find
+          me tackling a CTF challenge or two, or leaving a dozen half-finished
+          side projects open in another tab while trying to stay awake in class.
+        </p>
+      </div>
+    </section>
+
+    <!-- Quick Stats / Vibes -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div
+        class="bg-overlay border border-highlight-med rounded-xl p-5 hover:border-primary/50 transition-colors group"
+      >
+        <p class="font-pixel text-xs text-primary mb-2 tracking-wider">STYLE</p>
+        <p
+          class="text-text-primary font-bold text-lg group-hover:text-primary transition-colors"
+        >
+          Fuck it, we ball
+        </p>
+        <p class="text-text-muted text-sm mt-1">
+          Chaotic, but with a plan. Somewhere.
+        </p>
+      </div>
+      <div
+        class="bg-overlay border border-highlight-med rounded-xl p-5 hover:border-tertiary/50 transition-colors group"
+      >
+        <p class="font-pixel text-xs text-tertiary mb-2 tracking-wider">
+          ACTUALLY
+        </p>
+        <p
+          class="text-text-primary font-bold text-lg group-hover:text-tertiary transition-colors"
+        >
+          Would've been a video editor
+        </p>
+        <p class="text-text-muted text-sm mt-1">If code didn't happen first.</p>
+      </div>
+    </section>
+
+    <!-- Timeline -->
+    <section>
+      <h2
+        class="text-2xl font-bold text-text-primary mb-2 flex items-center gap-4"
+      >
+        <svg
+          class="w-6 h-6 text-primary"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          ><path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg
+        >
+        Where I've Been
+      </h2>
+      <p class="text-text-muted text-sm mb-8">
+        Clubs, communities, and things I'm part of.
+      </p>
+      <div class="relative">
+        {
+          timeline.map((item) => (
+            <TimelineItem
+              date={item.date}
+              title={item.title}
+              description={item.description}
+            />
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- Tech Stack -->
+    <section id="skills">
+      <h2
+        class="text-2xl font-bold text-text-primary mb-2 flex items-center gap-4"
+      >
+        <svg
+          class="w-6 h-6 text-secondary"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          ><path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+          ></path></svg
+        >
+        Current Loadout
+      </h2>
+      <p class="text-text-muted text-sm mb-8">
+        Things I actually use. GitHub has more receipts.
+      </p>
+      <div class="bg-overlay border border-highlight-med rounded-xl p-6 md:p-8">
+        <TechStack category="Spoken Languages" skills={spokenLanguages} />
+        <TechStack category="Programming Languages" skills={languages} />
+        <TechStack category="Frontend" skills={frontend} />
+        <TechStack category="Backend" skills={backend} />
+        <TechStack category="Security" skills={security} />
+        <TechStack category="Tools" skills={tools} />
+      </div>
+    </section>
+
+    <!-- Fun Facts -->
+    <section>
+      <h2
+        class="text-2xl font-bold text-text-primary mb-2 flex items-center gap-4"
+      >
+        <svg
+          class="w-6 h-6 text-tertiary"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          ><path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"
+          ></path></svg
+        >
+        Other Than That
+      </h2>
+      <p class="text-text-muted text-sm mb-8">
+        The stuff that doesn't go on a resume.
+      </p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {
+          facts.map((fact) => (
+            <div
+              class={`bg-overlay border border-highlight-med rounded-xl p-5 transition-colors group ${fact.borderColor}`}
+            >
+              <div class="flex items-center gap-3 mb-3">
+                <span class="text-2xl">{fact.icon}</span>
+                <p
+                  class={`font-pixel text-xs tracking-wider ${fact.chipColor}`}
+                >
+                  {fact.chip}
+                </p>
+              </div>
+              <p
+                class={`font-bold text-base text-text-primary mb-1 transition-colors group-hover:${fact.chipColor.replace("text-", "text-")}`}
+              >
+                {fact.title}
+              </p>
+              <p class="text-text-muted text-sm leading-relaxed">
+                {fact.subtitle}
+              </p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <!-- Sign-off -->
+    <section class="border-t border-highlight-med pt-10 text-center">
+      <p class="text-text-muted text-sm leading-relaxed max-w-lg mx-auto">
+        If you made it this far, you probably know more about me than I do.
+        Anyway, if you want to build something cool, break something, or just
+        talk tech, my inbox is always open.
+      </p>
+      <p class="font-pixel text-xs text-primary mt-4 tracking-widest">
+        — peace
+      </p>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

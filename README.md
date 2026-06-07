@@ -1,4 +1,4 @@
-# 👾 Chimera Pixel Dashboard
+# 👾 Chimera's Realm
 
 > A retro-inspired, highly interactive developer portfolio.
 

@@ -1,0 +1,179 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import PasswordEntropy from '../components/labs/PasswordEntropy.astro';
+import Base64Hex from '../components/labs/Base64Hex.astro';
+import ColorPalette from '../components/labs/ColorPalette.astro';
+import RegexTester from '../components/labs/RegexTester.astro';
+import JsonValidator from '../components/labs/JsonValidator.astro';
+import HashGenerator from '../components/labs/HashGenerator.astro';
+import CssGradient from '../components/labs/CssGradient.astro';
+import UnixTimestamp from '../components/labs/UnixTimestamp.astro';
+import PathfindingVis from '../components/labs/PathfindingVis.astro';
+import AsciiArt from '../components/labs/AsciiArt.astro';
+
+
+// Tool configurations
+const tools = [
+  { id: 'password-checker', name: 'Password Entropy', icon: 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z' },
+  { id: 'pathfinding', name: 'Pathfinding Vis', icon: 'M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7' },
+  { id: 'base64-hex', name: 'Base64 / Hex', icon: 'M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4' },
+  { id: 'color-palette', name: 'Color Palette', icon: 'M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01' },
+  { id: 'regex-tester', name: 'Regex Tester', icon: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' },
+  { id: 'json-validator', name: 'JSON Formatter', icon: 'M4 6h16M4 10h16M4 14h16M4 18h16' },
+  { id: 'ascii-art', name: 'ASCII Art Maker', icon: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z' },
+  { id: 'hash-gen', name: 'Hash Generator', icon: 'M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4' },
+  { id: 'css-gradient', name: 'CSS Gradient', icon: 'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z' },
+  { id: 'unix-converter', name: 'Unix Timestamp', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
+  { id: 'bracket-generator', name: 'Bracket Generator', icon: 'M17 3v4a2 2 0 01-2 2H9m0 0a2 2 0 01-2 2v4a2 2 0 002 2h6a2 2 0 002-2v-4m-8-2H5' }
+];
+---
+
+<Layout title="Chimera's Laboratory | Labs">
+  <Navbar />
+
+  <div class="mt-8 animate-fade-in">
+
+    <!-- Page Header — matches site pattern -->
+    <section class="mb-8">
+      <h1 class="text-4xl md:text-5xl font-bold text-text-primary mb-3">
+        Chimera's <span class="text-primary font-pixel text-2xl md:text-3xl align-middle">Laboratory</span>
+      </h1>
+      <p class="text-text-muted text-base max-w-lg">
+        Ten interactive experiments. Poke around, break things, learn something.
+      </p>
+    </section>
+
+  <div class="mb-10 h-[calc(100vh-280px)] min-h-[500px]">
+    <!-- Terminal Header -->
+    <div class="bg-overlay border border-highlight-med rounded-t-xl px-4 py-3 flex items-center gap-3">
+      <div class="flex gap-2">
+        <div class="w-3 h-3 rounded-full bg-red/80"></div>
+        <div class="w-3 h-3 rounded-full bg-yellow/80"></div>
+        <div class="w-3 h-3 rounded-full bg-green/80"></div>
+      </div>
+      <span class="font-mono text-xs text-text-muted">chimera@labs ~ ./run_experiments.sh</span>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="flex flex-col md:flex-row h-full border border-t-0 border-highlight-med rounded-b-xl overflow-hidden bg-surface">
+      
+      <!-- Sidebar Navigation -->
+      <div class="w-full md:w-64 bg-overlay border-b md:border-b-0 md:border-r border-highlight-med flex flex-col flex-shrink-0">
+        <div class="p-4 border-b border-highlight-med hidden md:block">
+          <h2 class="font-pixel text-primary text-[10px] uppercase tracking-widest">Laboratory</h2>
+          <p class="text-[10px] text-text-muted mt-2 font-mono">Select an experiment:</p>
+        </div>
+        
+        <nav class="md:flex-grow overflow-x-auto md:overflow-y-auto custom-scroll p-2 flex flex-row md:flex-col gap-1 items-center md:items-stretch" id="labs-sidebar">
+          {tools.map((tool, idx) => (
+            <button 
+              data-tab={tool.id}
+              class={`tab-btn flex-shrink-0 flex items-center gap-3 px-4 py-3 rounded-lg font-mono text-xs transition-all duration-200 text-left ${idx === 0 ? 'active-tab bg-primary/10 text-primary border border-primary/30' : 'inactive-tab text-text-muted hover:text-text-primary hover:bg-surface-bright border border-transparent'}`}
+            >
+              <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d={tool.icon}></path>
+              </svg>
+              <span class="whitespace-nowrap">{tool.name}</span>
+            </button>
+          ))}
+        </nav>
+      </div>
+
+      <!-- Tab Content Area -->
+      <div class="flex-grow relative bg-surface overflow-y-auto custom-scroll p-4 md:p-8" id="labs-content">
+        <PasswordEntropy />
+        <PathfindingVis />
+        <Base64Hex />
+        <ColorPalette />
+        <RegexTester />
+        <JsonValidator />
+        <AsciiArt />
+        <HashGenerator />
+        <CssGradient />
+        <UnixTimestamp />
+        <div id="bracket-generator" class="tab-panel hidden h-full flex items-center justify-center">
+          <div class="border-2 border-dashed border-highlight-med rounded-xl w-full max-w-2xl py-10 flex flex-col items-center justify-center gap-5 min-h-[180px]">
+            <!-- Beaker SVG -->
+            <svg class="w-14 h-14" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22 8 L22 30 L10 52 Q8 56 12 58 L52 58 Q56 56 54 52 L42 30 L42 8" stroke="var(--rose,#eb6f92)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <path d="M22 8 L42 8" stroke="var(--rose,#eb6f92)" stroke-width="3" stroke-linecap="round"/>
+              <path d="M18 38 Q28 34 46 44" stroke="var(--rose,#eb6f92)" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.5"/>
+              <path d="M14 48 Q28 42 50 52" stroke="var(--rose,#eb6f92)" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.3"/>
+            </svg>
+            <p class="font-pixel text-rose text-sm uppercase tracking-[0.25em]">Under Construction</p>
+            <p class="font-pixel text-text-muted text-[10px] uppercase tracking-widest text-center max-w-xs leading-relaxed">
+              Bracket Generator is being built. Check back soon.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div><!-- /animate-fade-in -->
+</Layout>
+
+<style>
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  
+  .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+  .custom-scroll::-webkit-scrollbar-track { background: var(--overlay); }
+  .custom-scroll::-webkit-scrollbar-thumb { background: var(--highlight-med); border-radius: 3px; }
+  .custom-scroll::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+</style>
+
+<script is:inline>
+  // ── Tab Switching Logic ──────────────────────────────────────────────────
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+
+  const activeClasses = ['bg-primary/10', 'text-primary', 'border-primary/30'];
+  const inactiveClasses = ['text-text-muted', 'hover:text-text-primary', 'hover:bg-surface-bright', 'border-transparent'];
+
+  function activateTab(targetId) {
+    const btn = document.querySelector(`[data-tab="${targetId}"]`);
+    if (!btn) return;
+
+    // Deactivate all
+    tabBtns.forEach(b => {
+      b.classList.remove(...activeClasses);
+      b.classList.add(...inactiveClasses);
+    });
+    tabPanels.forEach(p => {
+      p.classList.remove('block');
+      p.classList.add('hidden');
+    });
+
+    // Activate clicked
+    btn.classList.remove(...inactiveClasses);
+    btn.classList.add(...activeClasses);
+    
+    const targetPanel = document.getElementById(targetId);
+    if (targetPanel) {
+      targetPanel.classList.remove('hidden');
+      targetPanel.classList.add('block');
+    }
+  }
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.getAttribute('data-tab');
+      if (targetId) {
+        window.history.replaceState(null, '', `#${targetId}`);
+        activateTab(targetId);
+      }
+    });
+  });
+
+  // Handle initial load based on URL hash
+  const initialHash = window.location.hash.slice(1);
+  if (initialHash) {
+    activateTab(initialHash);
+  }
+</script>

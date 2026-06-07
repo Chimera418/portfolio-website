@@ -1,7 +1,7 @@
-import { c as createComponent } from './astro-component_B5SO9A1K.mjs';
+import { c as createComponent } from './astro-component_C6RNkUFs.mjs';
 import 'piccolore';
-import { r as maybeRenderHead, x as renderTemplate, u as renderComponent, k as addAttribute } from './entrypoint_iyr8SyaV.mjs';
-import { $ as $$Layout, a as $$Navbar } from './Navbar_DPaWP05p.mjs';
+import { r as maybeRenderHead, x as renderTemplate, u as renderComponent, k as addAttribute } from './entrypoint_D1WMlBhe.mjs';
+import { $ as $$Layout, a as $$Navbar } from './Navbar_CDW4UHEX.mjs';
 import 'clsx';
 
 const $$TimelineItem = createComponent(($$result, $$props, $$slots) => {

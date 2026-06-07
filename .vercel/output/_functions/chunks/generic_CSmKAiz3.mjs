@@ -1,6 +1,6 @@
-import { z as typeHandlers, B as types, A as AstroError, N as NoImageMetadata, o as isRemoteAllowed, F as FailedToFetchRemoteImageDimensions, R as RemoteImageNotAllowed, t as removeQueryString, q as joinPaths, E as ExpectedImage, p as isRemotePath, L as LocalImageUsedWrongly, g as MissingImageDimension, j as UnsupportedImageFormat, d as IncompatibleDescriptorOptions, i as UnsupportedImageConversion, f as InvalidImageService, a as ExpectedImageOptions, b as ExpectedNotESMImage, I as ImageMissingAlt, r as maybeRenderHead, k as addAttribute, y as spreadAttributes, x as renderTemplate, c as FontFamilyNotFound, C as unescapeHTML, M as MissingGetFontFileRequestUrl } from './entrypoint_iyr8SyaV.mjs';
+import { z as typeHandlers, B as types, A as AstroError, N as NoImageMetadata, o as isRemoteAllowed, F as FailedToFetchRemoteImageDimensions, R as RemoteImageNotAllowed, t as removeQueryString, q as joinPaths, E as ExpectedImage, p as isRemotePath, L as LocalImageUsedWrongly, g as MissingImageDimension, j as UnsupportedImageFormat, d as IncompatibleDescriptorOptions, i as UnsupportedImageConversion, f as InvalidImageService, a as ExpectedImageOptions, b as ExpectedNotESMImage, I as ImageMissingAlt, r as maybeRenderHead, k as addAttribute, y as spreadAttributes, x as renderTemplate, c as FontFamilyNotFound, C as unescapeHTML, M as MissingGetFontFileRequestUrl } from './entrypoint_D1WMlBhe.mjs';
 import { a as DEFAULT_OUTPUT_FORMAT, b as VALID_SUPPORTED_FORMATS, D as DEFAULT_HASH_PROPS } from './consts_Cm-hF_R3.mjs';
-import { c as createComponent } from './astro-component_B5SO9A1K.mjs';
+import { c as createComponent } from './astro-component_C6RNkUFs.mjs';
 import 'clsx';
 import * as mime from 'mrmime';
 import 'piccolore';
@@ -596,7 +596,7 @@ async function getConfiguredImageService() {
   if (!globalThis?.astroAsset?.imageService) {
     const { default: service } = await import(
       // @ts-expect-error
-      './sharp_DgwYUrhV.mjs'
+      './sharp_OueLLWqN.mjs'
     ).catch((e) => {
       const error = new AstroError(InvalidImageService);
       error.cause = e;

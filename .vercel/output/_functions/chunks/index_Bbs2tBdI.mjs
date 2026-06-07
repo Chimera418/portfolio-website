@@ -1,13 +1,13 @@
-import { c as createComponent } from './astro-component_B5SO9A1K.mjs';
+import { c as createComponent } from './astro-component_C6RNkUFs.mjs';
 import 'piccolore';
-import { n as generateCspDigest, y as spreadAttributes, C as unescapeHTML, x as renderTemplate, s as removeBase, p as isRemotePath, A as AstroError, U as UnknownContentCollectionError, u as renderComponent, r as maybeRenderHead, k as addAttribute } from './entrypoint_iyr8SyaV.mjs';
+import { n as generateCspDigest, y as spreadAttributes, C as unescapeHTML, x as renderTemplate, s as removeBase, p as isRemotePath, A as AstroError, U as UnknownContentCollectionError, u as renderComponent, r as maybeRenderHead, k as addAttribute } from './entrypoint_D1WMlBhe.mjs';
 import 'html-escaper';
 import { Traverse } from 'neotraverse/modern';
 import * as z from 'zod/v4';
 import 'clsx';
 import { V as VALID_INPUT_FORMATS } from './consts_Cm-hF_R3.mjs';
 import * as devalue from 'devalue';
-import { $ as $$Layout, a as $$Navbar } from './Navbar_DPaWP05p.mjs';
+import { $ as $$Layout, a as $$Navbar } from './Navbar_CDW4UHEX.mjs';
 
 function createSvgComponent({ meta, attributes, children, styles }) {
   const hasStyles = styles.length > 0;
@@ -149,7 +149,7 @@ function createGetCollection({
     const hasFilter = typeof filter === "function";
     const store = await globalDataStore.get();
     if (store.hasCollection(collection)) {
-      const { default: imageAssetMap } = await import('./content-assets_DloNRoa4.mjs');
+      const { default: imageAssetMap } = await import('./content-assets_DleWbedO.mjs');
       const result = [];
       for (const rawEntry of store.values(collection)) {
         const data = updateImageReferencesInData(rawEntry.data, rawEntry.filePath, imageAssetMap);

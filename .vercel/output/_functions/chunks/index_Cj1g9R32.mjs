@@ -1,13 +1,13 @@
-import { c as createComponent } from './astro-component_C6RNkUFs.mjs';
+import { c as createComponent } from './astro-component_B4qxK23r.mjs';
 import 'piccolore';
-import { n as generateCspDigest, y as spreadAttributes, C as unescapeHTML, x as renderTemplate, s as removeBase, p as isRemotePath, A as AstroError, U as UnknownContentCollectionError, u as renderComponent, r as maybeRenderHead, k as addAttribute } from './entrypoint_D1WMlBhe.mjs';
+import { n as generateCspDigest, y as spreadAttributes, C as unescapeHTML, x as renderTemplate, s as removeBase, p as isRemotePath, A as AstroError, U as UnknownContentCollectionError, u as renderComponent, r as maybeRenderHead, k as addAttribute } from './entrypoint_Dc7B2knl.mjs';
 import 'html-escaper';
 import { Traverse } from 'neotraverse/modern';
 import * as z from 'zod/v4';
 import 'clsx';
 import { V as VALID_INPUT_FORMATS } from './consts_Cm-hF_R3.mjs';
 import * as devalue from 'devalue';
-import { $ as $$Layout, a as $$Navbar } from './Navbar_CDW4UHEX.mjs';
+import { $ as $$Layout, a as $$Navbar } from './Navbar_RBZ07xdE.mjs';
 
 function createSvgComponent({ meta, attributes, children, styles }) {
   const hasStyles = styles.length > 0;

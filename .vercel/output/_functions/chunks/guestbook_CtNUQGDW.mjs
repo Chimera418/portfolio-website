@@ -1,7 +1,7 @@
-import { c as createComponent } from './astro-component_B4qxK23r.mjs';
+import { c as createComponent } from './astro-component_DiYaXUiq.mjs';
 import 'piccolore';
-import { u as renderComponent, x as renderTemplate, r as maybeRenderHead, k as addAttribute } from './entrypoint_Dc7B2knl.mjs';
-import { $ as $$Layout, r as renderScript, a as $$Navbar } from './Navbar_RBZ07xdE.mjs';
+import { u as renderComponent, x as renderTemplate, r as maybeRenderHead, k as addAttribute } from './entrypoint_CDKNy878.mjs';
+import { $ as $$Layout, r as renderScript, a as $$Navbar } from './Navbar_B7fZhmYl.mjs';
 
 const $$Guestbook = createComponent(async ($$result, $$props, $$slots) => {
   const AVATAR_INDICES = Array.from({ length: 45 }, (_, i) => i);

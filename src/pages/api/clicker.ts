@@ -1,13 +1,23 @@
 import type { APIRoute } from 'astro';
 import { Redis } from '@upstash/redis';
 
-const redis = new Redis({
-  url: import.meta.env.UPSTASH_REDIS_REST_URL,
-  token: import.meta.env.UPSTASH_REDIS_REST_TOKEN,
-});
+// Initialize lazily or safely so it doesn't crash the Vercel lambda on boot
+// if environment variables are missing.
+let redis: Redis | null = null;
+try {
+  if (import.meta.env.UPSTASH_REDIS_REST_URL && import.meta.env.UPSTASH_REDIS_REST_TOKEN) {
+    redis = new Redis({
+      url: import.meta.env.UPSTASH_REDIS_REST_URL,
+      token: import.meta.env.UPSTASH_REDIS_REST_TOKEN,
+    });
+  }
+} catch (e) {
+  console.warn("⚠️ Failed to initialize Redis:", e);
+}
 
 export const GET: APIRoute = async () => {
   try {
+    if (!redis) throw new Error("Redis is not configured");
     const score = await redis.get<number>('chimera_global_clicks') || 0;
     console.log("Global score fetched:", score);
     return new Response(JSON.stringify({ score }), {
@@ -25,6 +35,7 @@ export const GET: APIRoute = async () => {
 
 export const POST: APIRoute = async ({ request }) => {
   try {
+    if (!redis) throw new Error("Redis is not configured");
     const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
     
     // Rate Limiting Logic: Max 10 requests per 5 seconds per IP

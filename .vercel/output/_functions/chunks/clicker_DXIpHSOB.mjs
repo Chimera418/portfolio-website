@@ -1,11 +1,19 @@
 import { Redis } from '@upstash/redis';
 
-const redis = new Redis({
-  url: "https://literate-eel-99565.upstash.io",
-  token: "gQAAAAAAAYTtAAIgcDE2YjJlNzRkZmIzZmU0MDMxOTcwYmVhZjQ0MWY3OGQxNg"
-});
+let redis = null;
+try {
+  if ("gQAAAAAAAYTtAAIgcDE2YjJlNzRkZmIzZmU0MDMxOTcwYmVhZjQ0MWY3OGQxNg") {
+    redis = new Redis({
+      url: "https://literate-eel-99565.upstash.io",
+      token: "gQAAAAAAAYTtAAIgcDE2YjJlNzRkZmIzZmU0MDMxOTcwYmVhZjQ0MWY3OGQxNg"
+    });
+  }
+} catch (e) {
+  console.warn("⚠️ Failed to initialize Redis:", e);
+}
 const GET = async () => {
   try {
+    if (!redis) throw new Error("Redis is not configured");
     const score = await redis.get("chimera_global_clicks") || 0;
     console.log("Global score fetched:", score);
     return new Response(JSON.stringify({ score }), {
@@ -22,6 +30,7 @@ const GET = async () => {
 };
 const POST = async ({ request }) => {
   try {
+    if (!redis) throw new Error("Redis is not configured");
     const ip = request.headers.get("x-forwarded-for") || request.headers.get("x-real-ip") || "unknown";
     if (ip !== "unknown") {
       const rlKey = `rate_limit:clicker:${ip}`;

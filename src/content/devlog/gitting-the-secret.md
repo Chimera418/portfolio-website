@@ -1,5 +1,5 @@
 ---
-title: "🐿️ Gitting the Secret — squ1rrel CTF Writeup"
+title: "Gitting the Secret — squ1rrel CTF Writeup"
 pubDate: 2026-05-28
 description: "A writeup for a Git forensics challenge from squ1rrel CTF focused on recovering hidden objects and decoding Base62."
 tags: ["CTF", "squ1rrel CTF", "Git", "Forensics", "Python"]
@@ -8,13 +8,13 @@ tags: ["CTF", "squ1rrel CTF", "Git", "Forensics", "Python"]
 **Category:** Misc / Forensics (Git)
 ---
 
-## 🧩 Challenge Description
+## Challenge Description
 
 > "I'm a supremely talented developer who would never ever commit secrets to git. You'll never find the flag, let alone all three parts of it!"
 
 ---
 
-## 🧠 Approach Overview
+## Approach Overview
 
 This challenge focuses on **Git forensics** — recovering hidden or deleted data from a repository.
 
@@ -22,11 +22,11 @@ This challenge focuses on **Git forensics** — recovering hidden or deleted dat
 - `git log` showed no commits  
 - `.git/` directory contained objects, logs, and a suspicious `secret/` folder  
 
-➡️ This indicates **detached or hidden Git history**
+This indicates **detached or hidden Git history**
 
 ---
 
-## 🔍 Step 1 — Find Hidden Objects
+## Step 1 — Find Hidden Objects
 
 ### Command
 ```bash
@@ -39,11 +39,11 @@ dangling commit 9d219e...
 dangling blob e0de69...
 ```
 
-➡️ These are **unreferenced objects** that may contain deleted data
+These are **unreferenced objects** that may contain deleted data
 
 ---
 
-## 📦 Step 2 — Recover Checkpoint 1
+## Step 2 — Recover Checkpoint 1
 
 ### Inspect Commit
 ```bash
@@ -72,7 +72,7 @@ git cat-file -p 920984763899e54c82db401ec6d9db7b5540754a
 
 ---
 
-## 🧊 Step 3 — Extract from Dangling Blobs
+## Step 3 — Extract from Dangling Blobs
 
 ### Dump Blobs
 ```bash
@@ -91,7 +91,7 @@ BR43O1z6Oh4uZB9
 
 ---
 
-## 🔐 Step 4 — Hidden Packfile
+## Step 4 — Hidden Packfile
 
 Inside:
 ```
@@ -103,11 +103,11 @@ Inside:
 knapsack.pack
 ```
 
-➡️ A Git packfile containing hidden objects
+A Git packfile containing hidden objects
 
 ---
 
-## 📤 Step 5 — Unpack Packfile
+## Step 5 — Unpack Packfile
 
 ```bash
 git unpack-objects < knapsack.pack
@@ -121,7 +121,7 @@ dangling commit 2ef0d8...
 
 ---
 
-## 📦 Step 6 — Recover Checkpoint 3
+## Step 6 — Recover Checkpoint 3
 
 ```bash
 git cat-file -p 2ef0d8...
@@ -149,18 +149,18 @@ git cat-file -p 93bbb5c17dea12d25aedf03b8996935a5fc950ba
 
 ---
 
-## 🧠 Step 7 — Identify Encoding
+## Step 7 — Identify Encoding
 
 From `index.html`:
 ```
 Home base: 62
 ```
 
-➡️ Indicates **Base62 encoding**
+Indicates **Base62 encoding**
 
 ---
 
-## 🔓 Step 8 — Decode Each Part
+## Step 8 — Decode Each Part
 
 ### Python Script
 ```python
@@ -190,7 +190,7 @@ for p in parts:
 
 ---
 
-## 🏁 Final Flag
+## Final Flag
 
 ```
 squ1rrel{d0nut_c0mM1T_uR_s3cR3ts_w1tH_g1T_12b7160d77d8fbd071f42e0cbccad934}

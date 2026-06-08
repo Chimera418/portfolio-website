@@ -33,14 +33,47 @@ import ThemeDrawer from './ThemeDrawer.astro';
           <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.992 6.012 17.5 2 12 2z"/>
         </svg>
       </button>
+
+      <!-- Hamburger button for mobile -->
+      <button id="mobile-menu-btn" class="md:hidden p-2 text-text-muted hover:text-primary transition-colors cursor-pointer" aria-label="Open Mobile Menu">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
     </div>
   </nav>
 </header>
 
 <ThemeDrawer />
 
+<!-- Mobile Nav Drawer -->
+<div id="mobile-drawer" class="fixed inset-y-0 right-0 w-64 bg-surface/95 backdrop-blur-xl border-l border-highlight-med shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out z-[60] flex flex-col p-6">
+  <div class="flex items-center justify-between mb-8">
+    <span class="font-bold text-lg text-text-primary tracking-tight">Menu</span>
+    <button id="mobile-drawer-close" class="p-2 text-text-muted hover:text-primary transition-colors cursor-pointer" aria-label="Close Mobile Menu">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+  
+  <div class="flex flex-col gap-6 font-pixel text-[10px] uppercase tracking-widest text-text-muted">
+    <a href="/" class="hover:text-primary transition-colors">Home</a>
+    <a href="/about" class="hover:text-primary transition-colors">About</a>
+    <a href="/projects" class="hover:text-primary transition-colors">Projects</a>
+    <a href="/devlog" class="hover:text-primary transition-colors">Devlog</a>
+    <a href="/labs" id="nav-labs-link-mobile" class="hover:text-primary transition-colors hidden">Labs</a>
+    <a href="/games" id="nav-games-link-mobile" class="hover:text-primary transition-colors hidden">Games</a>
+    <a href="/guestbook" class="hover:text-primary transition-colors">Guestbook</a>
+    <a href="/contact" class="hover:text-primary transition-colors">Contact</a>
+  </div>
+</div>
+
 <script>
-  // Drawer toggle logic
+  // Theme drawer toggle logic
   const toggleBtn = document.getElementById('theme-toggle-btn');
   const drawer = document.getElementById('theme-drawer');
   const closeBtn = document.getElementById('theme-drawer-close');
@@ -55,15 +88,35 @@ import ThemeDrawer from './ThemeDrawer.astro';
     });
   }
 
+  // Mobile nav drawer logic
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const mobileDrawer = document.getElementById('mobile-drawer');
+  const mobileCloseBtn = document.getElementById('mobile-drawer-close');
+
+  if (mobileMenuBtn && mobileDrawer && mobileCloseBtn) {
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileDrawer.classList.remove('translate-x-full');
+    });
+
+    mobileCloseBtn.addEventListener('click', () => {
+      mobileDrawer.classList.add('translate-x-full');
+    });
+  }
+
   // Secret page unlock logic
   function applyNavUnlocks() {
     const labsLink = document.getElementById('nav-labs-link');
     const gamesLink = document.getElementById('nav-games-link');
-    if (labsLink && localStorage.getItem('chimera_labs_unlocked') === 'true') {
-      labsLink.classList.remove('hidden');
+    const labsLinkMobile = document.getElementById('nav-labs-link-mobile');
+    const gamesLinkMobile = document.getElementById('nav-games-link-mobile');
+    
+    if (localStorage.getItem('chimera_labs_unlocked') === 'true') {
+      if (labsLink) labsLink.classList.remove('hidden');
+      if (labsLinkMobile) labsLinkMobile.classList.remove('hidden');
     }
-    if (gamesLink && localStorage.getItem('chimera_games_unlocked') === 'true') {
-      gamesLink.classList.remove('hidden');
+    if (localStorage.getItem('chimera_games_unlocked') === 'true') {
+      if (gamesLink) gamesLink.classList.remove('hidden');
+      if (gamesLinkMobile) gamesLinkMobile.classList.remove('hidden');
     }
   }
 
@@ -73,7 +126,16 @@ import ThemeDrawer from './ThemeDrawer.astro';
     const detail = (e as CustomEvent).detail;
     const labsLink = document.getElementById('nav-labs-link');
     const gamesLink = document.getElementById('nav-games-link');
-    if (detail?.page === 'labs' && labsLink) labsLink.classList.remove('hidden');
-    if (detail?.page === 'games' && gamesLink) gamesLink.classList.remove('hidden');
+    const labsLinkMobile = document.getElementById('nav-labs-link-mobile');
+    const gamesLinkMobile = document.getElementById('nav-games-link-mobile');
+
+    if (detail?.page === 'labs') {
+      if (labsLink) labsLink.classList.remove('hidden');
+      if (labsLinkMobile) labsLinkMobile.classList.remove('hidden');
+    }
+    if (detail?.page === 'games') {
+      if (gamesLink) gamesLink.classList.remove('hidden');
+      if (gamesLinkMobile) gamesLinkMobile.classList.remove('hidden');
+    }
   });
 </script>

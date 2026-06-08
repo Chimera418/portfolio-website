@@ -486,6 +486,12 @@
       e.preventDefault(); // Prevent scrolling on the game board
     }, {passive: false});
 
+    tilesContainer.parentElement?.addEventListener('touchmove', (e) => {
+      const gameContainer = document.getElementById('game-content-2048');
+      if (!gameContainer || gameContainer.classList.contains('hidden')) return;
+      e.preventDefault(); // Prevent scroll to avoid touch cancellation
+    }, {passive: false});
+
     tilesContainer.parentElement?.addEventListener('touchend', (e) => {
       const gameContainer = document.getElementById('game-content-2048');
       if (!gameContainer || gameContainer.classList.contains('hidden')) return;

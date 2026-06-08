@@ -17,7 +17,7 @@ allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
     <!-- Header -->
     <section class="text-center">
       <h1 class="text-4xl md:text-5xl font-bold text-text-primary mb-4">
-        Developer <span class="text-tertiary font-pixel text-2xl md:text-3xl align-middle">Log</span>
+        Developer <span class="text-primary font-pixel text-2xl md:text-3xl align-middle">Log</span>
       </h1>
       <p class="text-lg text-text-muted">
         Writeups, technical notes, and build logs.
@@ -27,9 +27,9 @@ allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
     <!-- Post List -->
     <section class="space-y-6">
       {allPosts.map((post) => (
-        <a href={`/devlog/${post.id}`} class="block bg-surface-dim border border-highlight-med rounded-xl p-6 hover:border-tertiary transition-colors group">
+        <a href={`/devlog/${post.id}`} class="block bg-surface-dim border border-highlight-med rounded-xl p-6 hover:border-primary transition-colors group">
           <div class="flex flex-col md:flex-row justify-between md:items-center mb-2 gap-2">
-            <h2 class="text-2xl font-bold text-text-primary group-hover:text-tertiary transition-colors">{post.data.title}</h2>
+            <h2 class="text-2xl font-bold text-text-primary group-hover:text-primary transition-colors">{post.data.title}</h2>
             <span class="font-pixel text-[10px] text-text-muted whitespace-nowrap">
               {post.data.pubDate.toLocaleDateString('en-US', {
                 year: 'numeric',

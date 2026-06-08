@@ -31,7 +31,8 @@ const supabaseKey = import.meta.env.SUPABASE_ANON_KEY;
     </div>
     <button
       id="clicker-btn"
-      class="px-6 py-2 bg-overlay hover:bg-surface-bright border-2 border-highlight-med hover:border-primary text-text-primary font-bold rounded-lg transition-all active:scale-95 active:bg-primary/20 cursor-pointer flex items-center justify-center font-pixel text-xs z-10"
+      class="px-6 py-2 bg-overlay hover:bg-surface-bright border-2 border-highlight-med hover:border-primary text-text-primary font-bold rounded-lg transition-all active:scale-95 active:bg-primary/20 cursor-pointer flex items-center justify-center font-pixel text-xs z-10 touch-manipulation select-none"
+      style="-webkit-tap-highlight-color: transparent;"
     >
       CLICK
     </button>

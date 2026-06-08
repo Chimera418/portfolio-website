@@ -214,6 +214,16 @@
     // Handle Resize/Visibility pausing if needed
     // But since it's an overlay game, we'll just let it run or pause if the game container is hidden
 
+    // Only allow direction keys that aren't a 180° reversal
+    const enqueue = (ndx: number, ndy: number) => {
+      // Look at last queued direction (or current) to prevent reversals
+      const last = inputQueue.length > 0 ? inputQueue[inputQueue.length - 1] : { dx, dy };
+      if (ndx === -last.dx && last.dx !== 0) return; // would reverse horizontally
+      if (ndy === -last.dy && last.dy !== 0) return; // would reverse vertically
+      if (ndx === last.dx && ndy === last.dy) return; // same direction, skip
+      if (inputQueue.length < 2) inputQueue.push({ dx: ndx, dy: ndy }); // cap queue at 2
+    };
+
     // Keyboard controls
     document.addEventListener('keydown', (e) => {
       if (!isPlaying) return;
@@ -229,21 +239,50 @@
         }
       }
 
-      // Only allow direction keys that aren't a 180° reversal
-      const enqueue = (ndx: number, ndy: number) => {
-        // Look at last queued direction (or current) to prevent reversals
-        const last = inputQueue.length > 0 ? inputQueue[inputQueue.length - 1] : { dx, dy };
-        if (ndx === -last.dx && last.dx !== 0) return; // would reverse horizontally
-        if (ndy === -last.dy && last.dy !== 0) return; // would reverse vertically
-        if (ndx === last.dx && ndy === last.dy) return; // same direction, skip
-        if (inputQueue.length < 2) inputQueue.push({ dx: ndx, dy: ndy }); // cap queue at 2
-      };
-
       if (e.key === 'ArrowLeft'  || e.key === 'a') enqueue(-grid, 0);
       else if (e.key === 'ArrowRight' || e.key === 'd') enqueue(grid, 0);
       else if (e.key === 'ArrowUp'    || e.key === 'w') enqueue(0, -grid);
       else if (e.key === 'ArrowDown'  || e.key === 's') enqueue(0, grid);
     });
+
+    // Touch controls
+    let touchStartX = 0;
+    let touchStartY = 0;
+    const snakeContainer = document.getElementById('snake-container');
+    if (snakeContainer) {
+      snakeContainer.addEventListener('touchstart', (e) => {
+        if (!isPlaying) return;
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+        e.preventDefault();
+      }, { passive: false });
+
+      snakeContainer.addEventListener('touchmove', (e) => {
+        if (isPlaying) e.preventDefault(); // prevent scroll
+      }, { passive: false });
+
+      snakeContainer.addEventListener('touchend', (e) => {
+        if (!isPlaying) return;
+        const touchEndX = e.changedTouches[0].screenX;
+        const touchEndY = e.changedTouches[0].screenY;
+        
+        const deltaX = touchEndX - touchStartX;
+        const deltaY = touchEndY - touchStartY;
+        
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+          if (Math.abs(deltaX) > 30) {
+            if (deltaX > 0) enqueue(grid, 0);
+            else enqueue(-grid, 0);
+          }
+        } else {
+          if (Math.abs(deltaY) > 30) {
+            if (deltaY > 0) enqueue(0, grid);
+            else enqueue(0, -grid);
+          }
+        }
+        e.preventDefault();
+      }, { passive: false });
+    }
     
     // Pause game when hidden
     const observer = new MutationObserver((mutations) => {

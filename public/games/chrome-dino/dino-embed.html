@@ -99,7 +99,7 @@
     </div>
   </div>
 
-  <p id="hint">Press Space or ↑ to play</p>
+  <p id="hint">Tap, Space or ↑ to play</p>
 
   <!-- Hidden image resources -->
   <div id="offline-resources" style="display:none">
@@ -163,6 +163,11 @@
         var h = document.getElementById('hint');
         if (h) { h.style.opacity = '0'; setTimeout(function() { h.remove(); }, 1000); }
         document.removeEventListener('keydown', hideHint);
+      });
+      document.addEventListener('touchstart', function hideHintTouch() {
+        var h = document.getElementById('hint');
+        if (h) { h.style.opacity = '0'; setTimeout(function() { h.remove(); }, 1000); }
+        document.removeEventListener('touchstart', hideHintTouch);
       });
     });
 

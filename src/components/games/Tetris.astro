@@ -507,6 +507,72 @@
       }
     });
 
+    // Touch controls
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let lastTouchX = 0;
+    let lastTouchY = 0;
+    let touchMoved = false;
+    const moveThreshold = 30; // Pixels to swipe before piece moves
+
+    const tetrisContainer = document.getElementById("tetris-container");
+    if (tetrisContainer) {
+      tetrisContainer.addEventListener("touchstart", (e) => {
+        if (!isPlaying) return;
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+        lastTouchX = touchStartX;
+        lastTouchY = touchStartY;
+        touchMoved = false;
+        e.preventDefault();
+      }, { passive: false });
+
+      tetrisContainer.addEventListener("touchmove", (e) => {
+        if (!isPlaying) return;
+        const currentX = e.changedTouches[0].screenX;
+        const currentY = e.changedTouches[0].screenY;
+        const deltaX = currentX - lastTouchX;
+        const deltaY = currentY - lastTouchY;
+        
+        if (Math.abs(deltaX) > moveThreshold) {
+          if (deltaX > 0) pieceMove(1);
+          else pieceMove(-1);
+          lastTouchX = currentX;
+          touchMoved = true;
+        }
+        
+        if (deltaY > moveThreshold) {
+          pieceDrop();
+          lastTouchY = currentY;
+          touchMoved = true;
+        }
+        e.preventDefault(); // Prevent scrolling
+      }, { passive: false });
+
+      tetrisContainer.addEventListener("touchend", (e) => {
+        if (!isPlaying) return;
+        const currentY = e.changedTouches[0].screenY;
+        const totalDeltaY = currentY - touchStartY;
+        const totalDeltaX = e.changedTouches[0].screenX - touchStartX;
+        
+        // Fast swipe down for hard drop
+        if (totalDeltaY > 60 && Math.abs(totalDeltaX) < 40 && touchMoved) {
+          while (!collide(board, piece)) {
+            piece.y++;
+          }
+          piece.y--;
+          merge(board, piece);
+          spawnPiece();
+          clearLines();
+          dropCounter = 0;
+        } else if (!touchMoved || (Math.abs(totalDeltaX) < 10 && Math.abs(totalDeltaY) < 10)) {
+          // Tap to rotate
+          pieceRotate(1);
+        }
+        e.preventDefault();
+      }, { passive: false });
+    }
+
     // Pause game when hidden
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {

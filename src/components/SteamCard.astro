@@ -8,9 +8,13 @@ interface Props {
 const { class: className, style } = Astro.props;
 ---
 
-<BentoCard title="Current Addiction" className={className} style={style} tag="LANYARD">
+<BentoCard
+  title="I Can Explain"
+  className={className}
+  style={style}
+  tag="LANYARD"
+>
   <div class="flex flex-col justify-between h-full relative z-10 pt-1 gap-4">
-
     <!-- Cover + info row -->
     <div class="flex items-center gap-4">
       <div
@@ -23,7 +27,10 @@ const { class: className, style } = Astro.props;
 
       <div class="flex-1 min-w-0 flex flex-col justify-center gap-1">
         <!-- Game name -->
-        <h4 id="ga-name" class="font-bold text-text-primary text-sm md:text-base truncate">
+        <h4
+          id="ga-name"
+          class="font-bold text-text-primary text-sm md:text-base truncate"
+        >
           Connecting...
         </h4>
         <!-- Sub-line: rich-presence detail/state, or last-seen timestamp -->
@@ -39,7 +46,8 @@ const { class: className, style } = Astro.props;
           <span
             id="ga-status-label"
             class="font-pixel text-[9px] uppercase tracking-widest text-text-muted"
-          >Offline</span>
+            >Offline</span
+          >
         </div>
       </div>
     </div>
@@ -54,13 +62,20 @@ const { class: className, style } = Astro.props;
     >
       <div class="flex items-center gap-2 min-w-0">
         <!-- Steam icon -->
-        <svg class="w-4 h-4 flex-shrink-0 text-text-muted group-hover:text-[#66c0f4] transition-colors" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.454 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z"/>
+        <svg
+          class="w-4 h-4 flex-shrink-0 text-text-muted group-hover:text-[#66c0f4] transition-colors"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+        >
+          <path
+            d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.454 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z"
+          ></path>
         </svg>
         <span
           id="ga-bar-label"
           class="font-pixel text-[10px] uppercase tracking-widest text-text-muted truncate group-hover:text-[#66c0f4] transition-colors"
-        >Play on Steam</span>
+          >Play on Steam</span
+        >
       </div>
       <svg
         class="w-3.5 h-3.5 text-text-muted group-hover:text-[#66c0f4] group-hover:translate-x-0.5 transition-all flex-shrink-0"
@@ -72,259 +87,300 @@ const { class: className, style } = Astro.props;
         <path d="M7 17L17 7M17 7H7M17 7v10"></path>
       </svg>
     </a>
-
   </div>
 </BentoCard>
 
 <style>
   @keyframes pixel-blink {
-    0%, 49% { opacity: 1; }
-    50%, 100% { opacity: 0; }
+    0%,
+    49% {
+      opacity: 1;
+    }
+    50%,
+    100% {
+      opacity: 0;
+    }
   }
-  .pixel-blink { animation: pixel-blink 1s step-end infinite; }
+  .pixel-blink {
+    animation: pixel-blink 1s step-end infinite;
+  }
 </style>
 
 <script is:inline>
-(function () {
-  /* ── constants ─────────────────────────────────────────────────────── */
-  const LS_KEY   = 'ga_last_game';
-  const POLL_MS  = 30_000;
-  let   pollTimer = null;
-  let   tickTimer = null;
-  let   lastFetch = 0;
-  let   _lastSeenTs = null;
+  (function () {
+    /* ── constants ─────────────────────────────────────────────────────── */
+    const LS_KEY = "ga_last_game";
+    const POLL_MS = 30_000;
+    let pollTimer = null;
+    let tickTimer = null;
+    let lastFetch = 0;
+    let _lastSeenTs = null;
 
-  /* ── helpers ───────────────────────────────────────────────────────── */
-  function $(id) { return document.getElementById(id); }
+    /* ── helpers ───────────────────────────────────────────────────────── */
+    function $(id) {
+      return document.getElementById(id);
+    }
 
-  function relativeTime(ms) {
-    const s = Math.floor((Date.now() - ms) / 1000);
-    if (s <  60)  return `${s}s ago`;
-    const m = Math.floor(s / 60);
-    if (m <  60)  return `${m}m ago`;
-    const h = Math.floor(m / 60);
-    const rm = m % 60;
-    return rm > 0 ? `${h}h ${rm}m ago` : `${h}h ago`;
-  }
+    function relativeTime(ms) {
+      const s = Math.floor((Date.now() - ms) / 1000);
+      if (s < 60) return `${s}s ago`;
+      const m = Math.floor(s / 60);
+      if (m < 60) return `${m}m ago`;
+      const h = Math.floor(m / 60);
+      const rm = m % 60;
+      return rm > 0 ? `${h}h ${rm}m ago` : `${h}h ago`;
+    }
 
-  function sessionDuration(startMs) {
-    const s = Math.floor((Date.now() - startMs) / 1000);
-    if (s < 60)  return `${s}s`;
-    const m = Math.floor(s / 60);
-    if (m < 60)  return `${m}m`;
-    const h = Math.floor(m / 60);
-    const rm = m % 60;
-    return rm > 0 ? `${h}h ${rm}m` : `${h}h`;
-  }
+    function sessionDuration(startMs) {
+      const s = Math.floor((Date.now() - startMs) / 1000);
+      if (s < 60) return `${s}s`;
+      const m = Math.floor(s / 60);
+      if (m < 60) return `${m}m`;
+      const h = Math.floor(m / 60);
+      const rm = m % 60;
+      return rm > 0 ? `${h}h ${rm}m` : `${h}h`;
+    }
 
-  /* ── localStorage ──────────────────────────────────────────────────── */
-  // Left for backward compatibility if ever needed, but now we use backend cache
-  function saveGame(game) {}
-  function loadGame() { return null; }
+    /* ── localStorage ──────────────────────────────────────────────────── */
+    // Left for backward compatibility if ever needed, but now we use backend cache
+    function saveGame(game) {}
+    function loadGame() {
+      return null;
+    }
 
-  /* ── cover art ─────────────────────────────────────────────────────── */
-  function setCover(src, name) {
-    const el = $('ga-cover');
-    if (!el) return;
-    if (src) {
-      const img = document.createElement('img');
-      img.src       = src;
-      img.alt       = name;
-      img.className = 'w-full h-full object-cover absolute inset-0 opacity-0 transition-opacity duration-500 ease-in-out z-20';
-      img.onload    = () => img.classList.remove('opacity-0');
-      img.onerror   = () => setPixelCover(name);
-      
-      // Keep skeleton while loading
-      el.innerHTML  = `
+    /* ── cover art ─────────────────────────────────────────────────────── */
+    function setCover(src, name) {
+      const el = $("ga-cover");
+      if (!el) return;
+      if (src) {
+        const img = document.createElement("img");
+        img.src = src;
+        img.alt = name;
+        img.className =
+          "w-full h-full object-cover absolute inset-0 opacity-0 transition-opacity duration-500 ease-in-out z-20";
+        img.onload = () => img.classList.remove("opacity-0");
+        img.onerror = () => setPixelCover(name);
+
+        // Keep skeleton while loading
+        el.innerHTML = `
         <div class="absolute inset-0 bg-highlight-low animate-pulse z-0"></div>
       `;
-      el.appendChild(img);
-    } else {
-      setPixelCover(name);
+        el.appendChild(img);
+      } else {
+        setPixelCover(name);
+      }
     }
-  }
 
-  function setPixelCover(name) {
-    const el = $('ga-cover');
-    if (!el) return;
-    let hash = 0;
-    for (const c of (name || '')) hash = (hash * 31 + c.charCodeAt(0)) | 0;
-    const hue = Math.abs(hash) % 360;
-    el.innerHTML = `
+    function setPixelCover(name) {
+      const el = $("ga-cover");
+      if (!el) return;
+      let hash = 0;
+      for (const c of name || "") hash = (hash * 31 + c.charCodeAt(0)) | 0;
+      const hue = Math.abs(hash) % 360;
+      el.innerHTML = `
       <div class="absolute inset-0 w-full h-full flex items-center justify-center z-10" style="background:hsl(${hue},40%,18%)">
         <span class="font-pixel text-[9px] text-center px-1" style="color:hsl(${hue},70%,65%)">
-          ${(name || 'GAME').slice(0, 4).toUpperCase()}
+          ${(name || "GAME").slice(0, 4).toUpperCase()}
         </span>
       </div>`;
-  }
-
-  /* ── ticking last-seen counter ─────────────────────────────────────── */
-  function startLastSeenTick(lastSeenMs) {
-    _lastSeenTs = lastSeenMs;
-    clearInterval(tickTimer);
-    tickTimer = setInterval(() => {
-      const sub = $('ga-sub');
-      if (sub) sub.textContent = relativeTime(_lastSeenTs);
-    }, 1000);
-  }
-
-  function stopTick() {
-    clearInterval(tickTimer);
-    tickTimer = null;
-    _lastSeenTs = null;
-  }
-
-  /* ── link logic ────────────────────────────────────────────────────── */
-  function setBottomLink(name, appId) {
-    const bar = $('ga-bottom-bar');
-    const label = $('ga-bar-label');
-    if (!bar || !label) return;
-
-    // We can't guarantee a Discord App ID matches a Steam App ID.
-    // The safest dynamic link is a Steam store search for the game's name.
-    if (name) {
-      bar.href = `https://store.steampowered.com/search/?term=${encodeURIComponent(name)}`;
-      bar.classList.remove('pointer-events-none', 'opacity-50', 'cursor-default');
-      bar.classList.add('cursor-pointer', 'group');
-      label.textContent = 'Play on Steam';
-    } else {
-      bar.href = '#';
-      bar.classList.add('pointer-events-none', 'opacity-50', 'cursor-default');
-      bar.classList.remove('cursor-pointer', 'group');
-      label.textContent = 'Play on Steam';
-    }
-  }
-
-  /* ── render: currently playing ─────────────────────────────────────── */
-  function renderPlaying(game) {
-    stopTick();
-
-    const sessionStart = game.session_start ? Number(game.session_start) : Date.now();
-
-    const nameEl = $('ga-name');
-    if (nameEl) { nameEl.textContent = game.name; nameEl.title = game.name; }
-
-    // Sub-line: prefer rich-presence detail/state, fall back to session timer
-    const sub = $('ga-sub');
-    if (sub) {
-      const detail = [game.details, game.state].filter(Boolean).join(' · ');
-      sub.textContent = detail || sessionDuration(sessionStart);
     }
 
-    setCover(game.image, game.name);
-
-    const dot = $('ga-dot');
-    if (dot) {
-      dot.className = 'w-1.5 h-1.5 rounded-full flex-shrink-0 -translate-y-[1px] pixel-blink';
-      dot.style.background = 'var(--green)';
+    /* ── ticking last-seen counter ─────────────────────────────────────── */
+    function startLastSeenTick(lastSeenMs) {
+      _lastSeenTs = lastSeenMs;
+      clearInterval(tickTimer);
+      tickTimer = setInterval(() => {
+        const sub = $("ga-sub");
+        if (sub) sub.textContent = relativeTime(_lastSeenTs);
+      }, 1000);
     }
 
-    const label = $('ga-status-label');
-    if (label) {
-      label.textContent = 'Playing Now';
-      label.style.color = 'var(--green)';
+    function stopTick() {
+      clearInterval(tickTimer);
+      tickTimer = null;
+      _lastSeenTs = null;
     }
 
-    setBottomLink(game.name, game.application_id);
+    /* ── link logic ────────────────────────────────────────────────────── */
+    function setBottomLink(name, appId) {
+      const bar = $("ga-bottom-bar");
+      const label = $("ga-bar-label");
+      if (!bar || !label) return;
 
-    // Update sub-line with live session timer every second
-    clearInterval(tickTimer);
-    tickTimer = setInterval(() => {
-      const subEl = $('ga-sub');
-      if (!subEl) return;
-      const detail = [game.details, game.state].filter(Boolean).join(' · ');
-      subEl.textContent = detail || sessionDuration(sessionStart);
-    }, 1000);
-  }
-
-  /* ── render: last seen ─────────────────────────────────────────────── */
-  function renderLastSeen(cached) {
-    stopTick();
-
-    const nameEl = $('ga-name');
-    if (nameEl) { nameEl.textContent = cached.name; nameEl.title = cached.name; }
-
-    const sub = $('ga-sub');
-    if (sub) sub.textContent = relativeTime(cached.last_seen);
-
-    setCover(cached.image, cached.name);
-
-    const dot = $('ga-dot');
-    if (dot) {
-      dot.className = 'w-1.5 h-1.5 rounded-full bg-[#66c0f4] flex-shrink-0 -translate-y-[1px]';
-      dot.style.background = '';
+      // We can't guarantee a Discord App ID matches a Steam App ID.
+      // The safest dynamic link is a Steam store search for the game's name.
+      if (name) {
+        bar.href = `https://store.steampowered.com/search/?term=${encodeURIComponent(name)}`;
+        bar.classList.remove(
+          "pointer-events-none",
+          "opacity-50",
+          "cursor-default",
+        );
+        bar.classList.add("cursor-pointer", "group");
+        label.textContent = "Play on Steam";
+      } else {
+        bar.href = "#";
+        bar.classList.add(
+          "pointer-events-none",
+          "opacity-50",
+          "cursor-default",
+        );
+        bar.classList.remove("cursor-pointer", "group");
+        label.textContent = "Play on Steam";
+      }
     }
 
-    const label = $('ga-status-label');
-    if (label) {
-      label.textContent = 'Last Played';
-      label.className = 'font-pixel text-[9px] uppercase tracking-widest text-[#66c0f4]';
-      label.style.color = '';
+    /* ── render: currently playing ─────────────────────────────────────── */
+    function renderPlaying(game) {
+      stopTick();
+
+      const sessionStart = game.session_start
+        ? Number(game.session_start)
+        : Date.now();
+
+      const nameEl = $("ga-name");
+      if (nameEl) {
+        nameEl.textContent = game.name;
+        nameEl.title = game.name;
+      }
+
+      // Sub-line: prefer rich-presence detail/state, fall back to session timer
+      const sub = $("ga-sub");
+      if (sub) {
+        const detail = [game.details, game.state].filter(Boolean).join(" · ");
+        sub.textContent = detail || sessionDuration(sessionStart);
+      }
+
+      setCover(game.image, game.name);
+
+      const dot = $("ga-dot");
+      if (dot) {
+        dot.className =
+          "w-1.5 h-1.5 rounded-full flex-shrink-0 -translate-y-[1px] pixel-blink";
+        dot.style.background = "var(--green)";
+      }
+
+      const label = $("ga-status-label");
+      if (label) {
+        label.textContent = "Playing Now";
+        label.style.color = "var(--green)";
+      }
+
+      setBottomLink(game.name, game.application_id);
+
+      // Update sub-line with live session timer every second
+      clearInterval(tickTimer);
+      tickTimer = setInterval(() => {
+        const subEl = $("ga-sub");
+        if (!subEl) return;
+        const detail = [game.details, game.state].filter(Boolean).join(" · ");
+        subEl.textContent = detail || sessionDuration(sessionStart);
+      }, 1000);
     }
 
-    setBottomLink(cached.name, cached.app_id || cached.application_id);
+    /* ── render: last seen ─────────────────────────────────────────────── */
+    function renderLastSeen(cached) {
+      stopTick();
 
-    startLastSeenTick(cached.last_seen);
-  }
+      const nameEl = $("ga-name");
+      if (nameEl) {
+        nameEl.textContent = cached.name;
+        nameEl.title = cached.name;
+      }
 
-  /* ── render: empty ─────────────────────────────────────────────────── */
-  function renderEmpty() {
-    stopTick();
+      const sub = $("ga-sub");
+      if (sub) sub.textContent = relativeTime(cached.last_seen);
 
-    const nameEl = $('ga-name');
-    if (nameEl) nameEl.textContent = 'No Activity';
+      setCover(cached.image, cached.name);
 
-    const sub = $('ga-sub');
-    if (sub) sub.textContent = 'Open a game to get started';
+      const dot = $("ga-dot");
+      if (dot) {
+        dot.className =
+          "w-1.5 h-1.5 rounded-full bg-[#66c0f4] flex-shrink-0 -translate-y-[1px]";
+        dot.style.background = "";
+      }
 
-    const el = $('ga-cover');
-    if (el) el.innerHTML = '<span class="font-pixel text-[8px] text-text-muted">N/A</span>';
+      const label = $("ga-status-label");
+      if (label) {
+        label.textContent = "Last Played";
+        label.className =
+          "font-pixel text-[9px] uppercase tracking-widest text-[#66c0f4]";
+        label.style.color = "";
+      }
 
-    const dot = $('ga-dot');
-    if (dot) { dot.className = 'w-1.5 h-1.5 rounded-full bg-text-muted flex-shrink-0 -translate-y-[1px]'; dot.style.background = ''; }
+      setBottomLink(cached.name, cached.app_id || cached.application_id);
 
-    const label = $('ga-status-label');
-    if (label) { 
-      label.textContent = 'Offline'; 
-      label.className = 'font-pixel text-[9px] uppercase tracking-widest text-text-muted';
-      label.style.color = ''; 
+      startLastSeenTick(cached.last_seen);
     }
 
-    setBottomLink(null, null);
-  }
+    /* ── render: empty ─────────────────────────────────────────────────── */
+    function renderEmpty() {
+      stopTick();
 
-  /* ── main logic ────────────────────────────────────────────────────── */
-  function handleData(data) {
-    if (data && data.game) {
-      renderPlaying(data.game);
-    } else if (data && data.cached) {
-      renderLastSeen(data.cached);
-    } else {
-      renderEmpty();
+      const nameEl = $("ga-name");
+      if (nameEl) nameEl.textContent = "No Activity";
+
+      const sub = $("ga-sub");
+      if (sub) sub.textContent = "Open a game to get started";
+
+      const el = $("ga-cover");
+      if (el)
+        el.innerHTML =
+          '<span class="font-pixel text-[8px] text-text-muted">N/A</span>';
+
+      const dot = $("ga-dot");
+      if (dot) {
+        dot.className =
+          "w-1.5 h-1.5 rounded-full bg-text-muted flex-shrink-0 -translate-y-[1px]";
+        dot.style.background = "";
+      }
+
+      const label = $("ga-status-label");
+      if (label) {
+        label.textContent = "Offline";
+        label.className =
+          "font-pixel text-[9px] uppercase tracking-widest text-text-muted";
+        label.style.color = "";
+      }
+
+      setBottomLink(null, null);
     }
-  }
 
-  /* ── fetch ─────────────────────────────────────────────────────────── */
-  async function poll() {
-    const now = Date.now();
-    if (now - lastFetch < POLL_MS) return;
-    lastFetch = now;
-
-    try {
-      const res = await fetch('/api/steam');
-      if (!res.ok) throw new Error('non-ok');
-      handleData(await res.json());
-    } catch (err) {
-      console.warn('[CurrentAddiction] fetch failed', err);
-      renderEmpty();
+    /* ── main logic ────────────────────────────────────────────────────── */
+    function handleData(data) {
+      if (data && data.game) {
+        renderPlaying(data.game);
+      } else if (data && data.cached) {
+        renderLastSeen(data.cached);
+      } else {
+        renderEmpty();
+      }
     }
-  }
 
-  /* ── init ──────────────────────────────────────────────────────────── */
-  poll();
-  pollTimer = setInterval(poll, POLL_MS);
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) { lastFetch = 0; poll(); }
-  });
-})();
+    /* ── fetch ─────────────────────────────────────────────────────────── */
+    async function poll() {
+      const now = Date.now();
+      if (now - lastFetch < POLL_MS) return;
+      lastFetch = now;
+
+      try {
+        const res = await fetch("/api/steam");
+        if (!res.ok) throw new Error("non-ok");
+        handleData(await res.json());
+      } catch (err) {
+        console.warn("[CurrentAddiction] fetch failed", err);
+        renderEmpty();
+      }
+    }
+
+    /* ── init ──────────────────────────────────────────────────────────── */
+    poll();
+    pollTimer = setInterval(poll, POLL_MS);
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) {
+        lastFetch = 0;
+        poll();
+      }
+    });
+  })();
 </script>

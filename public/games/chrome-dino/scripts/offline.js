@@ -127,7 +127,7 @@ const IS_IOS = !!window.navigator.userAgent.match(/iP(hone|ad|od)/i) && !!window
   _isIpad() || /CriOS/.test(window.navigator.userAgent) || /FxiOS/.test(window.navigator.userAgent);
 
 /** @const */
-const IS_MOBILE = /Android/.test(window.navigator.userAgent) || IS_IOS;
+const IS_MOBILE = true; // Forced true to enable touch controls globally
 
 /** @const */
 const IS_RTL = document.querySelector('html').dir == 'rtl';
@@ -936,10 +936,8 @@ Runner.prototype = {
     // A11y keyboard / screen reader activation.
     this.containerEl.addEventListener(
         Runner.events.KEYDOWN, this.handleCanvasKeyPress.bind(this));
-    if (!IS_MOBILE) {
-      this.containerEl.addEventListener(
-          Runner.events.FOCUS, this.showSpeedToggle.bind(this));
-    }
+    // Focus listener for speed toggle removed to hide 'Start Slower' button
+
     this.canvas.addEventListener(
         Runner.events.KEYDOWN, this.preventScrolling.bind(this));
     this.canvas.addEventListener(

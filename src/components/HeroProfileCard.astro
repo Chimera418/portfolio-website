@@ -18,7 +18,9 @@ const { class: className } = Astro.props;
           Aneesh Sagar Reddy
         </p>
         <h1
-          class="text-5xl md:text-6xl font-bold text-text-primary tracking-tight font-pixel uppercase leading-none drop-shadow-sm"
+          id="hero-title"
+          data-text="CHIMERA"
+          class="text-5xl md:text-6xl font-bold text-text-primary tracking-tight font-pixel uppercase leading-none drop-shadow-sm cursor-default"
         >
           Chimera
         </h1>
@@ -152,8 +154,11 @@ const { class: className } = Astro.props;
   </div>
 </BentoCard>
 
-<script is:inline>
+<script>
+  import anime from "animejs";
+
   (function () {
+    // Clock & Weather logic
     function updateHeroClock() {
       const el = document.getElementById("hero-clock");
       if (!el) return;
@@ -176,7 +181,9 @@ const { class: className } = Astro.props;
       const el = document.getElementById("hero-weather");
       if (!el) return;
       try {
-        const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=12.9716&longitude=77.5946&current=temperature_2m");
+        const res = await fetch(
+          "https://api.open-meteo.com/v1/forecast?latitude=12.9716&longitude=77.5946&current=temperature_2m",
+        );
         const data = await res.json();
         const temp = Math.round(data.current.temperature_2m);
         el.textContent = `${temp}°C`;
@@ -189,5 +196,45 @@ const { class: className } = Astro.props;
     updateWeather();
     setInterval(updateHeroClock, 1000);
     setInterval(updateWeather, 3600000); // 1 hour
+
+    // Scramble Text Logic for "Chimera"
+    const titleEl = document.getElementById("hero-title");
+    if (titleEl) {
+      const originalText = titleEl.dataset.text || "CHIMERA";
+      // Using only standard ASCII to ensure the monospace pixel font doesn't fall back and cause layout shift
+      const chars = "!<>-_\\/[]{}|=+*^?#@";
+      let isAnimating = false;
+
+      titleEl.addEventListener("mouseenter", () => {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        let iteration = 0;
+
+        const animation = anime({
+          targets: titleEl,
+          duration: 1200,
+          easing: "linear",
+          update: function () {
+            // Lower increment = slower reveal
+            iteration += 0.1;
+
+            titleEl.textContent = originalText
+              .split("")
+              .map((letter, index) => {
+                if (index < iteration) {
+                  return originalText[index];
+                }
+                return chars[Math.floor(Math.random() * chars.length)];
+              })
+              .join("");
+          },
+          complete: function () {
+            titleEl.textContent = originalText;
+            isAnimating = false;
+          },
+        });
+      });
+    }
   })();
 </script>

@@ -13,18 +13,24 @@ const achievements = [
 ---
 
 <BentoCard title="Quest Log" className={className} tag="ACHIEVEMENTS">
-  <div class="flex flex-col gap-4 mt-2 h-full justify-center">
+  <div class="flex flex-col gap-0 mt-2 h-full justify-center relative">
+    <!-- vertical line -->
+    <div class="absolute left-[19px] top-3 bottom-3 w-px bg-highlight-med/50"></div>
+
     {
-      achievements.map((ach) => (
-        <div class="flex items-start gap-3">
-          <span class="font-pixel text-[10px] text-primary pt-1 w-14 flex-shrink-0 whitespace-nowrap">
-            {ach.year}
-          </span>
-          <div>
+      achievements.map((ach, i) => (
+        <div class="flex items-start gap-4 relative py-3">
+          <!-- dot -->
+          <div class="relative z-10 flex-shrink-0 w-[10px] h-[10px] mt-1.5 rounded-full bg-primary border-2 border-surface shadow-[0_0_8px_var(--primary)] ml-[14px]"></div>
+
+          <div class="flex-1 min-w-0">
+            <span class="font-pixel text-[9px] text-primary uppercase tracking-widest block mb-1">
+              {ach.year}
+            </span>
             <h4 class="text-text-primary text-sm font-semibold leading-tight mb-0.5">
               {ach.title}
             </h4>
-            <p class="text-text-muted text-xs">{ach.detail}</p>
+            <p class="text-text-muted text-[11px]">{ach.detail}</p>
           </div>
         </div>
       ))

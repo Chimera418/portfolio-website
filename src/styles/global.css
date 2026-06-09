@@ -211,4 +211,18 @@
     scrollbar-width: thin;
     scrollbar-color: var(--primary) var(--surface-dim);
   }
+
+  /* Bento grid stagger — each direct child of the grid delays slightly */
+  .bento-grid > div:nth-child(1)  .bento-card { animation-delay: 0.05s; }
+  .bento-grid > div:nth-child(2)  .bento-card { animation-delay: 0.10s; }
+  .bento-grid > div:nth-child(3)  .bento-card { animation-delay: 0.15s; }
+  .bento-grid > div:nth-child(4)  .bento-card { animation-delay: 0.20s; }
+  .bento-grid > div:nth-child(5)  .bento-card { animation-delay: 0.25s; }
+  .bento-grid > div:nth-child(6)  .bento-card { animation-delay: 0.30s; }
+  .bento-grid > div:nth-child(7)  .bento-card { animation-delay: 0.35s; }
+  .bento-grid > div:nth-child(8)  .bento-card { animation-delay: 0.40s; }
+  .bento-grid > div:nth-child(9)  .bento-card { animation-delay: 0.45s; }
+  .bento-grid > div:nth-child(10) .bento-card { animation-delay: 0.50s; }
+  .bento-grid > div:nth-child(11) .bento-card { animation-delay: 0.55s; }
+  .bento-grid > div:nth-child(12) .bento-card { animation-delay: 0.60s; }
 }

@@ -1,6 +1,5 @@
 ---
 import BentoCard from './BentoCard.astro';
-import Button from './Button.astro';
 
 interface Props {
   class?: string;
@@ -18,7 +17,7 @@ const skills = [
   <div class="flex flex-col h-full justify-between">
     <div class="flex flex-wrap gap-2 pt-2">
       {skills.map(skill => (
-        <span class="px-2 py-1 bg-overlay border border-highlight-med rounded text-xs text-text-primary font-pixel hover:border-secondary hover:text-secondary transition-colors cursor-default">
+        <span class="px-2.5 py-1 bg-primary/10 border border-primary/20 rounded text-[9px] text-primary font-pixel uppercase tracking-wider hover:bg-primary/20 hover:border-primary/40 transition-all duration-150 cursor-default">
           {skill}
         </span>
       ))}

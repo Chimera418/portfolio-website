@@ -73,35 +73,50 @@ const supabaseKey = import.meta.env.SUPABASE_ANON_KEY;
   }
 
   :global(.unlock-toast) {
-    position: fixed;
-    bottom: 100px;
+    position: absolute;
+    bottom: 20px;
     left: 50%;
-    transform: translateX(-50%) translateY(30px) scale(0.9);
-    background: var(--surface-dim, #1e1e2e);
-    border: 2px solid var(--primary, #cba6f7);
+    transform: translateX(-50%) translateY(10px);
+    background-color: var(--base, #1e1e2e);
+    border: 1px solid var(--primary, #cba6f7);
+    border-left: 3px solid var(--primary, #cba6f7);
     color: var(--primary, #cba6f7);
     font-family: "Press Start 2P", monospace;
-    font-size: 13px;
-    line-height: 1.6;
-    padding: 14px 28px;
-    border-radius: 10px;
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 8px 12px;
+    border-radius: 6px;
     box-shadow:
-      0 0 20px var(--primary, #cba6f7),
-      0 0 40px color-mix(in srgb, var(--primary, #cba6f7) 30%, transparent),
-      0 8px 32px rgba(0, 0, 0, 0.6);
+      0 0 12px color-mix(in srgb, var(--primary, #cba6f7) 20%, transparent),
+      0 6px 28px rgba(0, 0, 0, 0.7);
     opacity: 0;
-    transition:
-      opacity 0.25s ease,
-      transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-    z-index: 99999;
+    transition: opacity 0.2s ease, transform 0.25s ease;
+    z-index: 50;
     white-space: nowrap;
     pointer-events: none;
-    text-shadow: 0 0 12px var(--primary, #cba6f7);
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   :global(.unlock-toast--visible) {
     opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
+    transform: translateX(-50%) translateY(0);
+  }
+
+  :global(.unlock-toast-dot) {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: var(--primary, #cba6f7);
+    flex-shrink: 0;
+    animation: toast-dot-pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes toast-dot-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
   }
 </style>
 
@@ -280,9 +295,21 @@ const supabaseKey = import.meta.env.SUPABASE_ANON_KEY;
       function showUnlockToast(message: string) {
         const toast = document.createElement("div");
         toast.className = "unlock-toast";
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        // Trigger animation
+
+        const dot = document.createElement("span");
+        dot.className = "unlock-toast-dot";
+
+        const text = document.createElement("span");
+        text.textContent = "> " + message;
+
+        toast.appendChild(dot);
+        toast.appendChild(text);
+        if (container) {
+          container.appendChild(toast);
+        } else {
+          document.body.appendChild(toast);
+        }
+
         requestAnimationFrame(() => {
           requestAnimationFrame(() =>
             toast.classList.add("unlock-toast--visible"),
@@ -290,7 +317,7 @@ const supabaseKey = import.meta.env.SUPABASE_ANON_KEY;
         });
         setTimeout(() => {
           toast.classList.remove("unlock-toast--visible");
-          setTimeout(() => toast.remove(), 400);
+          setTimeout(() => toast.remove(), 300);
         }, 3000);
       }
 

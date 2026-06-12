@@ -7,7 +7,7 @@ interface Props {
 const { class: className } = Astro.props;
 ---
 
-<BentoCard className={className} glow={true}>
+<BentoCard className={`${className || ''} z-20`} glow={true}>
   <div class="flex flex-col justify-between h-full gap-4 py-1">
     <!-- Top: name block -->
     <div class="space-y-4">
@@ -137,7 +137,7 @@ const { class: className } = Astro.props;
                   <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
                 </svg>
                 <span
-                  class="text-[10px] font-pixel text-text-primary uppercase tracking-wide"
+                  class="text-[10px] font-pixel text-text-primary uppercase tracking-wide z-50"
                   >Amrita Vishwa Vidyapeetham</span
                 >
               </div>

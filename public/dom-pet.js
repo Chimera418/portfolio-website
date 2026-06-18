@@ -171,10 +171,10 @@
       let transform = this.facingRight ? 'scaleX(1)' : 'scaleX(-1)';
       
       if (state === STATES.WALL_CLIMB || state === STATES.WALL_HANG || state === STATES.WALL_NAP) {
-         // Rotate the fox so his feet touch the wall
-         const rot = this.wallSide === 'LEFT' ? 'rotate(90deg)' : 'rotate(-90deg)';
-         // When rotated, the flip might need adjusting, but simple scaleX is fine
-         transform += ` ${rot}`;
+         // Rotate the fox so his feet touch the wall and he faces UP
+         // Both left and right walls need -90deg rotation to face up. 
+         // Left wall has scaleX(-1) applied first, which flips the feet direction correctly.
+         transform += ` rotate(-90deg)`;
       }
       this.element.style.transform = transform;
 

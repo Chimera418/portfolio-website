@@ -6,7 +6,7 @@ import ThemeDrawer from './ThemeDrawer.astro';
   <nav class="w-full max-w-7xl backdrop-blur-md bg-overlay/80 border border-highlight-med rounded-xl px-6 py-4 flex items-center justify-between shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
     <div class="flex items-center gap-3">
       <!-- Logo -->
-      <img src="/chimera-logo.png" alt="Chimera Logo" class="w-8 h-8 rounded-sm shadow-[2px_2px_0_var(--color-highlight-med)] object-cover bg-surface-dim" onerror="this.style.display='none'" />
+      <img id="navbar-logo" src="/chimera-logo.png" alt="Chimera Logo" class="w-8 h-8 rounded-sm shadow-[2px_2px_0_var(--color-highlight-med)] object-cover bg-surface-dim cursor-pointer hover:scale-105 transition-transform" onerror="this.style.display='none'" />
       <a href="/" class="font-bold text-lg text-text-primary tracking-tight">
         Chimera
       </a>
@@ -138,4 +138,27 @@ import ThemeDrawer from './ThemeDrawer.astro';
       if (gamesLinkMobile) gamesLinkMobile.classList.remove('hidden');
     }
   });
+
+  // Pet Easter Egg with dom-pet.js
+  let petSpawned = false;
+  const logoBtn = document.getElementById('navbar-logo');
+  
+  if (logoBtn) {
+    logoBtn.addEventListener('click', () => {
+      if (petSpawned) return;
+      
+      if (!window.createDomPet) {
+        const script = document.createElement('script');
+        script.src = "/dom-pet.js";
+        script.onload = () => {
+          petSpawned = true;
+          window.createDomPet();
+        };
+        document.body.appendChild(script);
+      } else {
+        petSpawned = true;
+        window.createDomPet();
+      }
+    });
+  }
 </script>

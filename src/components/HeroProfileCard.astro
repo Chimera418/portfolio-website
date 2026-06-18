@@ -7,7 +7,7 @@ interface Props {
 const { class: className } = Astro.props;
 ---
 
-<BentoCard className={`${className || ''} z-20`} glow={true}>
+<BentoCard className={`hero-card-element ${className || ""} z-20`} glow={true}>
   <div class="flex flex-col justify-between h-full gap-4 py-1">
     <!-- Top: name block -->
     <div class="space-y-4">
@@ -20,7 +20,7 @@ const { class: className } = Astro.props;
         <h1
           id="hero-title"
           data-text="CHIMERA"
-          class="text-5xl md:text-6xl font-bold text-text-primary tracking-tight font-pixel uppercase leading-none drop-shadow-sm cursor-default"
+          class="w-fit text-5xl md:text-6xl font-bold text-text-primary tracking-tight font-pixel uppercase leading-none drop-shadow-sm cursor-default"
         >
           Chimera
         </h1>

@@ -41,7 +41,8 @@ const { title } = Astro.props;
       const crtMode = localStorage.getItem("crtMode") === "true";
       const pixelMode = localStorage.getItem("pixelMode") === "true";
       const accentColor =
-        localStorage.getItem("secondaryAccentColor") || "#cba6f7";
+        localStorage.getItem("secondaryAccentColor") || "mauve";
+      const primaryValue = accentColor.startsWith("#") ? accentColor : `var(--${accentColor})`;
 
       document.documentElement.setAttribute("data-theme", theme);
       document.documentElement.setAttribute("data-crt-mode", String(crtMode));
@@ -50,8 +51,8 @@ const { title } = Astro.props;
         String(pixelMode),
       );
 
-      document.documentElement.style.setProperty("--primary", accentColor);
-      document.documentElement.style.setProperty("--secondary", accentColor);
+      document.documentElement.style.setProperty("--primary", primaryValue);
+      document.documentElement.style.setProperty("--secondary", primaryValue);
     </script>
   </head>
   <body class="relative min-h-screen flex flex-col items-center overflow-x-hidden">

@@ -237,7 +237,9 @@
       // ── Visual position ──────────────────────────────────────────────────
       const voxX = -(VISUAL_SIZE - COLLISION_W) / 2;
       let extraX = 0;
-      if (this.wallState) extraX = this.wallSide === 'RIGHT' ? -16 : 0;
+      if (this.wallState) {
+         extraX = this.wallSide === 'RIGHT' ? -16 : 16;
+      }
 
       this.element.style.left = Math.round(this.x + voxX + extraX) + 'px';
       this.element.style.top  = Math.round(this.y - (VISUAL_SIZE - COLLISION_H)) + 'px';

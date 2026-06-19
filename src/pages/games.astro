@@ -13,6 +13,7 @@ import DontWordle  from '../components/games/DontWordle.astro';
 import ColorGuesser from '../components/games/ColorGuesser.astro';
 import Wordle       from '../components/games/Wordle.astro';
 import Connect4     from '../components/games/Connect4.astro';
+import GravityMaze from '../components/games/GravityMaze.astro';
 
 const gameIcons: Record<string, string> = {
   'chrome-dino': `<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" stroke="currentColor" stroke-width="0" viewBox="0 0 288 203">
@@ -339,6 +340,11 @@ const gameIcons: Record<string, string> = {
   <circle cx="61" cy="82" r="5"/>
   <circle cx="82" cy="82" r="5" fill="currentColor"/>
 </svg>`,
+
+  'gravity-maze': `<svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="6" xmlns="http://www.w3.org/2000/svg" width="40" height="40">
+  <rect x="5" y="5" width="90" height="90" rx="8"/>
+  <text x="50" y="58" font-size="28" font-family="monospace" font-weight="bold" text-anchor="middle" fill="currentColor" stroke="none">MAZE</text>
+</svg>`,
 };
 
 const games = [
@@ -353,6 +359,7 @@ const games = [
   { id: 'color-guesser', title: 'Color Guesser',   desc: 'Match the RGB swatch',          genre: 'Visual Quiz',    difficulty: 'Medium' },
   { id: 'wordle',        title: 'Wordle',          desc: 'Guess the 5-letter word',       genre: 'Word Game',      difficulty: 'Medium' },
   { id: 'connect-4',     title: 'Connect 4',       desc: 'Drop discs, connect four',      genre: 'Strategy',       difficulty: 'Medium' },
+  { id: 'gravity-maze',  title: 'Gravity Maze',    desc: 'Rotate to win',                 genre: 'Puzzle',         difficulty: 'Hard'   },
 ];
 ---
 
@@ -462,6 +469,7 @@ const games = [
         <div id="game-content-color-guesser" class="game-content hidden w-full h-full max-w-3xl  max-h-[560px] border border-highlight-med rounded-xl overflow-hidden shadow-2xl"><ColorGuesser /></div>
         <div id="game-content-wordle"        class="game-content hidden w-full h-full max-w-md   max-h-[700px] border border-highlight-med rounded-xl overflow-hidden shadow-2xl bg-surface-dim"><Wordle /></div>
         <div id="game-content-connect-4"     class="game-content hidden w-full h-full max-w-2xl  max-h-[700px] border border-highlight-med rounded-xl overflow-hidden shadow-2xl bg-surface-dim"><Connect4 /></div>
+        <div id="game-content-gravity-maze"   class="game-content hidden w-full h-full max-w-4xl  max-h-[820px] border border-highlight-med rounded-xl overflow-hidden shadow-2xl bg-surface-dim"><GravityMaze /></div>
       </div>
 
     </div>

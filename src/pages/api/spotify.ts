@@ -63,7 +63,7 @@ export const GET: APIRoute = async () => {
 
       if (recentResponse.ok) {
         const recentData = await recentResponse.json();
-        if (recentData.items?.[0]) {
+        if (recentData.items && recentData.items.length > 0) {
           const item = recentData.items[0].track;
           track = {
             name: item.name,
@@ -75,7 +75,11 @@ export const GET: APIRoute = async () => {
             progress_ms: 0,
             is_playing: false,
           };
+        } else {
+          console.log('Spotify recently-played returned empty items array:', recentData);
         }
+      } else {
+        console.error('Spotify recently-played API failed:', recentResponse.status, await recentResponse.text());
       }
     }
 

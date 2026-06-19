@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import CommandPalette from "../components/CommandPalette.astro";
+import SpeedInsights from "@vercel/speed-insights/astro";
 
 interface Props {
   title: string;
@@ -559,5 +560,6 @@ const { title } = Astro.props;
         }, 5000);
       })();
     </script>
+    <SpeedInsights />
   </body>
 </html>

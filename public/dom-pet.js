@@ -153,6 +153,12 @@
       this.element.appendChild(this.img);
       document.body.appendChild(this.element);
 
+      this.zzzElement = document.createElement('div');
+      this.zzzElement.textContent = "Z z z";
+      this.zzzElement.className = "fox-zzz";
+      document.body.appendChild(this.zzzElement);
+
+
       this.lastTime = performance.now();
       this.setAnimation(STATES.IDLE);
       requestAnimationFrame(t => this.loop(t));
@@ -243,6 +249,21 @@
 
       this.element.style.left = Math.round(this.x + voxX + extraX) + 'px';
       this.element.style.top  = Math.round(this.y - (VISUAL_SIZE - COLLISION_H)) + 'px';
+
+      const isSleeping = (this.behaviorState === 'SLEEP') || (this.wallState === 'NAPPING');
+      if (isSleeping !== this.isSleeping) {
+        this.isSleeping = isSleeping;
+        if (isSleeping) {
+          this.zzzElement.classList.add('sleeping');
+        } else {
+          this.zzzElement.classList.remove('sleeping');
+        }
+      }
+      
+      if (isSleeping) {
+         this.zzzElement.style.left = Math.round(this.x + voxX + extraX + 20) + 'px';
+         this.zzzElement.style.top  = Math.round(this.y - (VISUAL_SIZE - COLLISION_H) - 5) + 'px';
+      }
 
       requestAnimationFrame(t => this.loop(t));
     }

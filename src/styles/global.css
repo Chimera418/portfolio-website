@@ -246,6 +246,39 @@
     opacity: 1;
   }
 
+  .fox-zzz {
+    position: absolute;
+    font-family: var(--font-pixel);
+    font-size: 10px;
+    color: var(--text-primary);
+    text-shadow: 2px 2px 0 var(--surface-dim);
+    pointer-events: none;
+    white-space: nowrap;
+    opacity: 0;
+    z-index: 999999;
+  }
+
+  .fox-zzz.sleeping {
+    animation: zzz-float 4s infinite linear;
+  }
+
+  @keyframes zzz-float {
+    0% {
+      transform: translate(0, 0) scale(0.6) rotate(-10deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 0.8;
+    }
+    60% {
+      opacity: 0.8;
+    }
+    100% {
+      transform: translate(25px, -40px) scale(1.4) rotate(15deg);
+      opacity: 0;
+    }
+  }
+
   .back-to-top::after {
     content: "";
     position: fixed;

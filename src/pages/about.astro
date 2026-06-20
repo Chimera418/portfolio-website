@@ -12,30 +12,35 @@ const timeline = [
     title: "Tech Team Member — ACM Student Chapter ASEB",
     description:
       "Joined the tech team. Mostly broke things first, then figured out how to fix them. Sometimes in that order.",
+    color: "primary",
   },
   {
     date: "2024 - Present",
     title: "Senior Executive — FORGE",
     description:
       "Forum of Game Engineering. Yes, the name is cool. Yes, that mattered when I joined.",
+    color: "secondary",
   },
   {
     date: "2025 — Present",
     title: "CTF Player — Bi0s",
     description:
       "Started breaking into things legally. Cybersecurity competitions where sleep is optional and caffeine is currency.",
+    color: "rosewater",
   },
   {
     date: "2026 — Present",
     title: "CTF Player — Void Walkers",
     description:
       "Continuing the cybersecurity journey. More CTFs, more challenges, and definitely more caffeine.",
+    color: "tertiary",
   },
   {
     date: "2025 — 2026",
     title: "President — CSI Student Chapter ASEB",
     description:
       "Somehow became the person in charge. Still figuring out how that happened.",
+    color: "primary",
   },
 ];
 
@@ -203,6 +208,7 @@ const facts = [
               date={item.date}
               title={item.title}
               description={item.description}
+              color={item.color as any}
             />
           ))
         }

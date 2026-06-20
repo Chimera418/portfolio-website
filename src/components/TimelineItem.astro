@@ -3,67 +3,50 @@ interface Props {
   date: string;
   title: string;
   description: string;
-  color?: "primary" | "secondary" | "tertiary" | "rosewater";
+  isLeft?: boolean;
 }
-const { date, title, description, color = "primary" } = Astro.props;
-
-// Determine color variables based on the prop
-const colorClasses = {
-  primary: {
-    text: "group-hover:text-primary",
-    border: "group-hover:border-primary",
-    bg: "bg-primary",
-    shadowBox: "hover:shadow-[0_4px_20px_-4px_color-mix(in_srgb,var(--primary)_20%,transparent)]",
-    shadowNode: "group-hover:shadow-[0_0_12px_color-mix(in_srgb,var(--primary)_60%,transparent)]",
-  },
-  secondary: {
-    text: "group-hover:text-secondary",
-    border: "group-hover:border-secondary",
-    bg: "bg-secondary",
-    shadowBox: "hover:shadow-[0_4px_20px_-4px_color-mix(in_srgb,var(--secondary)_20%,transparent)]",
-    shadowNode: "group-hover:shadow-[0_0_12px_color-mix(in_srgb,var(--secondary)_60%,transparent)]",
-  },
-  tertiary: {
-    text: "group-hover:text-tertiary",
-    border: "group-hover:border-tertiary",
-    bg: "bg-tertiary",
-    shadowBox: "hover:shadow-[0_4px_20px_-4px_color-mix(in_srgb,var(--tertiary)_20%,transparent)]",
-    shadowNode: "group-hover:shadow-[0_0_12px_color-mix(in_srgb,var(--tertiary)_60%,transparent)]",
-  },
-  rosewater: {
-    text: "group-hover:text-rosewater",
-    border: "group-hover:border-rosewater",
-    bg: "bg-rosewater",
-    shadowBox: "hover:shadow-[0_4px_20px_-4px_color-mix(in_srgb,var(--rosewater)_20%,transparent)]",
-    shadowNode: "group-hover:shadow-[0_0_12px_color-mix(in_srgb,var(--rosewater)_60%,transparent)]",
-  },
-};
-
-const c = colorClasses[color];
+const { date, title, description, isLeft = false } = Astro.props;
 ---
-<div class="relative pl-8 sm:pl-32 py-6 group">
-  <!-- Date (desktop left, mobile top) -->
-  <div class={`font-pixel text-[9px] text-text-muted/70 transition-colors duration-300 mb-2 sm:mb-0 sm:absolute sm:left-0 sm:top-9 sm:w-24 sm:text-right ${c.text}`}>
-    {date}
+<div class="relative flex flex-col md:flex-row items-center w-full mb-12 group">
+  <!-- Mobile Node (Top aligned to match text) -->
+  <div class="absolute left-[20px] top-7 w-2.5 h-2.5 rounded-full bg-surface border-2 border-primary group-hover:bg-primary transition-colors -translate-x-1/2 z-10 md:hidden"></div>
+
+  <!-- Desktop Node (Center aligned) -->
+  <div class="hidden md:block absolute left-1/2 top-1/2 w-2.5 h-2.5 rounded-full bg-surface border-2 border-primary group-hover:bg-primary transition-colors -translate-x-1/2 -translate-y-1/2 z-10"></div>
+
+  <!-- Left Side (Desktop Only) -->
+  <div class="hidden md:flex w-1/2 pr-10 justify-end">
+    {isLeft && (
+      <div class="flex flex-col items-end w-full max-w-md">
+        <div class="font-pixel text-[10px] text-primary mb-2 opacity-80">{date}</div>
+        <div class="bg-overlay border border-highlight-med/40 rounded-xl p-5 transition-colors w-full text-left hover:border-primary/40 relative">
+          <h3 class="text-text-primary font-bold text-lg mb-1 relative z-10">{title}</h3>
+          <p class="text-text-muted text-sm leading-relaxed relative z-10">{description}</p>
+        </div>
+      </div>
+    )}
   </div>
-  
-  <!-- Line and Node -->
-  <div class="flex flex-col items-center absolute left-0 sm:left-28 top-0 h-full">
-    <!-- Line -->
-    <div class="w-[2px] h-full bg-highlight-med/30 group-last:bg-gradient-to-b group-last:from-highlight-med/30 group-last:to-transparent"></div>
-    
-    <!-- Node -->
-    <div class={`absolute top-8 w-[14px] h-[14px] rounded-full bg-surface border-2 border-highlight-med -translate-x-1/2 left-1/2 z-10 transition-all duration-300 ${c.border} ${c.shadowNode}`}>
-      <div class={`absolute inset-0 rounded-full scale-0 group-hover:scale-100 transition-transform duration-300 ${c.bg}`}></div>
+
+  <!-- Right Side (Also acts as Mobile Container) -->
+  <div class="w-full md:w-1/2 pl-12 md:pl-10 flex justify-start">
+    {/* Mobile Only Rendering */}
+    <div class="md:hidden flex flex-col items-start w-full">
+      <div class="font-pixel text-[10px] text-primary mb-2 opacity-80">{date}</div>
+      <div class="bg-overlay border border-highlight-med/40 rounded-xl p-5 transition-colors w-full text-left hover:border-primary/40 relative">
+        <h3 class="text-text-primary font-bold text-lg mb-1 relative z-10">{title}</h3>
+        <p class="text-text-muted text-sm leading-relaxed relative z-10">{description}</p>
+      </div>
     </div>
-  </div>
-  
-  <!-- Content -->
-  <div class={`relative bg-overlay/20 border border-highlight-med/40 rounded-xl p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:bg-overlay/40 ${c.border} ${c.shadowBox}`}>
-    <!-- Inner corner accent -->
-    <div class={`absolute top-0 right-0 w-8 h-8 opacity-0 group-hover:opacity-10 transition-opacity duration-300 bg-gradient-to-bl from-current to-transparent rounded-tr-xl ${c.text}`}></div>
-    
-    <h3 class={`text-text-primary font-bold text-lg sm:text-xl transition-colors duration-300 ${c.text}`}>{title}</h3>
-    <p class="text-text-muted mt-2 text-sm leading-relaxed">{description}</p>
+
+    {/* Desktop Right Side Rendering */}
+    {!isLeft && (
+      <div class="hidden md:flex flex-col items-start w-full max-w-md">
+        <div class="font-pixel text-[10px] text-primary mb-2 opacity-80">{date}</div>
+        <div class="bg-overlay border border-highlight-med/40 rounded-xl p-5 transition-colors w-full text-left hover:border-primary/40 relative">
+          <h3 class="text-text-primary font-bold text-lg mb-1 relative z-10">{title}</h3>
+          <p class="text-text-muted text-sm leading-relaxed relative z-10">{description}</p>
+        </div>
+      </div>
+    )}
   </div>
 </div>

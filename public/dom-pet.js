@@ -261,7 +261,11 @@
       }
       
       if (isSleeping) {
-         this.zzzElement.style.left = Math.round(this.x + voxX + extraX + 20) + 'px';
+         let zzzOffsetX = 20;
+         if (this.wallState && this.wallSide === 'RIGHT') {
+            zzzOffsetX = -20;
+         }
+         this.zzzElement.style.left = Math.round(this.x + voxX + extraX + zzzOffsetX) + 'px';
          this.zzzElement.style.top  = Math.round(this.y - (VISUAL_SIZE - COLLISION_H) - 5) + 'px';
       }
 

@@ -128,6 +128,7 @@ const tools = [
           <nav
             class="md:flex-grow overflow-x-auto md:overflow-y-auto custom-scroll p-2 flex flex-row md:flex-col gap-1 items-center md:items-stretch"
             id="labs-sidebar"
+            data-lenis-prevent
           >
             {
               tools.map((tool, idx) => (
@@ -157,6 +158,7 @@ const tools = [
         <div
           class="flex-grow relative bg-surface overflow-y-auto custom-scroll p-4 md:p-8"
           id="labs-content"
+          data-lenis-prevent
         >
           <PasswordEntropy />
           <PathfindingVis />
@@ -250,11 +252,11 @@ const tools = [
     background: var(--overlay);
   }
   .custom-scroll::-webkit-scrollbar-thumb {
-    background: var(--highlight-med);
+    background: color-mix(in srgb, var(--primary) 80%, transparent);
     border-radius: 3px;
   }
   .custom-scroll::-webkit-scrollbar-thumb:hover {
-    background: var(--text-muted);
+    background: var(--primary);
   }
 </style>
 

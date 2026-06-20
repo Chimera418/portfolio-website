@@ -58,6 +58,7 @@ const AVATAR_INDICES = Array.from({ length: 45 }, (_, i) => i);
         <div
           id="gb-message-wall"
           class="space-y-3 max-h-[680px] overflow-y-auto pr-1 custom-scroll"
+          data-lenis-prevent
         >
           <!-- Populated via LocalStorage on Client Side -->
         </div>
@@ -135,6 +136,7 @@ const AVATAR_INDICES = Array.from({ length: 45 }, (_, i) => i);
               </label>
               <div
                 class="grid grid-cols-5 gap-2 p-3 bg-overlay border border-highlight-med rounded-lg h-48 overflow-y-auto custom-scroll"
+                data-lenis-prevent
               >
                 {
                   AVATAR_INDICES.map((idx, i) => (
@@ -329,11 +331,11 @@ const AVATAR_INDICES = Array.from({ length: 45 }, (_, i) => i);
     border-radius: 2px;
   }
   .custom-scroll::-webkit-scrollbar-thumb {
-    background: var(--highlight-med);
+    background: color-mix(in srgb, var(--primary) 80%, transparent);
     border-radius: 2px;
   }
   .custom-scroll::-webkit-scrollbar-thumb:hover {
-    background: var(--text-muted);
+    background: var(--primary);
   }
 
   /* Input focus ring */

@@ -197,18 +197,18 @@
   }
   
   ::-webkit-scrollbar-thumb {
-    background: var(--highlight-med);
+    background: color-mix(in srgb, var(--primary) 80%, transparent);
     border-radius: 10px;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--text-muted);
+    background: var(--primary);
   }
 
   /* Firefox Scrollbar */
   * {
     scrollbar-width: thin;
-    scrollbar-color: var(--highlight-med) transparent;
+    scrollbar-color: var(--primary) transparent;
   }
 
   /* Bento grid stagger — each direct child of the grid delays slightly */

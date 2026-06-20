@@ -262,9 +262,14 @@
       
       if (isSleeping) {
          let zzzOffsetX = 20;
+         const clientW = document.documentElement.clientWidth;
+         
          if (this.wallState && this.wallSide === 'RIGHT') {
-            zzzOffsetX = -20;
+            zzzOffsetX = -25;
+         } else if (!this.wallState && this.x > clientW - 60) {
+            zzzOffsetX = -30;
          }
+
          this.zzzElement.style.left = Math.round(this.x + voxX + extraX + zzzOffsetX) + 'px';
          this.zzzElement.style.top  = Math.round(this.y - (VISUAL_SIZE - COLLISION_H) - 5) + 'px';
       }

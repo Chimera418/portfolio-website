@@ -91,7 +91,7 @@ const tools = [
       </p>
     </section>
 
-    <div class="mb-10 h-[800px] md:h-[calc(100vh-280px)] min-h-[600px] md:min-h-[500px] flex flex-col">
+    <div class="mb-10 h-[calc(100vh-120px)] md:h-[calc(100vh-280px)] min-h-[500px] md:min-h-[500px] flex flex-col">
       <!-- Terminal Header -->
       <div
         class="bg-overlay border border-highlight-med rounded-t-xl px-4 py-3 flex items-center gap-3"
@@ -126,7 +126,7 @@ const tools = [
           </div>
 
           <nav
-            class="md:flex-grow overflow-x-auto md:overflow-y-auto custom-scroll p-3 flex flex-row md:flex-col gap-2 items-center md:items-stretch"
+            class="md:flex-grow overflow-x-auto md:overflow-y-auto custom-scroll hide-scrollbar-mobile p-3 flex flex-row md:flex-col gap-2 items-center md:items-stretch"
             id="labs-sidebar"
             data-lenis-prevent
           >
@@ -257,6 +257,16 @@ const tools = [
   }
   .custom-scroll::-webkit-scrollbar-thumb:hover {
     background: var(--primary);
+  }
+  
+  @media (max-width: 768px) {
+    .hide-scrollbar-mobile::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar-mobile {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
   }
 </style>
 

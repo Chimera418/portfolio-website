@@ -147,7 +147,7 @@
       // ── DOM sprite ───────────────────────────────────────────────────────
       this.element = document.createElement('div');
       this.element.style.cssText =
-        `position:absolute;width:${VISUAL_SIZE}px;height:${VISUAL_SIZE}px;z-index:999999;pointer-events:none;`;
+        `position:absolute;width:${VISUAL_SIZE}px;height:${VISUAL_SIZE}px;z-index:50;pointer-events:none;`;
       this.img = document.createElement('img');
       this.img.style.cssText = 'width:100%;height:100%;image-rendering:pixelated;';
       this.element.appendChild(this.img);

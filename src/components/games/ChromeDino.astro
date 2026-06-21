@@ -3,7 +3,8 @@
 
 <div
   id="dino-wrapper"
-  class="w-full h-full flex flex-col items-stretch select-none overflow-hidden"
+  class="w-full h-full flex flex-col items-stretch select-none overflow-hidden touch-action-none"
+  style="touch-action: none;"
 >
   <!-- The iframe fills the entire game card area (minus the mode selector) -->
   <iframe
@@ -91,6 +92,14 @@
           '*'
         );
       }, { passive: false });
+
+      wrapper.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        iframe.contentWindow?.postMessage(
+          { type: 'KEY', eventType: 'keydown', key: ' ', code: 'Space', keyCode: 32 },
+          '*'
+        );
+      });
     }
 
     // Handle option selection

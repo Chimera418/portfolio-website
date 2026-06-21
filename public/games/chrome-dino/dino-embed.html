@@ -172,7 +172,7 @@
       });
 
       // Enable jumping via mouse click inside the iframe on PC
-      document.addEventListener('mousedown', function (e) {
+      document.addEventListener('pointerdown', function (e) {
         if (e.target && e.target.closest && e.target.closest('.dino-option')) return;
         var evDown = new KeyboardEvent('keydown', { bubbles: true, cancelable: true });
         Object.defineProperty(evDown, 'keyCode', { get: function() { return 32; } });
@@ -185,7 +185,7 @@
           Object.defineProperty(evUp, 'which', { get: function() { return 32; } });
           document.dispatchEvent(evUp);
         }, 150);
-      });
+      }, true);
     });
 
     // Relay key events from parent

@@ -69,7 +69,7 @@ export default function InteractiveBlob({ className = "" }: { className?: string
   if (isAngry) {
     mood = 'angry';
   } else if (isSleeping) {
-    mood = 'sad'; // Usually looks droopy/sleepy
+    mood = 'password'; // Password mood might have closed/covered eyes
   } else if (isHovered) {
     mood = 'happy';
     happyEyes = 'smile';

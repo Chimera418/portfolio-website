@@ -25,7 +25,7 @@ const imagePath = `/images/projects/${slug}.jpg`;
 const absoluteImagePath = path.join(process.cwd(), 'public', 'images', 'projects', `${slug}.jpg`);
 const hasImage = fs.existsSync(absoluteImagePath);
 ---
-<div class="bg-surface-dim border border-highlight-med rounded-xl overflow-hidden hover:border-primary transition-colors flex flex-col group h-full relative">
+<div class="bg-surface-dim border-2 border-highlight-med rounded-xl overflow-hidden hover:border-primary transition-colors flex flex-col group h-full relative">
   <!-- Main Link covering the card -->
   <a href={`/projects/${slug}`} class="absolute inset-0 z-10" aria-label={`View details for ${title}`}></a>
 

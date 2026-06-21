@@ -148,7 +148,7 @@ const facts = [
     <!-- Quick Stats / Vibes -->
     <section class="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <div
-        class="bg-overlay border border-highlight-med rounded-xl p-5 hover:border-primary/50 transition-colors group"
+        class="bg-overlay border-2 border-highlight-med rounded-xl p-5 hover:border-primary/50 transition-colors group"
       >
         <p class="font-pixel text-xs text-primary mb-2 tracking-wider">STYLE</p>
         <p
@@ -161,7 +161,7 @@ const facts = [
         </p>
       </div>
       <div
-        class="bg-overlay border border-highlight-med rounded-xl p-5 hover:border-tertiary/50 transition-colors group"
+        class="bg-overlay border-2 border-highlight-med rounded-xl p-5 hover:border-tertiary/50 transition-colors group"
       >
         <p class="font-pixel text-xs text-tertiary mb-2 tracking-wider">
           ACTUALLY
@@ -234,7 +234,7 @@ const facts = [
       <p class="text-text-muted text-sm mb-8">
         Things I actually use. GitHub has more receipts.
       </p>
-      <div class="bg-overlay border border-highlight-med rounded-xl p-6 md:p-8">
+      <div class="bg-overlay border-2 border-highlight-med rounded-xl p-6 md:p-8">
         <TechStack category="Spoken Languages" skills={spokenLanguages} />
         <TechStack category="Programming Languages" skills={languages} />
         <TechStack category="Frontend" skills={frontend} />
@@ -270,7 +270,7 @@ const facts = [
         {
           facts.map((fact) => (
             <div
-              class={`bg-overlay border border-highlight-med rounded-xl p-5 transition-colors group ${fact.borderColor}`}
+              class={`bg-overlay border-2 border-highlight-med rounded-xl p-5 transition-colors group ${fact.borderColor}`}
             >
               <div class="flex items-center gap-3 mb-3">
                 <span class="text-2xl">{fact.icon}</span>

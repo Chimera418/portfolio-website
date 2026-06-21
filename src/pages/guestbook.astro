@@ -72,7 +72,7 @@ const AVATAR_INDICES = Array.from({ length: 45 }, (_, i) => i);
       <!-- Right: Submit Form (2/5 width) -->
       <div class="lg:col-span-2 lg:sticky lg:top-28">
         <div
-          class="bg-surface border border-highlight-med rounded-xl p-6 relative overflow-hidden"
+          class="bg-surface border-2 border-highlight-med rounded-xl p-6 relative overflow-hidden"
         >
           <!-- Decorative pixel corner accents -->
           <div
@@ -286,7 +286,7 @@ const AVATAR_INDICES = Array.from({ length: 45 }, (_, i) => i);
 
         <!-- Pixel bar decoration -->
         <div
-          class="mt-4 bg-overlay border border-highlight-med rounded-xl p-4 flex items-center gap-3"
+          class="mt-4 bg-overlay border-2 border-highlight-med rounded-xl p-4 flex items-center gap-3"
         >
           <div class="flex gap-1 items-end">
             {
@@ -461,7 +461,7 @@ const AVATAR_INDICES = Array.from({ length: 45 }, (_, i) => i);
       : msg.date || "Just now";
 
     return `
-      <div class="message-card bg-surface border border-highlight-med rounded-xl p-5 hover:border-secondary/50 transition-all duration-300 group animate-fade-in">
+      <div class="message-card bg-surface border-2 border-highlight-med rounded-xl p-5 hover:border-secondary/50 transition-all duration-300 group animate-fade-in">
         <div class="flex items-start gap-4">
           <div class="w-10 h-10 flex-shrink-0 bg-overlay border border-highlight-med rounded-lg flex items-center justify-center overflow-hidden group-hover:scale-110 transition-transform duration-200">
              <div class="sprite-avatar" style="--sprite-idx: ${msg.avatarIdx};"></div>

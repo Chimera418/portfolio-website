@@ -17,6 +17,11 @@ export default defineConfig({
 
   base: process.env.NODE_ENV === 'production' ? '/' : '/',
 
+  prefetch: {
+    prefetchAll: true,
+    defaultStrategy: 'hover'
+  },
+
   vite: {
     plugins: [tailwindcss()]
   },

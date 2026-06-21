@@ -384,7 +384,7 @@ const games = [
       {games.map((game) => (
         <div
           data-game={game.id}
-          class="game-card group cursor-pointer bg-surface-dim border border-highlight-med rounded-xl overflow-hidden hover:border-primary transition-colors duration-200"
+          class="game-card group cursor-pointer bg-surface-dim border-2 border-highlight-med rounded-xl overflow-hidden hover:border-primary transition-colors duration-200"
         >
           <div class="p-5 flex flex-col gap-4">
 
@@ -447,7 +447,7 @@ const games = [
         </div>
         <button
           id="close-game-btn"
-          class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-highlight-med text-text-muted font-mono text-xs uppercase tracking-wider hover:border-red/60 hover:text-red transition-colors duration-200"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-highlight-med text-text-muted font-mono text-xs uppercase tracking-wider hover:border-red/60 hover:text-red transition-colors duration-200"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
@@ -458,18 +458,18 @@ const games = [
 
       <!-- Game viewport -->
       <div class="flex-grow relative overflow-hidden flex items-center justify-center p-4 md:p-8 bg-surface-dim">
-        <div id="game-content-chrome-dino"   class="game-content hidden w-full h-full max-w-5xl  max-h-[560px] border border-highlight-med rounded-xl overflow-hidden shadow-2xl"><ChromeDino /></div>
-        <div id="game-content-snake"         class="game-content hidden w-full h-full max-w-3xl  max-h-[580px] border border-highlight-med rounded-xl overflow-hidden shadow-2xl"><Snake /></div>
-        <div id="game-content-tetris"        class="game-content hidden w-full h-full max-w-3xl  max-h-[760px] border border-highlight-med rounded-xl overflow-hidden shadow-2xl"><Tetris /></div>
-        <div id="game-content-2048"          class="game-content hidden w-full h-full max-w-lg   max-h-[580px] border border-highlight-med rounded-xl overflow-hidden shadow-2xl"><Game2048 /></div>
-        <div id="game-content-flappy-bird"   class="game-content hidden w-full h-full max-w-md   max-h-[580px] border border-highlight-med rounded-xl overflow-hidden shadow-2xl"><FlappyBird /></div>
-        <div id="game-content-memory-match"  class="game-content hidden w-full h-full max-w-4xl  max-h-[680px] border border-highlight-med rounded-xl overflow-hidden shadow-2xl"><MemoryMatch /></div>
-        <div id="game-content-tic-tac-toe"   class="game-content hidden w-full h-full max-w-lg   max-h-[580px] border border-highlight-med rounded-xl overflow-hidden shadow-2xl"><TicTacToe /></div>
-        <div id="game-content-dont-wordle"   class="game-content hidden w-full h-full max-w-4xl  max-h-[820px] border border-highlight-med rounded-xl overflow-hidden shadow-2xl"><DontWordle /></div>
-        <div id="game-content-color-guesser" class="game-content hidden w-full h-full max-w-3xl  max-h-[560px] border border-highlight-med rounded-xl overflow-hidden shadow-2xl"><ColorGuesser /></div>
-        <div id="game-content-wordle"        class="game-content hidden w-full h-full max-w-md   max-h-[700px] border border-highlight-med rounded-xl overflow-hidden shadow-2xl bg-surface-dim"><Wordle /></div>
-        <div id="game-content-connect-4"     class="game-content hidden w-full h-full max-w-2xl  max-h-[700px] border border-highlight-med rounded-xl overflow-hidden shadow-2xl bg-surface-dim"><Connect4 /></div>
-        <div id="game-content-gravity-maze"   class="game-content hidden w-full h-full max-w-4xl  max-h-[820px] border border-highlight-med rounded-xl overflow-hidden shadow-2xl bg-surface-dim"><GravityMaze /></div>
+        <div id="game-content-chrome-dino"   class="game-content hidden w-full h-full max-w-5xl  max-h-[560px] border-2 border-highlight-med rounded-xl overflow-hidden shadow-2xl"><ChromeDino /></div>
+        <div id="game-content-snake"         class="game-content hidden w-full h-full max-w-3xl  max-h-[580px] border-2 border-highlight-med rounded-xl overflow-hidden shadow-2xl"><Snake /></div>
+        <div id="game-content-tetris"        class="game-content hidden w-full h-full max-w-3xl  max-h-[760px] border-2 border-highlight-med rounded-xl overflow-hidden shadow-2xl"><Tetris /></div>
+        <div id="game-content-2048"          class="game-content hidden w-full h-full max-w-lg   max-h-[580px] border-2 border-highlight-med rounded-xl overflow-hidden shadow-2xl"><Game2048 /></div>
+        <div id="game-content-flappy-bird"   class="game-content hidden w-full h-full max-w-md   max-h-[580px] border-2 border-highlight-med rounded-xl overflow-hidden shadow-2xl"><FlappyBird /></div>
+        <div id="game-content-memory-match"  class="game-content hidden w-full h-full max-w-4xl  max-h-[680px] border-2 border-highlight-med rounded-xl overflow-hidden shadow-2xl"><MemoryMatch /></div>
+        <div id="game-content-tic-tac-toe"   class="game-content hidden w-full h-full max-w-lg   max-h-[580px] border-2 border-highlight-med rounded-xl overflow-hidden shadow-2xl"><TicTacToe /></div>
+        <div id="game-content-dont-wordle"   class="game-content hidden w-full h-full max-w-4xl  max-h-[820px] border-2 border-highlight-med rounded-xl overflow-hidden shadow-2xl"><DontWordle /></div>
+        <div id="game-content-color-guesser" class="game-content hidden w-full h-full max-w-3xl  max-h-[560px] border-2 border-highlight-med rounded-xl overflow-hidden shadow-2xl"><ColorGuesser /></div>
+        <div id="game-content-wordle"        class="game-content hidden w-full h-full max-w-md   max-h-[700px] border-2 border-highlight-med rounded-xl overflow-hidden shadow-2xl bg-surface-dim"><Wordle /></div>
+        <div id="game-content-connect-4"     class="game-content hidden w-full h-full max-w-2xl  max-h-[700px] border-2 border-highlight-med rounded-xl overflow-hidden shadow-2xl bg-surface-dim"><Connect4 /></div>
+        <div id="game-content-gravity-maze"   class="game-content hidden w-full h-full max-w-4xl  max-h-[820px] border-2 border-highlight-med rounded-xl overflow-hidden shadow-2xl bg-surface-dim"><GravityMaze /></div>
       </div>
 
     </div>

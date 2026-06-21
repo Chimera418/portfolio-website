@@ -29,7 +29,6 @@ import CommandPalette from "../components/CommandPalette.astro";
         src="https://occepykq6d5iw5pd.public.blob.vercel-storage.com/Never%20gonna%20Meow%20you%20up.mp4"
         autoplay
         loop
-        muted
         playsinline></video>
     </div>
 
@@ -68,7 +67,7 @@ import CommandPalette from "../components/CommandPalette.astro";
     >
       <svg
         id="icon-muted"
-        class="w-4 h-4 group-hover:text-primary transition-colors"
+        class="w-4 h-4 group-hover:text-primary transition-colors hidden"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -81,7 +80,7 @@ import CommandPalette from "../components/CommandPalette.astro";
       >
       <svg
         id="icon-unmuted"
-        class="w-4 h-4 text-primary hidden"
+        class="w-4 h-4 text-primary"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -90,7 +89,7 @@ import CommandPalette from "../components/CommandPalette.astro";
           d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path
           d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg
       >
-      <span id="unmute-text">UNMUTE</span>
+      <span id="unmute-text">MUTE</span>
     </button>
 
     <!-- Initialize Theme Variables -->
@@ -110,7 +109,38 @@ import CommandPalette from "../components/CommandPalette.astro";
       const bgVideo = document.querySelector("video");
 
       if (unmuteBtn && bgVideo) {
-        unmuteBtn.addEventListener("click", () => {
+        bgVideo.volume = 0.5;
+        bgVideo.muted = false;
+
+        // Attempt to play unmuted. If the browser blocks it due to autoplay policies,
+        // we will wait for the first click on the document to start playing unmuted.
+        const playPromise = bgVideo.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {
+            // Browser blocked unmuted autoplay.
+            // Play it muted for now so the background is moving.
+            bgVideo.muted = true;
+            unmuteText.textContent = "UNMUTE";
+            iconMuted.classList.remove("hidden");
+            iconUnmuted.classList.add("hidden");
+            bgVideo.play();
+
+            // Setup a one-time click listener on the whole document to unmute
+            const unlockAudio = () => {
+              bgVideo.muted = false;
+              unmuteText.textContent = "MUTE";
+              iconMuted.classList.add("hidden");
+              iconUnmuted.classList.remove("hidden");
+              document.removeEventListener('click', unlockAudio);
+              document.removeEventListener('keydown', unlockAudio);
+            };
+            document.addEventListener('click', unlockAudio);
+            document.addEventListener('keydown', unlockAudio);
+          });
+        }
+
+        unmuteBtn.addEventListener("click", (e) => {
+          e.stopPropagation(); // prevent triggering the document listener immediately if clicked
           if (bgVideo.muted) {
             bgVideo.muted = false;
             bgVideo.volume = 0.5;

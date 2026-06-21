@@ -176,6 +176,13 @@
     });
   });
 
+  window.addEventListener('theme-updated', (e: Event) => {
+    const customEvent = e as CustomEvent;
+    if (customEvent.detail) {
+      updateFlavorUI(customEvent.detail);
+    }
+  });
+
   // Toggles logic
   const crtToggle = document.getElementById('crt-mode-toggle') as HTMLInputElement;
   const bgEffectLabel = document.getElementById('bg-effect-label');

@@ -322,4 +322,15 @@
     opacity: 1;
     transition-delay: 0.35s;
   }
+
+  .invert-theme {
+    filter: invert(1) hue-rotate(180deg);
+    background-color: #fff !important;
+  }
+
+  .invert-theme img,
+  .invert-theme video,
+  .invert-theme canvas {
+    filter: invert(1) hue-rotate(180deg);
+  }
 }

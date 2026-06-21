@@ -75,7 +75,7 @@ import ThemeDrawer from './ThemeDrawer.astro';
 </div>
 
 <!-- Music Player Island (Bottom) -->
-<div id="music-indicator" class="fixed bottom-6 left-6 z-[999] flex items-center gap-4 bg-surface/90 backdrop-blur-md border border-highlight-med rounded-full px-5 py-2.5 shadow-2xl transition-all duration-500 opacity-0 translate-y-8 pointer-events-none">
+<div id="music-indicator" class="fixed bottom-6 right-6 z-[999] flex items-center gap-4 bg-surface/90 backdrop-blur-md border border-highlight-med rounded-full px-5 py-2.5 shadow-2xl transition-all duration-500 opacity-0 translate-y-8 pointer-events-none">
   <div class="relative flex h-3 w-3">
     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
     <span class="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
@@ -179,35 +179,34 @@ import ThemeDrawer from './ThemeDrawer.astro';
   // Lofi Music Player on Logo Click
   const logoBtn = document.getElementById('navbar-logo');
   const musicIndicator = document.getElementById('music-indicator');
-  let lofiAudio = null;
+  
+  // Initialize audio immediately so it starts buffering
+  let lofiAudio = new Audio('https://occepykq6d5iw5pd.public.blob.vercel-storage.com/Voice%20of%20no%20Return%20-%20Normal%20%28NieR_Automata%20Original%20Soundtrack%29%E3%80%90Audio%E3%80%91.mp3');
+  lofiAudio.preload = 'auto';
+  lofiAudio.loop = true;
+  lofiAudio.volume = 0.35;
   let isPlaying = false;
   
+  const toggleMusic = () => {
+    if (isPlaying) {
+      lofiAudio.pause();
+      logoBtn.classList.remove('animate-pulse');
+      if (musicIndicator) {
+        musicIndicator.classList.add('opacity-0', 'translate-y-8', 'pointer-events-none');
+        musicIndicator.classList.remove('opacity-100', 'translate-y-0');
+      }
+    } else {
+      lofiAudio.play().catch(e => console.log("Audio play failed:", e));
+      logoBtn.classList.add('animate-pulse');
+      if (musicIndicator) {
+        musicIndicator.classList.remove('opacity-0', 'translate-y-8', 'pointer-events-none');
+        musicIndicator.classList.add('opacity-100', 'translate-y-0');
+      }
+    }
+    isPlaying = !isPlaying;
+  };
+
   if (logoBtn) {
-    logoBtn.addEventListener('click', () => {
-      if (!lofiAudio) {
-        // Using the NieR Automata soundtrack provided by user
-        lofiAudio = new Audio('https://occepykq6d5iw5pd.public.blob.vercel-storage.com/Voice%20of%20no%20Return%20-%20Normal%20%28NieR_Automata%20Original%20Soundtrack%29%E3%80%90Audio%E3%80%91.mp3');
-        lofiAudio.loop = true;
-        // Toned down to stay quietly in the background
-        lofiAudio.volume = 0.35;
-      }
-      
-      if (isPlaying) {
-        lofiAudio.pause();
-        logoBtn.classList.remove('animate-pulse');
-        if (musicIndicator) {
-          musicIndicator.classList.add('opacity-0', 'translate-y-8', 'pointer-events-none');
-          musicIndicator.classList.remove('opacity-100', 'translate-y-0');
-        }
-      } else {
-        lofiAudio.play().catch(e => console.log("Audio play failed:", e));
-        logoBtn.classList.add('animate-pulse');
-        if (musicIndicator) {
-          musicIndicator.classList.remove('opacity-0', 'translate-y-8', 'pointer-events-none');
-          musicIndicator.classList.add('opacity-100', 'translate-y-0');
-        }
-      }
-      isPlaying = !isPlaying;
-    });
+    logoBtn.addEventListener('click', toggleMusic);
   }
 </script>

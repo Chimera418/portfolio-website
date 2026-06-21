@@ -173,29 +173,26 @@
 
       // Enable jumping via mouse click inside the iframe on PC
       document.addEventListener('mousedown', function (e) {
-        // Only trigger if not clicking a button (like the game over restart button, though usually that's handled internally)
-        document.dispatchEvent(new KeyboardEvent('keydown', {
-          key:       ' ',
-          code:      'Space',
-          keyCode:   32,
-          which:     32,
-          bubbles:   true,
-          cancelable: true,
-        }));
+        if (Runner.instance_) {
+          Runner.instance_.onKeyDown({ type: 'keydown', keyCode: 32, preventDefault: function(){} });
+          setTimeout(function() {
+            Runner.instance_.onKeyUp({ type: 'keyup', keyCode: 32, preventDefault: function(){} });
+          }, 100);
+        }
       });
     });
 
     // Relay key events from parent
     window.addEventListener('message', function (e) {
       if (e.data && e.data.type === 'KEY') {
-        document.dispatchEvent(new KeyboardEvent(e.data.eventType, {
-          key:       e.data.key,
-          code:      e.data.code,
-          keyCode:   e.data.keyCode,
-          which:     e.data.keyCode,
-          bubbles:   true,
-          cancelable: true,
-        }));
+        if (Runner.instance_) {
+          var mockEvent = { type: e.data.eventType, keyCode: e.data.keyCode, preventDefault: function(){} };
+          if (e.data.eventType === 'keydown') {
+            Runner.instance_.onKeyDown(mockEvent);
+          } else if (e.data.eventType === 'keyup') {
+            Runner.instance_.onKeyUp(mockEvent);
+          }
+        }
       }
     });
   </script>

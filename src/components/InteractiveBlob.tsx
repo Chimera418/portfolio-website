@@ -103,7 +103,7 @@ export default function InteractiveBlob({ className = "" }: { className?: string
       className={`relative cursor-pointer transition-colors duration-300 ${className}`}
     >
       {isSleeping && (
-        <div className="absolute top-[5%] right-[15%] w-16 h-12 pointer-events-none z-10 font-bold text-white/80 select-none" style={{ fontFamily: 'comic sans ms, sans-serif' }}>
+        <div className="absolute top-[5%] right-[15%] w-16 h-12 pointer-events-none z-10 font-bold text-text-secondary select-none" style={{ fontFamily: 'comic sans ms, sans-serif' }}>
           <span className="absolute bottom-0 left-0 text-sm opacity-0" style={{ animation: 'float-zzz 3s infinite linear 0s' }}>Z</span>
           <span className="absolute bottom-3 left-4 text-sm opacity-0" style={{ animation: 'float-zzz 3s infinite linear 1s' }}>Z</span>
           <span className="absolute bottom-6 left-8 text-sm opacity-0" style={{ animation: 'float-zzz 3s infinite linear 2s' }}>Z</span>

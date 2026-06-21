@@ -115,7 +115,7 @@
   if (canvas && ctx && nextCanvas && nextCtx && startBtn && overlay && title) {
     // ── Board configuration ─────────────────────────────────────────────────
     // Change these three values and the board will adapt automatically.
-    const COLS = 15;
+    const COLS = 10;
     const ROWS = 20;
     const BLOCK_SIZE = 24;
 
@@ -123,11 +123,13 @@
     canvas.width = COLS * BLOCK_SIZE;
     canvas.height = ROWS * BLOCK_SIZE;
 
-    // Keep sidebar height in sync with the board
+    // Keep sidebar height in sync with the board on desktop
     const sidebar = document.getElementById(
       "tetris-sidebar",
     ) as HTMLElement | null;
-    if (sidebar) sidebar.style.height = canvas.height + "px";
+    if (sidebar && window.innerWidth >= 768) {
+      sidebar.style.height = canvas.height + "px";
+    }
 
     // Rosé Pine palette for pieces
     const COLORS = [

@@ -68,8 +68,8 @@
       w: 34,
       h: 24,
       velocity: 0,
-      gravity: 0.5,
-      jump: -7.5,
+      gravity: 0.25,
+      jump: -5.5,
       rotation: 0,
       
       draw() {
@@ -112,7 +112,7 @@
       items: [] as {x: number, y: number, passed: boolean}[],
       w: 60,
       gap: 170,
-      dx: 2.0,
+      dx: 1.25,
       
       draw() {
         for (let i = 0; i < this.items.length; i++) {

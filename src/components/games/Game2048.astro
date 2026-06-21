@@ -476,8 +476,8 @@
     let touchStartX = 0;
     let touchStartY = 0;
     
-    // Attach to the container to prevent global swiping interference, but use document for touchend
-    tilesContainer.parentElement?.addEventListener('touchstart', (e) => {
+    // Attach to the container to prevent global swiping interference
+    container.addEventListener('touchstart', (e) => {
       const gameContainer = document.getElementById('game-content-2048');
       if (!gameContainer || gameContainer.classList.contains('hidden')) return;
       
@@ -486,13 +486,13 @@
       e.preventDefault(); // Prevent scrolling on the game board
     }, {passive: false});
 
-    tilesContainer.parentElement?.addEventListener('touchmove', (e) => {
+    container.addEventListener('touchmove', (e) => {
       const gameContainer = document.getElementById('game-content-2048');
       if (!gameContainer || gameContainer.classList.contains('hidden')) return;
       e.preventDefault(); // Prevent scroll to avoid touch cancellation
     }, {passive: false});
 
-    tilesContainer.parentElement?.addEventListener('touchend', (e) => {
+    container.addEventListener('touchend', (e) => {
       const gameContainer = document.getElementById('game-content-2048');
       if (!gameContainer || gameContainer.classList.contains('hidden')) return;
       if (isGameOver || (isGameWon && !keepPlaying)) return;

@@ -82,6 +82,17 @@
       }
     });
 
+    const wrapper = document.getElementById('dino-wrapper');
+    if (wrapper) {
+      wrapper.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        iframe.contentWindow?.postMessage(
+          { type: 'KEY', eventType: 'keydown', key: ' ', code: 'Space', keyCode: 32 },
+          '*'
+        );
+      }, { passive: false });
+    }
+
     // Handle option selection
     options.forEach(opt => {
       opt.addEventListener('click', () => {

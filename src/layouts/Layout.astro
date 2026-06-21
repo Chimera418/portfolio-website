@@ -242,14 +242,14 @@ const { title } = Astro.props;
 
     <!-- Webrings -->
     <div
-      class="w-full max-w-7xl px-5 sm:px-16 pb-5 flex flex-wrap justify-center items-center gap-4 font-pixel text-[10px] uppercase tracking-widest text-text-muted"
+      class="w-full max-w-7xl px-5 sm:px-16 pb-5 flex justify-center items-center font-pixel text-[10px] uppercase tracking-widest text-text-muted"
     >
       <div
         data-solid="true"
-        class="bg-overlay border border-highlight-med rounded-xl flex flex-wrap justify-center items-stretch gap-0 min-h-[36px] relative"
+        class="bg-overlay border border-highlight-med rounded-xl flex flex-col md:flex-row justify-center items-stretch gap-0 min-h-[36px] overflow-hidden relative"
       >
         <!-- ● WEBRINGS label -->
-        <div class="flex items-center gap-2 px-4 border-r border-highlight-med">
+        <div class="flex items-center gap-2 px-4 py-3 md:py-0 border-b md:border-b-0 md:border-r border-highlight-med">
           <span
             class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_var(--primary)] flex-shrink-0"
           ></span>
@@ -265,7 +265,7 @@ const { title } = Astro.props;
           href="https://ctp-webr.ing/"
           target="_blank"
           rel="noopener"
-          class="flex items-center gap-1.5 px-4 border-r border-highlight-med text-text-primary hover:text-primary transition-colors group/home"
+          class="flex items-center gap-1.5 px-4 py-3 md:py-0 border-b md:border-b-0 md:border-r border-highlight-med text-text-primary hover:text-primary transition-colors group/home"
         >
           <svg
             class="w-3 h-3 flex-shrink-0 opacity-50 group-hover/home:opacity-100 transition-opacity"
@@ -287,11 +287,11 @@ const { title } = Astro.props;
         </a>
 
         <!-- Custom chevron dropdown trigger -->
-        <div class="relative flex items-center border-r border-highlight-med">
+        <div class="relative flex items-center border-b md:border-b-0 md:border-r border-highlight-med">
           <button
             id="webring-dropdown-btn"
             onclick="toggleWebringDropdown()"
-            class="flex items-center justify-center w-9 h-full text-text-muted hover:text-primary hover:bg-surface/40 transition-colors"
+            class="flex items-center justify-center w-full md:w-9 h-10 md:h-full text-text-muted hover:text-primary hover:bg-surface/40 transition-colors"
             aria-label="Switch webring"
           >
             <svg
@@ -341,7 +341,7 @@ const { title } = Astro.props;
           id="webring-prev"
           href="https://ctp-webr.ing/chimera/previous"
           aria-label="Previous site"
-          class="flex items-center gap-1.5 px-4 border-r border-highlight-med text-text-muted hover:text-primary transition-colors group/prev"
+          class="flex items-center justify-center gap-1.5 px-4 py-3 md:py-0 border-b md:border-b-0 md:border-r border-highlight-med text-text-muted hover:text-primary transition-colors group/prev"
         >
           <svg
             class="w-3 h-3 flex-shrink-0 group-hover/prev:-translate-x-0.5 transition-transform"
@@ -364,7 +364,7 @@ const { title } = Astro.props;
           title="Catppuccin webring index"
           target="_blank"
           rel="noopener"
-          class="flex items-center gap-1.5 px-4 border-r border-highlight-med text-primary hover:text-text-primary transition-colors group/rand"
+          class="flex items-center justify-center gap-1.5 px-4 py-3 md:py-0 border-b md:border-b-0 md:border-r border-highlight-med text-primary hover:text-text-primary transition-colors group/rand"
         >
           <svg
             id="webring-icon-dice"
@@ -415,7 +415,7 @@ const { title } = Astro.props;
           id="webring-next"
           href="https://ctp-webr.ing/chimera/next"
           aria-label="Next site"
-          class="flex items-center gap-1.5 px-4 text-text-muted hover:text-primary transition-colors group/next"
+          class="flex items-center justify-center gap-1.5 px-4 py-3 md:py-0 text-text-muted hover:text-primary transition-colors group/next"
         >
           <span class="leading-none translate-y-[1px]">NEXT</span>
           <svg
@@ -521,7 +521,7 @@ const { title } = Astro.props;
 
       <div
         data-solid="true"
-        class="w-full bg-overlay border border-highlight-med rounded-xl px-5 py-3 grid grid-cols-1 md:grid-cols-3 items-center gap-4 font-pixel text-[10px] uppercase tracking-widest text-text-muted"
+        class="w-full bg-overlay border border-highlight-med rounded-xl px-5 py-3 flex flex-col md:flex-row justify-between items-center gap-4 font-pixel text-[10px] uppercase tracking-widest text-text-muted"
       >
         <!-- Left: copyright + status -->
         <div class="flex items-center justify-start gap-4 min-w-0">

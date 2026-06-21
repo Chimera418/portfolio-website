@@ -26,7 +26,8 @@
     </div>
   </div>
 
-  <div class="relative w-full max-w-[400px] aspect-square bg-highlight-low rounded-lg p-3 touch-none">
+  <div class="relative w-full max-w-[400px] bg-highlight-low rounded-lg p-3 touch-none">
+    <div style="padding-bottom: 100%;"></div>
     <!-- Grid Background -->
     <div class="absolute inset-3 grid grid-cols-4 grid-rows-4 gap-3">
       {Array.from({length: 16}).map(() => (
@@ -38,9 +39,9 @@
     <div id="game2048-tiles" class="absolute inset-3" style="pointer-events:none;"></div>
 
     <!-- Game Over / Start Overlay -->
-    <div id="game2048-overlay" class="absolute inset-0 bg-surface/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-lg z-10">
+    <div id="game2048-overlay" class="absolute inset-0 bg-surface/80 backdrop-blur-sm flex flex-col items-center justify-center rounded-lg z-10" style="pointer-events: auto;">
       <h3 id="game2048-message" class="font-pixel text-primary text-3xl mb-4">2048</h3>
-      <button id="game2048-retry-btn" class="px-6 py-2 bg-primary/10 border-2 border-primary/50 text-primary hover:bg-primary/20 hover:border-primary rounded-lg font-pixel transition-colors">
+      <button id="game2048-retry-btn" class="px-6 py-2 bg-primary/10 border-2 border-primary/50 text-primary hover:bg-primary/20 hover:border-primary rounded-lg font-pixel transition-colors relative z-20">
         PLAY
       </button>
     </div>
@@ -481,20 +482,25 @@
       const gameContainer = document.getElementById('game-content-2048');
       if (!gameContainer || gameContainer.classList.contains('hidden')) return;
       
+      // Allow button clicks
+      if (e.target && (e.target as HTMLElement).closest && (e.target as HTMLElement).closest('button')) return;
+      
       touchStartX = e.touches[0].clientX;
       touchStartY = e.touches[0].clientY;
-      e.preventDefault(); // Prevent scrolling on the game board
+      if (e.cancelable) e.preventDefault(); // Prevent scrolling on the game board
     }, {passive: false});
 
     container.addEventListener('touchmove', (e) => {
       const gameContainer = document.getElementById('game-content-2048');
       if (!gameContainer || gameContainer.classList.contains('hidden')) return;
-      e.preventDefault(); // Prevent scroll to avoid touch cancellation
+      if (e.target && (e.target as HTMLElement).closest && (e.target as HTMLElement).closest('button')) return;
+      if (e.cancelable) e.preventDefault(); // Prevent scroll to avoid touch cancellation
     }, {passive: false});
 
     container.addEventListener('touchend', (e) => {
       const gameContainer = document.getElementById('game-content-2048');
       if (!gameContainer || gameContainer.classList.contains('hidden')) return;
+      if (e.target && (e.target as HTMLElement).closest && (e.target as HTMLElement).closest('button')) return;
       if (isGameOver || (isGameWon && !keepPlaying)) return;
 
       if (!e.changedTouches || e.changedTouches.length === 0) return;

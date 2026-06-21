@@ -173,26 +173,28 @@
 
       // Enable jumping via mouse click inside the iframe on PC
       document.addEventListener('mousedown', function (e) {
-        if (Runner.instance_) {
-          Runner.instance_.onKeyDown({ type: 'keydown', keyCode: 32, preventDefault: function(){} });
-          setTimeout(function() {
-            Runner.instance_.onKeyUp({ type: 'keyup', keyCode: 32, preventDefault: function(){} });
-          }, 100);
-        }
+        if (e.target && e.target.closest && e.target.closest('.dino-option')) return;
+        var evDown = new KeyboardEvent('keydown', { bubbles: true, cancelable: true });
+        Object.defineProperty(evDown, 'keyCode', { get: function() { return 32; } });
+        Object.defineProperty(evDown, 'which', { get: function() { return 32; } });
+        document.dispatchEvent(evDown);
+        
+        setTimeout(function() {
+          var evUp = new KeyboardEvent('keyup', { bubbles: true, cancelable: true });
+          Object.defineProperty(evUp, 'keyCode', { get: function() { return 32; } });
+          Object.defineProperty(evUp, 'which', { get: function() { return 32; } });
+          document.dispatchEvent(evUp);
+        }, 150);
       });
     });
 
     // Relay key events from parent
     window.addEventListener('message', function (e) {
       if (e.data && e.data.type === 'KEY') {
-        if (Runner.instance_) {
-          var mockEvent = { type: e.data.eventType, keyCode: e.data.keyCode, preventDefault: function(){} };
-          if (e.data.eventType === 'keydown') {
-            Runner.instance_.onKeyDown(mockEvent);
-          } else if (e.data.eventType === 'keyup') {
-            Runner.instance_.onKeyUp(mockEvent);
-          }
-        }
+        var ev = new KeyboardEvent(e.data.eventType, { bubbles: true, cancelable: true });
+        Object.defineProperty(ev, 'keyCode', { get: function() { return e.data.keyCode; } });
+        Object.defineProperty(ev, 'which', { get: function() { return e.data.keyCode; } });
+        document.dispatchEvent(ev);
       }
     });
   </script>

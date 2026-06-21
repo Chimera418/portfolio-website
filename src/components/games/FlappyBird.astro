@@ -68,7 +68,7 @@
       w: 34,
       h: 24,
       velocity: 0,
-      gravity: 0.25,
+      gravity: 0.22,
       jump: -5.5,
       rotation: 0,
       
@@ -132,7 +132,7 @@
       
       update() {
         // Add new pipe
-        if (frames % 130 === 0) {
+        if (frames % 160 === 0) {
           let min = 50;
           let max = canvas.height - bg.floorHeight - this.gap - 50;
           this.items.push({

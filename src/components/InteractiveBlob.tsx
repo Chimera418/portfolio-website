@@ -5,19 +5,20 @@ export default function InteractiveBlob({ className = "" }: { className?: string
   const [isHovered, setIsHovered] = useState(false);
   const [isAngry, setIsAngry] = useState(false);
   const [isSleeping, setIsSleeping] = useState(false);
+  const [idleMood, setIdleMood] = useState<'neutral' | 'happy' | 'sideEye' | 'hmm'>('neutral');
   
   const clickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const idleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const IDLE_TIME = 15000; // Sleep after 15 seconds of inactivity
 
   const resetIdleTimer = () => {
     if (idleTimeoutRef.current) {
       clearTimeout(idleTimeoutRef.current);
     }
+    // Random idle time between 30 and 45 seconds
+    const idleTime = Math.floor(Math.random() * (45000 - 30000 + 1) + 30000);
     idleTimeoutRef.current = setTimeout(() => {
       setIsSleeping(true);
-    }, IDLE_TIME);
+    }, idleTime);
   };
 
   useEffect(() => {
@@ -27,6 +28,22 @@ export default function InteractiveBlob({ className = "" }: { className?: string
       if (clickTimeoutRef.current) clearTimeout(clickTimeoutRef.current);
     };
   }, []);
+
+  // Effect to naturally cycle moods while awake and idle
+  useEffect(() => {
+    if (isSleeping || isHovered || isAngry) {
+      setIdleMood('neutral'); // reset to neutral when interrupted
+      return;
+    }
+    
+    const interval = setInterval(() => {
+      const moods: ('neutral' | 'happy' | 'sideEye' | 'hmm')[] = ['neutral', 'neutral', 'happy', 'sideEye', 'hmm', 'neutral'];
+      const randomMood = moods[Math.floor(Math.random() * moods.length)];
+      setIdleMood(randomMood);
+    }, 7000); // Change mood roughly every 7 seconds
+    
+    return () => clearInterval(interval);
+  }, [isSleeping, isHovered, isAngry]);
 
   const triggerAngry = (duration = 2500) => {
     setIsAngry(true);
@@ -63,7 +80,7 @@ export default function InteractiveBlob({ className = "" }: { className?: string
     resetIdleTimer();
   };
 
-  let mood: 'neutral' | 'happy' | 'angry' | 'sad' | 'hmm' | 'password' = 'neutral';
+  let mood: 'neutral' | 'happy' | 'angry' | 'sad' | 'hmm' | 'password' | 'sideEye' = idleMood;
   let happyEyes: 'star' | 'smile' = 'star';
   let mouth: 'open' | 'wide' | undefined = undefined;
 

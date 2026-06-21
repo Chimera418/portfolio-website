@@ -575,6 +575,7 @@ const games = [
     // Hide navbar
     if (siteNav) siteNav.style.display = 'none';
     document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
 
     if (overlay && card) {
       // 1. Snap overlay to card bounds (no transition)
@@ -626,6 +627,7 @@ const games = [
           overlay.style.transition = '';
           overlay.classList.add('hidden');
           document.body.style.overflow = '';
+          document.documentElement.style.overflow = '';
           contents.forEach(el => el.classList.add('hidden'));
           if (siteNav) siteNav.style.display = '';
         }, 330);

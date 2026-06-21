@@ -91,7 +91,7 @@ const tools = [
       </p>
     </section>
 
-    <div class="mb-10 h-[calc(100vh-280px)] min-h-[500px]">
+    <div class="mb-10 h-[800px] md:h-[calc(100vh-280px)] min-h-[600px] md:min-h-[500px] flex flex-col">
       <!-- Terminal Header -->
       <div
         class="bg-overlay border border-highlight-med rounded-t-xl px-4 py-3 flex items-center gap-3"
@@ -108,7 +108,7 @@ const tools = [
 
       <!-- Main Layout -->
       <div
-        class="flex flex-col md:flex-row h-full border border-t-0 border-highlight-med rounded-b-xl overflow-hidden bg-surface"
+        class="flex flex-col md:flex-row flex-grow border border-t-0 border-highlight-med rounded-b-xl overflow-hidden bg-surface"
       >
         <!-- Sidebar Navigation -->
         <div
@@ -126,7 +126,7 @@ const tools = [
           </div>
 
           <nav
-            class="md:flex-grow overflow-x-auto md:overflow-y-auto custom-scroll p-2 flex flex-row md:flex-col gap-1 items-center md:items-stretch"
+            class="md:flex-grow overflow-x-auto md:overflow-y-auto custom-scroll p-3 flex flex-row md:flex-col gap-2 items-center md:items-stretch"
             id="labs-sidebar"
             data-lenis-prevent
           >
@@ -134,7 +134,7 @@ const tools = [
               tools.map((tool, idx) => (
                 <button
                   data-tab={tool.id}
-                  class={`tab-btn flex-shrink-0 flex items-center gap-3 px-4 py-3 rounded-lg font-mono text-xs transition-all duration-200 text-left ${idx === 0 ? "active-tab bg-primary/10 text-primary border border-primary/30" : "inactive-tab text-text-muted hover:text-text-primary hover:bg-surface-bright border border-transparent"}`}
+                  class={`tab-btn flex-shrink-0 flex items-center gap-2 px-4 py-2.5 md:py-3 rounded-lg font-mono text-xs transition-all duration-200 text-left ${idx === 0 ? "active-tab bg-primary/10 text-primary border border-primary/30" : "inactive-tab text-text-muted hover:text-text-primary hover:bg-surface-bright border border-transparent"}`}
                 >
                   <svg
                     class="w-4 h-4 flex-shrink-0"

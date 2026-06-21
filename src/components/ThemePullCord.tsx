@@ -4,13 +4,13 @@ import 'pullcord/pullcord.css';
 
 export default function ThemePullCord() {
   const [pulled, setPulled] = useState(false);
-  const [enabled, setEnabled] = useState(true);
+  const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
     // Check initial state
     const stored = localStorage.getItem('pullcordEnabled');
-    if (stored === 'false') {
-      setEnabled(false);
+    if (stored === 'true') {
+      setEnabled(true);
     }
 
     const currentTheme = document.documentElement.getAttribute('data-theme') || 'mocha';

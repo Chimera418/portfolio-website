@@ -246,7 +246,7 @@
   const pullcordLabel = document.getElementById('pullcord-label');
   
   if (pullcordToggle && pullcordLabel) {
-    const isPullcordEnabled = localStorage.getItem('pullcordEnabled') !== 'false';
+    const isPullcordEnabled = localStorage.getItem('pullcordEnabled') === 'true';
     pullcordToggle.checked = isPullcordEnabled;
     pullcordLabel.textContent = isPullcordEnabled ? 'on' : 'off';
     pullcordLabel.className = isPullcordEnabled ? 'text-text-primary' : 'text-text-muted';

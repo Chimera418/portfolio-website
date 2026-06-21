@@ -63,13 +63,15 @@ export default function InteractiveBlob({ className = "" }: { className?: string
     resetIdleTimer();
   };
 
-  let mood: 'neutral' | 'happy' | 'angry' | 'sad' | 'hmm' = 'neutral';
+  let mood: 'neutral' | 'happy' | 'angry' | 'sad' | 'hmm' | 'password' = 'neutral';
   let happyEyes: 'star' | 'smile' = 'star';
+  let mouth: 'open' | 'wide' | undefined = undefined;
 
   if (isAngry) {
     mood = 'angry';
+    mouth = 'wide'; // Make it yell to look more angry
   } else if (isSleeping) {
-    mood = 'password'; // Password mood might have closed/covered eyes
+    mood = 'password'; // Covers eyes / closed eyes
   } else if (isHovered) {
     mood = 'happy';
     happyEyes = 'smile';
@@ -101,8 +103,8 @@ export default function InteractiveBlob({ className = "" }: { className?: string
       className={`relative cursor-pointer transition-colors duration-300 ${className}`}
     >
       {isSleeping && (
-        <div className="absolute top-[15%] right-[25%] pointer-events-none z-10 font-bold text-primary select-none" style={{ fontFamily: 'comic sans ms, sans-serif' }}>
-          <span className="absolute text-sm opacity-0" style={{ animation: 'float-zzz 2.5s infinite linear 0s' }}>Z</span>
+        <div className="absolute top-[20%] right-[32%] pointer-events-none z-10 font-bold text-white/80 select-none" style={{ fontFamily: 'comic sans ms, sans-serif' }}>
+          <span className="absolute text-xs opacity-0" style={{ animation: 'float-zzz 2.5s infinite linear 0s' }}>Z</span>
           <span className="absolute text-sm opacity-0" style={{ animation: 'float-zzz 2.5s infinite linear 0.8s' }}>z</span>
           <span className="absolute text-base opacity-0" style={{ animation: 'float-zzz 2.5s infinite linear 1.6s' }}>Z</span>
         </div>
@@ -111,13 +113,13 @@ export default function InteractiveBlob({ className = "" }: { className?: string
         {`
           @keyframes float-zzz {
             0% { opacity: 0; transform: translate(0, 0) scale(0.5); }
-            20% { opacity: 1; transform: translate(4px, -6px) scale(0.8); }
-            80% { opacity: 0.8; transform: translate(12px, -18px) scale(1.1); }
-            100% { opacity: 0; transform: translate(16px, -24px) scale(1.2); }
+            20% { opacity: 1; transform: translate(2px, -4px) scale(0.8); }
+            80% { opacity: 0.8; transform: translate(6px, -12px) scale(1.1); }
+            100% { opacity: 0; transform: translate(8px, -16px) scale(1.2); }
           }
         `}
       </style>
-      <JellyBlobMascot mood={mood} happyEyes={happyEyes} className="w-full h-full" />
+      <JellyBlobMascot mood={mood} happyEyes={happyEyes} mouth={mouth} className="w-full h-full" />
     </div>
   );
 }

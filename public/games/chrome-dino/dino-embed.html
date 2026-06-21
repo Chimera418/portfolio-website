@@ -170,6 +170,19 @@
         if (h) { h.style.opacity = '0'; setTimeout(function() { h.remove(); }, 1000); }
         document.removeEventListener('touchstart', hideHintTouch);
       });
+
+      // Enable jumping via mouse click inside the iframe on PC
+      document.addEventListener('mousedown', function (e) {
+        // Only trigger if not clicking a button (like the game over restart button, though usually that's handled internally)
+        document.dispatchEvent(new KeyboardEvent('keydown', {
+          key:       ' ',
+          code:      'Space',
+          keyCode:   32,
+          which:     32,
+          bubbles:   true,
+          cancelable: true,
+        }));
+      });
     });
 
     // Relay key events from parent

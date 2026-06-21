@@ -68,8 +68,7 @@ export default function InteractiveBlob({ className = "" }: { className?: string
   let mouth: 'open' | 'wide' | undefined = undefined;
 
   if (isAngry) {
-    mood = 'angry';
-    mouth = 'wide'; // Make it yell to look more angry
+    mood = 'hmm'; // User prefers the hmm (squiggly) mouth for the angry/annoyed state
   } else if (isSleeping) {
     mood = 'password'; // Covers eyes / closed eyes
   } else if (isHovered) {

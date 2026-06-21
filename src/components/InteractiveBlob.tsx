@@ -4,19 +4,20 @@ import { JellyBlobMascot } from 'feral-blob';
 export default function InteractiveBlob({ className = "" }: { className?: string }) {
   const [isHovered, setIsHovered] = useState(false);
   const [isAngry, setIsAngry] = useState(false);
-  const [isSad, setIsSad] = useState(false);
+  const [isSleeping, setIsSleeping] = useState(false);
   
   const clickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const idleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const IDLE_TIME = 15000; // Sleep after 15 seconds of inactivity
 
   const resetIdleTimer = () => {
     if (idleTimeoutRef.current) {
       clearTimeout(idleTimeoutRef.current);
     }
-    setIsSad(false);
     idleTimeoutRef.current = setTimeout(() => {
-      setIsSad(true);
-    }, 120000); // 2 minutes (120,000 ms)
+      setIsSleeping(true);
+    }, IDLE_TIME);
   };
 
   useEffect(() => {
@@ -27,20 +28,34 @@ export default function InteractiveBlob({ className = "" }: { className?: string
     };
   }, []);
 
-  const handleClick = () => {
-    resetIdleTimer();
+  const triggerAngry = (duration = 2500) => {
     setIsAngry(true);
     if (clickTimeoutRef.current) {
       clearTimeout(clickTimeoutRef.current);
     }
     clickTimeoutRef.current = setTimeout(() => {
       setIsAngry(false);
-    }, 2500); // Stays angry for 2.5 seconds
+    }, duration);
+  };
+
+  const handleInteraction = (type: 'hover' | 'click') => {
+    if (isSleeping) {
+      // Woken up from sleep! Get angry!
+      setIsSleeping(false);
+      triggerAngry(4000); // Stay angry longer if woken up abruptly
+    } else if (type === 'click') {
+      triggerAngry(2500);
+    }
+    resetIdleTimer();
+  };
+
+  const handleClick = () => {
+    handleInteraction('click');
   };
 
   const handleMouseEnter = () => {
     setIsHovered(true);
-    resetIdleTimer();
+    handleInteraction('hover');
   };
 
   const handleMouseLeave = () => {
@@ -53,11 +68,11 @@ export default function InteractiveBlob({ className = "" }: { className?: string
 
   if (isAngry) {
     mood = 'angry';
+  } else if (isSleeping) {
+    mood = 'sad'; // Usually looks droopy/sleepy
   } else if (isHovered) {
     mood = 'happy';
     happyEyes = 'smile';
-  } else if (isSad) {
-    mood = 'sad';
   }
 
   // Derive blob shades dynamically from the active theme's primary color
@@ -83,8 +98,25 @@ export default function InteractiveBlob({ className = "" }: { className?: string
       onMouseLeave={handleMouseLeave}
       onClick={handleClick}
       style={style} 
-      className={`cursor-pointer transition-colors duration-300 ${className}`}
+      className={`relative cursor-pointer transition-colors duration-300 ${className}`}
     >
+      {isSleeping && (
+        <div className="absolute top-0 right-1/4 pointer-events-none z-10 font-bold text-primary select-none" style={{ fontFamily: 'comic sans ms, sans-serif' }}>
+          <span className="absolute text-sm opacity-0" style={{ animation: 'float-zzz 3s infinite linear 0s' }}>Z</span>
+          <span className="absolute text-base opacity-0" style={{ animation: 'float-zzz 3s infinite linear 1s' }}>z</span>
+          <span className="absolute text-lg opacity-0" style={{ animation: 'float-zzz 3s infinite linear 2s' }}>Z</span>
+        </div>
+      )}
+      <style>
+        {`
+          @keyframes float-zzz {
+            0% { opacity: 0; transform: translate(0, 0) scale(0.5); }
+            20% { opacity: 1; transform: translate(10px, -10px) scale(0.8); }
+            80% { opacity: 0.8; transform: translate(25px, -30px) scale(1.1); }
+            100% { opacity: 0; transform: translate(30px, -40px) scale(1.2); }
+          }
+        `}
+      </style>
       <JellyBlobMascot mood={mood} happyEyes={happyEyes} className="w-full h-full" />
     </div>
   );

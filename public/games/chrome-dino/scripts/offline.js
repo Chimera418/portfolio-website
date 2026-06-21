@@ -136,9 +136,6 @@ const IS_RTL = document.querySelector('html').dir == 'rtl';
 const ARCADE_MODE_URL = 'chrome://dino/';
 
 /** @const */
-const HIDDEN_CLASS = 'hidden';
-
-/** @const */
 const RESOURCE_POSTFIX = 'offline-resources-';
 
 /** @const */

@@ -63,11 +63,11 @@ import CommandPalette from "../components/CommandPalette.astro";
     <!-- Unmute Button -->
     <button
       id="unmute-btn"
-      class="pointer-events-auto fixed bottom-8 right-8 z-50 bg-surface/90 backdrop-blur-md border border-highlight-med hover:border-primary text-text-primary hover:text-primary px-5 py-4 rounded-xl font-pixel text-xs tracking-widest shadow-xl transition-all hover:-translate-y-1 active:translate-y-0 flex items-center gap-2 group"
+      class="pointer-events-auto fixed bottom-8 right-8 z-50 bg-surface/90 backdrop-blur-md border-2 border-highlight-med hover:border-primary text-text-primary hover:text-primary px-5 py-4 rounded-xl font-pixel text-xs tracking-widest shadow-xl transition-all hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2 group"
     >
       <svg
         id="icon-muted"
-        class="w-4 h-4 group-hover:text-primary transition-colors hidden"
+        class="w-4 h-4 group-hover:text-primary transition-colors hidden translate-y-[1px]"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -80,7 +80,7 @@ import CommandPalette from "../components/CommandPalette.astro";
       >
       <svg
         id="icon-unmuted"
-        class="w-4 h-4 text-primary"
+        class="w-4 h-4 text-primary translate-y-[1px]"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"

@@ -1,5 +1,7 @@
 ---
 import BentoCard from "./BentoCard.astro";
+import InteractiveBlob from "./InteractiveBlob";
+import "feral-blob/blob.css";
 
 interface Props {
   class?: string;
@@ -10,38 +12,45 @@ const { class: className } = Astro.props;
 <BentoCard className={`hero-card-element ${className || ""} z-20`} glow={true}>
   <div class="flex flex-col justify-between h-full gap-4 py-1">
     <!-- Top: name block -->
-    <div class="space-y-4">
-      <div>
-        <p
-          class="text-text-muted font-pixel text-[10px] uppercase tracking-[0.25em] mb-3 opacity-70"
-        >
-          Aneesh Sagar Reddy <span class="text-secondary font-bold">AKA</span>
-        </p>
-        <h1
-          id="hero-title"
-          data-text="CHIMERA"
-          class="w-fit text-[2.5rem] sm:text-5xl md:text-6xl font-bold text-text-primary tracking-tight font-pixel uppercase leading-none drop-shadow-sm cursor-default break-words hyphens-none"
-        >
-          Chimera
-        </h1>
-        <p
-          class="text-secondary font-pixel text-[10px] uppercase tracking-widest mt-3 opacity-90"
-        >
-          Full Stack &bull; Cybersecurity &bull; AI ENGINEERING
+    <div class="flex flex-col sm:flex-row justify-between items-start gap-6">
+      <div class="space-y-4 flex-1">
+        <div>
+          <p
+            class="text-text-muted font-pixel text-[10px] uppercase tracking-[0.25em] mb-3 opacity-70"
+          >
+            Aneesh Sagar Reddy <span class="text-secondary font-bold">AKA</span>
+          </p>
+          <h1
+            id="hero-title"
+            data-text="CHIMERA"
+            class="w-fit text-[2.5rem] sm:text-5xl md:text-6xl font-bold text-text-primary tracking-tight font-pixel uppercase leading-none drop-shadow-sm cursor-default break-words hyphens-none"
+          >
+            Chimera
+          </h1>
+          <p
+            class="text-secondary font-pixel text-[10px] uppercase tracking-widest mt-3 opacity-90"
+          >
+            Full Stack &bull; Cybersecurity &bull; AI ENGINEERING
+          </p>
+        </div>
+
+        <p class="text-text-muted text-sm leading-relaxed max-w-lg">
+          Hey, welcome to my corner of the internet. Feel free to look around,
+          explore some projects, or leave a message in the guestbook. And if
+          you're the kind of person who clicks on everything, keep an eye
+          out—there are a few easter eggs hidden around the site.
         </p>
       </div>
 
-      <p class="text-text-muted text-sm leading-relaxed max-w-lg">
-        Hey, welcome to my corner of the internet. Feel free to look around,
-        explore some projects, or leave a message in the guestbook. And if
-        you're the kind of person who clicks on everything, keep an eye
-        out—there are a few easter eggs hidden around the site.
-      </p>
+      <!-- Scaled up blob taking the right side space -->
+      <div class="w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 flex-shrink-0 self-center sm:self-center pointer-events-auto mt-4 sm:mt-0">
+        <InteractiveBlob client:load className="w-full h-full" />
+      </div>
     </div>
 
     <!-- Bottom: status badges -->
     <div
-      class="mt-4 flex items-center justify-between flex-wrap gap-2 border-t border-highlight-med/30 pt-4"
+      class="mt-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-2 border-t border-highlight-med/30 pt-4"
     >
       <div
         class="flex items-center gap-2 text-[9px] font-pixel text-text-muted uppercase tracking-wider"
@@ -51,15 +60,15 @@ const { class: className } = Astro.props;
         ></span>
         Clueless about life rn
       </div>
-      <div class="flex items-center gap-3">
-        <div class="relative group/location inline-block">
+      <div class="flex items-center gap-3 pl-[14px] sm:pl-0">
+        <div tabindex="0" class="relative group/location inline-block focus:outline-none">
           <span
             class="text-[9px] font-pixel text-text-muted uppercase tracking-wider cursor-help border-b border-dashed border-text-muted/50 pb-[1px] hover:text-primary transition-colors"
             >BLR, IN</span
           >
           <!-- Tooltip -->
           <div
-            class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-max opacity-0 group-hover/location:opacity-100 transition-all duration-200 pointer-events-none z-50 translate-y-1 group-hover/location:translate-y-0"
+            class="absolute bottom-full left-0 sm:left-1/2 sm:-translate-x-1/2 mb-3 w-max opacity-0 group-hover/location:opacity-100 group-focus/location:opacity-100 transition-all duration-200 pointer-events-none z-50 translate-y-1 group-hover/location:translate-y-0 group-focus/location:translate-y-0"
           >
             <div
               class="bg-overlay border border-highlight-med rounded-lg px-2.5 py-1.5 shadow-xl shadow-black/50 backdrop-blur-sm"
@@ -103,7 +112,7 @@ const { class: className } = Astro.props;
             </div>
             <!-- Arrow -->
             <div
-              class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-overlay border-r border-b border-highlight-med rotate-45"
+              class="absolute -bottom-1 left-4 sm:left-1/2 sm:-translate-x-1/2 w-2 h-2 bg-overlay border-r border-b border-highlight-med rotate-45"
             >
             </div>
           </div>
@@ -111,14 +120,14 @@ const { class: className } = Astro.props;
 
         <span class="text-highlight-med/40">|</span>
 
-        <div class="relative group/edu inline-block">
+        <div tabindex="0" class="relative group/edu inline-block focus:outline-none">
           <span
             class="text-[9px] font-pixel text-text-muted uppercase tracking-wider cursor-help border-b border-dashed border-text-muted/50 pb-[1px] hover:text-primary transition-colors"
             >CSE-AI &apos;28</span
           >
           <!-- Tooltip -->
           <div
-            class="absolute bottom-full right-0 md:left-1/2 md:-translate-x-1/2 mb-3 w-max opacity-0 group-hover/edu:opacity-100 transition-all duration-200 pointer-events-none z-50 translate-y-1 group-hover/edu:translate-y-0"
+            class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-max opacity-0 group-hover/edu:opacity-100 group-focus/edu:opacity-100 transition-all duration-200 pointer-events-none z-50 translate-y-1 group-hover/edu:translate-y-0 group-focus/edu:translate-y-0"
           >
             <div
               class="bg-overlay border border-highlight-med rounded-lg px-2.5 py-1.5 shadow-xl shadow-black/50 backdrop-blur-sm"
@@ -137,14 +146,14 @@ const { class: className } = Astro.props;
                   <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
                 </svg>
                 <span
-                  class="text-[10px] font-pixel text-text-primary uppercase tracking-wide z-50"
-                  >Amrita Vishwa Vidyapeetham</span
+                  class="text-[10px] font-pixel text-text-primary uppercase tracking-wide z-50 text-center leading-[1.4]"
+                  >Amrita Vishwa<br/>Vidyapeetham</span
                 >
               </div>
             </div>
             <!-- Arrow -->
             <div
-              class="absolute -bottom-1 right-6 md:left-1/2 md:-translate-x-1/2 w-2 h-2 bg-overlay border-r border-b border-highlight-med rotate-45"
+              class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-overlay border-r border-b border-highlight-med rotate-45"
             >
             </div>
           </div>

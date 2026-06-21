@@ -38,7 +38,9 @@ import CommandPalette from "../components/CommandPalette.astro";
     >
       <!-- 404 Glitch Text -->
       <div class="relative inline-block mb-8">
-        <h1 class="text-7xl md:text-9xl font-pixel text-primary drop-shadow-[6px_6px_0_rgba(0,0,0,0.8)] select-none">
+        <h1
+          class="text-7xl md:text-9xl font-pixel text-primary drop-shadow-[6px_6px_0_rgba(0,0,0,0.8)] select-none"
+        >
           404
         </h1>
       </div>
@@ -47,8 +49,23 @@ import CommandPalette from "../components/CommandPalette.astro";
       <p
         class="text-text-primary/90 font-mono text-center max-w-lg mb-10 leading-relaxed pointer-events-auto bg-surface-dim/95 p-6 rounded-xl border border-highlight-med shadow-2xl backdrop-blur-md"
       >
-        <span class="text-primary font-bold">Congratulations!!</span> You've been <span class="text-primary font-bold">meow-rolled</span>.<br /><br />
-        Use <button onclick="document.dispatchEvent(new CustomEvent('open-command-palette'))" class="group inline-flex items-center gap-1 mx-1 px-2 py-1 bg-surface-dim hover:bg-surface rounded border border-primary/40 hover:border-primary transition-all cursor-pointer shadow-[2px_2px_0_rgba(0,0,0,0.5)] align-middle -translate-y-0.5"><kbd class="bg-surface border border-primary/30 rounded px-1.5 py-0.5 text-xs text-primary group-hover:border-primary transition-colors font-sans shadow-sm">CTRL</kbd><span class="text-xs text-primary/70 group-hover:text-primary transition-colors">+</span><kbd class="bg-surface border border-primary/30 rounded px-1.5 py-0.5 text-xs text-primary group-hover:border-primary transition-colors font-sans shadow-sm">K</kbd></button> to jump to other webpages, or click the button below to return to the home page.
+        <span class="text-primary font-bold">Congratulations!!</span> You've been
+        <span class="text-primary font-bold">meow-rolled</span>.<br /><br />
+        Use <button
+          onclick="document.dispatchEvent(new CustomEvent('open-command-palette'))"
+          class="group inline-flex items-center gap-1 mx-1 px-2 py-1 bg-surface-dim hover:bg-surface rounded border border-primary/40 hover:border-primary transition-all cursor-pointer shadow-[2px_2px_0_rgba(0,0,0,0.5)] align-middle -translate-y-0.5"
+          ><kbd
+            class="bg-surface border border-primary/30 rounded px-1.5 py-0.5 text-xs text-primary group-hover:border-primary transition-colors font-sans shadow-sm"
+            >CTRL</kbd
+          ><span
+            class="text-xs text-primary/70 group-hover:text-primary transition-colors"
+            >+</span
+          ><kbd
+            class="bg-surface border border-primary/30 rounded px-1.5 py-0.5 text-xs text-primary group-hover:border-primary transition-colors font-sans shadow-sm"
+            >K</kbd
+          ></button
+        > to jump to other webpages, or click the button below to return to the home
+        page.
       </p>
 
       <!-- Return Button -->
@@ -67,7 +84,7 @@ import CommandPalette from "../components/CommandPalette.astro";
     >
       <svg
         id="icon-muted"
-        class="w-4 h-4 group-hover:text-primary transition-colors hidden translate-y-[1px]"
+        class="w-4 h-4 group-hover:text-primary transition-colors hidden translate-y-[-1px]"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -80,7 +97,7 @@ import CommandPalette from "../components/CommandPalette.astro";
       >
       <svg
         id="icon-unmuted"
-        class="w-4 h-4 text-primary translate-y-[1px]"
+        class="w-4 h-4 text-primary translate-y-[-1px]"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -96,7 +113,9 @@ import CommandPalette from "../components/CommandPalette.astro";
     <script is:inline>
       const accentColor =
         localStorage.getItem("secondaryAccentColor") || "mauve";
-      const primaryValue = accentColor.startsWith("#") ? accentColor : `var(--${accentColor})`;
+      const primaryValue = accentColor.startsWith("#")
+        ? accentColor
+        : `var(--${accentColor})`;
       document.documentElement.style.setProperty("--primary", primaryValue);
     </script>
 
@@ -131,11 +150,11 @@ import CommandPalette from "../components/CommandPalette.astro";
               unmuteText.textContent = "MUTE";
               iconMuted.classList.add("hidden");
               iconUnmuted.classList.remove("hidden");
-              document.removeEventListener('click', unlockAudio);
-              document.removeEventListener('keydown', unlockAudio);
+              document.removeEventListener("click", unlockAudio);
+              document.removeEventListener("keydown", unlockAudio);
             };
-            document.addEventListener('click', unlockAudio);
-            document.addEventListener('keydown', unlockAudio);
+            document.addEventListener("click", unlockAudio);
+            document.addEventListener("keydown", unlockAudio);
           });
         }
 

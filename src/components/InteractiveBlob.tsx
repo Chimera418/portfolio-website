@@ -101,19 +101,19 @@ export default function InteractiveBlob({ className = "" }: { className?: string
       className={`relative cursor-pointer transition-colors duration-300 ${className}`}
     >
       {isSleeping && (
-        <div className="absolute top-0 right-1/4 pointer-events-none z-10 font-bold text-primary select-none" style={{ fontFamily: 'comic sans ms, sans-serif' }}>
-          <span className="absolute text-sm opacity-0" style={{ animation: 'float-zzz 3s infinite linear 0s' }}>Z</span>
-          <span className="absolute text-base opacity-0" style={{ animation: 'float-zzz 3s infinite linear 1s' }}>z</span>
-          <span className="absolute text-lg opacity-0" style={{ animation: 'float-zzz 3s infinite linear 2s' }}>Z</span>
+        <div className="absolute top-[15%] right-[25%] pointer-events-none z-10 font-bold text-primary select-none" style={{ fontFamily: 'comic sans ms, sans-serif' }}>
+          <span className="absolute text-sm opacity-0" style={{ animation: 'float-zzz 2.5s infinite linear 0s' }}>Z</span>
+          <span className="absolute text-sm opacity-0" style={{ animation: 'float-zzz 2.5s infinite linear 0.8s' }}>z</span>
+          <span className="absolute text-base opacity-0" style={{ animation: 'float-zzz 2.5s infinite linear 1.6s' }}>Z</span>
         </div>
       )}
       <style>
         {`
           @keyframes float-zzz {
             0% { opacity: 0; transform: translate(0, 0) scale(0.5); }
-            20% { opacity: 1; transform: translate(10px, -10px) scale(0.8); }
-            80% { opacity: 0.8; transform: translate(25px, -30px) scale(1.1); }
-            100% { opacity: 0; transform: translate(30px, -40px) scale(1.2); }
+            20% { opacity: 1; transform: translate(4px, -6px) scale(0.8); }
+            80% { opacity: 0.8; transform: translate(12px, -18px) scale(1.1); }
+            100% { opacity: 0; transform: translate(16px, -24px) scale(1.2); }
           }
         `}
       </style>

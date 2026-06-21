@@ -1,7 +1,7 @@
 ---
 ---
 
-<div id="theme-drawer" class="fixed top-0 right-0 h-full w-80 bg-surface border-l border-highlight-med shadow-2xl transform translate-x-full transition-transform duration-300 z-50 overflow-y-auto">
+<div id="theme-drawer" class="fixed top-0 right-0 h-full w-80 bg-surface border-l border-highlight-med shadow-2xl transform translate-x-full transition-transform duration-300 z-[100] overflow-y-auto">
   <div class="p-6">
     <div class="flex justify-between items-center mb-8">
       <h2 class="font-bold text-xl text-text-primary tracking-tight">Settings</h2>
@@ -11,6 +11,18 @@
           <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
       </button>
+    </div>
+
+    <!-- Mobile Navigation (Visible only on mobile) -->
+    <div class="flex flex-col gap-6 font-pixel text-[10px] uppercase tracking-widest text-text-muted md:hidden mb-8 border-b border-highlight-med pb-8">
+      <a href="/" class="hover:text-primary transition-colors">Home</a>
+      <a href="/about" class="hover:text-primary transition-colors">About</a>
+      <a href="/projects" class="hover:text-primary transition-colors">Projects</a>
+      <a href="/devlog" class="hover:text-primary transition-colors">Devlog</a>
+      <a href="/labs" id="theme-nav-labs-link-mobile" class="hover:text-primary transition-colors hidden">Labs</a>
+      <a href="/games" id="theme-nav-games-link-mobile" class="hover:text-primary transition-colors hidden">Games</a>
+      <a href="/guestbook" class="hover:text-primary transition-colors">Guestbook</a>
+      <a href="/contact" class="hover:text-primary transition-colors">Contact</a>
     </div>
 
     <!-- Theme Config -->
@@ -43,6 +55,15 @@
 
       <!-- Toggles -->
       <div class="flex flex-col gap-4 font-mono text-sm text-text-muted">
+        <!-- Pullcord Toggle -->
+        <label class="flex items-center gap-3 cursor-pointer group w-fit">
+          <div class="relative flex items-center justify-center w-5 h-5 bg-overlay border border-highlight-med rounded group-hover:border-primary transition-colors">
+            <input type="checkbox" id="pullcord-toggle" class="peer sr-only">
+            <div class="absolute inset-0 bg-primary opacity-0 peer-checked:opacity-100 transition-opacity rounded-[2px] m-[3px]"></div>
+          </div>
+          <span class="select-none">Pullcord: <span id="pullcord-label" class="text-text-primary">on</span></span>
+        </label>
+        
         <label class="flex items-center gap-3 cursor-pointer group w-fit">
           <div class="relative flex items-center justify-center w-5 h-5 bg-overlay border border-highlight-med rounded group-hover:border-primary transition-colors">
             <input type="checkbox" id="crt-mode-toggle" class="peer sr-only">
@@ -218,6 +239,24 @@
       localStorage.setItem('pixelMode', String(val));
       pixelModeLabel.textContent = val ? 'on' : 'off';
       pixelModeLabel.className = val ? 'text-text-primary' : 'text-text-muted';
+    });
+  }
+
+  const pullcordToggle = document.getElementById('pullcord-toggle') as HTMLInputElement;
+  const pullcordLabel = document.getElementById('pullcord-label');
+  
+  if (pullcordToggle && pullcordLabel) {
+    const isPullcordEnabled = localStorage.getItem('pullcordEnabled') !== 'false';
+    pullcordToggle.checked = isPullcordEnabled;
+    pullcordLabel.textContent = isPullcordEnabled ? 'on' : 'off';
+    pullcordLabel.className = isPullcordEnabled ? 'text-text-primary' : 'text-text-muted';
+    
+    pullcordToggle.addEventListener('change', (e) => {
+      const val = (e.target as HTMLInputElement).checked;
+      localStorage.setItem('pullcordEnabled', String(val));
+      pullcordLabel.textContent = val ? 'on' : 'off';
+      pullcordLabel.className = val ? 'text-text-primary' : 'text-text-muted';
+      window.dispatchEvent(new CustomEvent('toggle-pullcord', { detail: val }));
     });
   }
 </script>

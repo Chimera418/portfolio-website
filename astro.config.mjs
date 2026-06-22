@@ -7,6 +7,8 @@ import vercel from '@astrojs/vercel';
 
 import react from '@astrojs/react';
 
+import svelte from '@astrojs/svelte';
+
 // https://astro.build/config
 export default defineConfig({
   output: 'server',
@@ -23,9 +25,14 @@ export default defineConfig({
   },
 
   vite: {
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    resolve: {
+      alias: {
+        '$lib': '/src/components/plinko'
+      }
+    }
   },
 
   adapter: vercel(),
-  integrations: [react()]
+  integrations: [react(), svelte()]
 });

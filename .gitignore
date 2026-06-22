@@ -11,3 +11,5 @@ dist/
 *.local
 *.log
 .nekojs_temp/
+
+todo.list

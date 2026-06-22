@@ -1,0 +1,354 @@
+---
+import PlaycaptchaWrapper from './PlaycaptchaWrapper';
+import PlinkoApp from './plinko/components/app.svelte';
+---
+
+<!--
+  CaptchaModal — clean, reliable pointer-events structure:
+  ┌─ #captcha-modal (fixed inset-0, flex centering)
+  │   ├─ #captcha-backdrop (absolute, pointer-events-none always)
+  │   ├─ #captcha-menu-card (flex child, , opacity transition)
+  │   ├─ #captcha-playcaptcha-container (absolute inset-0, shown/hidden)
+  │   ├─ #captcha-plinko-container       (absolute inset-0, shown/hidden)
+  │   └─ #captcha-success-screen         (absolute inset-0, shown/hidden)
+  
+  Performance: backdrop-filter is disabled on #captcha-backdrop while a game runs
+  so the browser never re-composites a blur on every canvas frame.
+-->
+
+<div
+  id="captcha-modal"
+  class="fixed inset-0 z-[200] flex items-center justify-center
+         opacity-0 pointer-events-none transition-opacity duration-500"
+>
+  <!-- Backdrop: blur + dim, NEVER intercepts clicks -->
+  <div
+    id="captcha-backdrop"
+    class="absolute inset-0 bg-black/60 pointer-events-none transition-all duration-300"
+    style="backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);"
+  ></div>
+
+  <!-- ─── MENU CARD (direct flex child → always reachable) ─── -->
+  <div
+    id="captcha-menu-card"
+    class="relative z-10 pointer-events-none w-full max-w-xl mx-4
+           bg-surface-dim/95 backdrop-blur-xl
+           border border-highlight-med rounded-2xl
+           shadow-[4px_4px_0_rgba(0,0,0,0.5)]
+           p-10 flex flex-col gap-10
+           transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]
+           scale-95 opacity-0"
+  >
+    <!-- Close -->
+    <button
+      id="close-captcha-btn"
+      class="absolute top-6 right-6 w-10 h-10 flex items-center justify-center
+             rounded border border-highlight-med bg-surface hover:bg-surface-dim
+             text-text-secondary hover:text-primary hover:border-primary
+             transition-all cursor-pointer shadow-[2px_2px_0_rgba(0,0,0,0.5)]"
+      aria-label="Close"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+
+    <!-- Title -->
+    <div class="space-y-3 mt-4 text-center">
+      <h2 class="text-3xl font-pixel tracking-widest text-primary drop-shadow-[2px_2px_0_rgba(0,0,0,0.8)] uppercase">Security Check</h2>
+      <p class="text-text-secondary text-sm font-mono leading-relaxed mt-2">Please verify you are human by completing a short challenge.</p>
+    </div>
+
+    <!-- Game choice buttons -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+      <!-- Claw Captcha -->
+      <button
+        type="button"
+        id="btn-playcaptcha"
+        class="group relative flex flex-col items-center text-center gap-4 p-8
+               bg-surface border border-highlight-med hover:border-primary
+               rounded-xl transition-all duration-300
+               hover:-translate-y-1 hover:bg-surface-dim cursor-pointer overflow-hidden
+               shadow-[4px_4px_0_rgba(0,0,0,0.5)]"
+      >
+        <div class="relative w-14 h-14 rounded-lg bg-surface-dim flex items-center justify-center border border-highlight-med group-hover:border-primary group-hover:scale-110 transition-all duration-300 ease-out">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               class="w-7 h-7 text-text-primary group-hover:text-primary transition-colors" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 3v4M6 3v4M3 9h18M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            <path d="M12 12v5M9.5 14.5L12 12l2.5 2.5"/>
+          </svg>
+        </div>
+        <div class="relative space-y-2 mt-2">
+          <span class="text-text-primary font-pixel text-sm uppercase tracking-widest block group-hover:text-primary transition-colors">Claw Machine</span>
+          <span class="text-text-secondary text-xs font-mono block leading-relaxed px-2">Retrieve the requested toy to proceed.</span>
+        </div>
+      </button>
+
+      <!-- Plinko Captcha -->
+      <button
+        type="button"
+        id="btn-plinko"
+        class="group relative flex flex-col items-center text-center gap-4 p-8
+               bg-surface border border-highlight-med hover:border-primary
+               rounded-xl transition-all duration-300
+               hover:-translate-y-1 hover:bg-surface-dim cursor-pointer overflow-hidden
+               shadow-[4px_4px_0_rgba(0,0,0,0.5)]"
+      >
+        <div class="relative w-14 h-14 rounded-lg bg-surface-dim flex items-center justify-center border border-highlight-med group-hover:border-primary group-hover:scale-110 transition-all duration-300 ease-out">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               class="w-7 h-7 text-text-primary group-hover:text-primary transition-colors" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="4" r="2" fill="currentColor" stroke="none"/>
+            <circle cx="7" cy="11" r="1.5" fill="currentColor" stroke="none"/>
+            <circle cx="17" cy="11" r="1.5" fill="currentColor" stroke="none"/>
+            <circle cx="4" cy="18" r="1.5" fill="currentColor" stroke="none"/>
+            <circle cx="12" cy="18" r="1.5" fill="currentColor" stroke="none"/>
+            <circle cx="20" cy="18" r="1.5" fill="currentColor" stroke="none"/>
+            <path d="M12 6v3M12 9l-5 4M12 9l5 4"/>
+          </svg>
+        </div>
+        <div class="relative space-y-2 mt-2">
+          <span class="text-text-primary font-pixel text-sm uppercase tracking-widest block group-hover:text-primary transition-colors">Plinko Board</span>
+          <span class="text-text-secondary text-xs font-mono block leading-relaxed px-2">Guide the ball to the target code.</span>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- ─── CLAW CAPTCHA OVERLAY ──────────────────────────────── -->
+  <div
+    id="captcha-playcaptcha-container"
+    class="game-container absolute inset-0 w-full h-full z-20
+           flex flex-col pointer-events-none opacity-0 transition-opacity duration-300"
+  >
+    <button type="button" class="btn-back absolute top-5 left-5 z-[300]
+                   flex items-center gap-1.5 px-3 py-2
+                   bg-surface border border-highlight-med hover:border-primary
+                   rounded-lg font-pixel text-[10px] text-text-secondary hover:text-primary
+                   transition-colors cursor-pointer ">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+           class="w-3 h-3" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      BACK
+    </button>
+    <div class="w-full h-full pt-14 pb-4 flex items-center justify-center overflow-y-auto overflow-x-hidden">
+      <PlaycaptchaWrapper client:idle />
+    </div>
+  </div>
+
+  <!-- ─── PLINKO OVERLAY ────────────────────────────────────── -->
+  <div
+    id="captcha-plinko-container"
+    class="game-container absolute inset-0 w-full h-full z-20
+           flex flex-col pointer-events-none opacity-0 transition-opacity duration-300"
+  >
+    <button type="button" class="btn-back absolute top-5 left-5 z-[300]
+                   flex items-center gap-1.5 px-3 py-2
+                   bg-surface border border-highlight-med hover:border-green
+                   rounded-lg font-pixel text-[10px] text-text-secondary hover:text-green
+                   transition-colors cursor-pointer ">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+           class="w-3 h-3" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      BACK
+    </button>
+    <div class="w-full h-full pt-14 relative overflow-hidden plinko-wrapper flex items-center justify-center">
+      <PlinkoApp client:idle />
+    </div>
+  </div>
+
+  <!-- ─── SUCCESS SCREEN ───────────────────────────────────── -->
+  <div
+    id="captcha-success-screen"
+    class="absolute inset-0 w-full h-full z-30
+           flex items-center justify-center
+           pointer-events-none opacity-0 transition-all duration-500"
+  >
+    <div class="relative flex flex-col items-center justify-center text-center
+                bg-surface-dim/95 backdrop-blur-xl border border-highlight-med
+                rounded-2xl p-12 mx-4 w-full max-w-sm
+                shadow-[4px_4px_0_rgba(0,0,0,0.5)]
+                overflow-hidden">
+      
+      <!-- Verified Badge -->
+      <div class="relative w-24 h-24 mb-8">
+        <div class="absolute inset-0 rounded bg-green-500/20 blur-xl animate-pulse"></div>
+        <div class="relative w-full h-full rounded border border-green-500 bg-surface flex items-center justify-center shadow-[4px_4px_0_rgba(0,0,0,0.5)]">
+          <svg id="success-checkmark" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+               class="w-12 h-12 text-green-500 opacity-0 transition-all duration-700 ease-out transform scale-50">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="space-y-4 relative z-10 mb-10">
+        <h2 class="text-3xl font-pixel tracking-widest text-green-500 uppercase drop-shadow-[2px_2px_0_rgba(0,0,0,0.8)]">Verified</h2>
+        <p class="text-text-secondary text-sm font-mono mt-2">Access granted successfully.</p>
+      </div>
+
+      <div class="flex flex-col gap-4 w-full relative z-10">
+        <button type="button" id="success-home-btn" class="group relative w-full flex items-center justify-center gap-2 cursor-pointer rounded-xl bg-surface border border-highlight-med hover:border-primary hover:text-primary px-6 py-4 font-pixel text-sm uppercase tracking-widest text-text-primary transition-all duration-300 hover:-translate-y-1 shadow-[4px_4px_0_rgba(0,0,0,0.5)]">
+          <span>Return to Home</span>
+          <svg class="w-4 h-4 text-text-secondary group-hover:text-primary transition-colors group-hover:translate-x-1 duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        </button>
+        <button type="button" id="success-play-again-btn" class="w-full flex items-center justify-center gap-2 cursor-pointer rounded-xl bg-transparent px-6 py-4 font-pixel text-xs tracking-widest uppercase text-text-secondary transition-colors duration-300 hover:text-primary hover:bg-surface border border-transparent hover:border-highlight-med">
+          Play Again
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .plinko-wrapper {
+    --font-sans: 'Inter', sans-serif;
+    color: var(--text-primary);
+  }
+  .plinko-wrapper :global(div) {
+    font-family: var(--font-sans);
+  }
+  /* Own GPU layer per game container — no blur compositing overhead */
+  .game-container {
+    isolation: isolate;
+    will-change: opacity;
+    transform: translateZ(0);
+  }
+</style>
+
+<script>
+  const modal                = document.getElementById('captcha-modal')!;
+  const backdrop             = document.getElementById('captcha-backdrop')!;
+  const menuCard             = document.getElementById('captcha-menu-card')!;
+  const playcaptchaContainer = document.getElementById('captcha-playcaptcha-container')!;
+  const plinkoContainer      = document.getElementById('captcha-plinko-container')!;
+  const successScreen        = document.getElementById('captcha-success-screen')!;
+  const closeBtn             = document.getElementById('close-captcha-btn')!;
+  const btnPlaycaptcha       = document.getElementById('btn-playcaptcha')!;
+  const btnPlinko            = document.getElementById('btn-plinko')!;
+  const successCheckmark     = document.getElementById('success-checkmark')!;
+  const successProgressBar   = document.getElementById('success-progress-bar')!;
+
+  // ── Backdrop blur helpers ─────────────────────────────────────────────────
+  const enableBackdrop  = () => { backdrop.style.backdropFilter = 'blur(4px)'; backdrop.style.webkitBackdropFilter = 'blur(4px)'; };
+  const disableBackdrop = () => { backdrop.style.backdropFilter = 'none';      backdrop.style.webkitBackdropFilter = 'none'; };
+
+  // ── Menu card ─────────────────────────────────────────────────────────────
+  const showMenuCard = () => {
+    menuCard.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+    menuCard.classList.add('opacity-100', 'scale-100');
+  };
+  const hideMenuCard = () => {
+    menuCard.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+    menuCard.classList.remove('opacity-100', 'scale-100');
+  };
+
+  // ── Open / close modal ───────────────────────────────────────────────────
+  const openModal = () => {
+    enableBackdrop();
+    // Hide all overlays first
+    [playcaptchaContainer, plinkoContainer, successScreen].forEach(el => {
+      el.classList.add('opacity-0', 'pointer-events-none');
+    });
+    modal.classList.remove('pointer-events-none', 'opacity-0');
+    requestAnimationFrame(() => requestAnimationFrame(showMenuCard));
+
+    // Pause background video so it doesn't play while the modal is open
+    const bgVideo = document.querySelector("video");
+    if (bgVideo) bgVideo.pause();
+  };
+
+  const closeModal = () => {
+    hideMenuCard();
+    modal.classList.add('opacity-0');
+    setTimeout(() => {
+      modal.classList.add('pointer-events-none');
+      disableBackdrop();
+      
+      const mainContent = document.getElementById('main-content');
+      if (mainContent) mainContent.classList.remove('opacity-0', 'pointer-events-none');
+      
+      const bgVideo = document.querySelector("video");
+      if (bgVideo) bgVideo.play();
+    }, 500);
+  };
+
+  // ── Switch to a game ─────────────────────────────────────────────────────
+  const switchToGame = (container: HTMLElement) => {
+    hideMenuCard();
+    
+    // Pause background video to save CPU
+    const bgVideo = document.querySelector("video");
+    if (bgVideo) bgVideo.pause();
+
+    setTimeout(() => {
+      disableBackdrop(); // kill blur before canvas starts painting
+      container.classList.remove('opacity-0', 'pointer-events-none');
+      
+      const mainContent = document.getElementById('main-content');
+      if (mainContent) mainContent.classList.add('opacity-0', 'pointer-events-none');
+      const navbar = document.getElementById('navbar-header');
+      if (navbar) navbar.classList.add('game-active');
+    }, 220);
+  };
+
+  // ── Back from game to menu ───────────────────────────────────────────────
+  const backToMenu = () => {
+    playcaptchaContainer.classList.add('opacity-0', 'pointer-events-none');
+    plinkoContainer.classList.add('opacity-0', 'pointer-events-none');
+    enableBackdrop();
+    setTimeout(showMenuCard, 150);
+    
+    const mainContent = document.getElementById('main-content');
+    if (mainContent) mainContent.classList.remove('opacity-0', 'pointer-events-none');
+    const navbar = document.getElementById('navbar-header');
+    if (navbar) navbar.classList.remove('game-active');
+  };
+
+  // ── Success screen ────────────────────────────────────────────────────────
+  const showSuccess = () => {
+    playcaptchaContainer.classList.add('opacity-0', 'pointer-events-none');
+    plinkoContainer.classList.add('opacity-0', 'pointer-events-none');
+    hideMenuCard();
+    enableBackdrop();
+
+    successScreen.classList.remove('opacity-0', 'pointer-events-none');
+    successScreen.classList.add('opacity-100');
+    const navbar = document.getElementById('navbar-header');
+    if (navbar) navbar.classList.remove('game-active');
+
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      successCheckmark.classList.remove('opacity-0', 'scale-50');
+      successCheckmark.classList.add('opacity-100', 'scale-100');
+    }));
+  };
+
+  const btnSuccessHome = document.getElementById('success-home-btn');
+  const btnSuccessPlayAgain = document.getElementById('success-play-again-btn');
+
+  btnSuccessHome?.addEventListener('click', () => { window.location.href = '/'; });
+  btnSuccessPlayAgain?.addEventListener('click', () => {
+    // Hide success screen
+    successScreen.classList.remove('opacity-100');
+    successScreen.classList.add('opacity-0', 'pointer-events-none');
+    successCheckmark.classList.add('opacity-0', 'scale-50');
+    successCheckmark.classList.remove('opacity-100', 'scale-100');
+
+    // Reset clawcaptcha
+    document.dispatchEvent(new CustomEvent('captcha-reset'));
+
+    // Go back to the menu to choose a game
+    openModal();
+  });
+
+  // ── Wire up events ────────────────────────────────────────────────────────
+  document.addEventListener('open-captcha-modal', openModal);
+  closeBtn?.addEventListener('click', closeModal);
+  document.querySelectorAll('.btn-back').forEach(btn => btn.addEventListener('click', backToMenu));
+  btnPlaycaptcha?.addEventListener('click', () => switchToGame(playcaptchaContainer));
+  btnPlinko?.addEventListener('click', () => switchToGame(plinkoContainer));
+  document.addEventListener('captcha-success', showSuccess);
+</script>

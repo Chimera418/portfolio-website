@@ -1,0 +1,88 @@
+// The game: the player must reproduce a randomly generated "code" by dropping
+// balls into the matching value slots. Each input is bound to a ball by drop
+// order (input i ← the i-th ball dropped) and shows that ball's *current*
+// resting slot — so settle order doesn't matter and a ball that gets bumped to
+// a new slot (even by a resize) just updates its own input. The code is only
+// evaluated on submit (Enter or the button), never auto-completed. The pool of
+// possible values comes from the active charset (a–z or 0–9).
+
+import { clearBalls } from "$lib/stores/balls";
+import { charset } from "$lib/stores/charset.svelte";
+import { matchPreset, settings } from "$lib/stores/settings.svelte";
+
+export const CODE_LENGTH = 6;
+
+type Status = "playing" | "success" | "failure";
+
+const randomCode = (): string => {
+	const values = charset.values;
+	let code = "";
+	for (let i = 0; i < CODE_LENGTH; i++) {
+		code += values[Math.floor(Math.random() * values.length)];
+	}
+	return code;
+};
+
+const empty = (): string[] => Array(CODE_LENGTH).fill("");
+
+export const game = $state({
+	target: randomCode(),
+	entered: empty(), // entered[i] = ball i's current letter, or "" while it's in flight
+	dropped: 0, // how many balls have been released this round (next drop fills this slot)
+	status: "playing" as Status
+});
+
+// every slot has a settled value
+export const isReady = (): boolean => game.entered.every((c) => c !== "");
+
+// Fire-and-forget analytics: umami may be absent (blocked, offline) or throw —
+// either way the game must be unaffected.
+const trackWin = (): void => {
+	try {
+		window.umami?.track("win", { difficulty: matchPreset(settings) ?? "custom" });
+	} catch {
+		// no-op
+	}
+};
+
+export const submit = (): void => {
+	if (game.status !== "playing" || !isReady()) return;
+	const won = game.entered.join("") === game.target;
+	game.status = won ? "success" : "failure";
+	if (won) {
+		trackWin();
+		clearBalls(); // start the win-screen free-play sandbox with a clean slate
+		document.dispatchEvent(new CustomEvent('captcha-success'));
+	}
+};
+
+// Hard mode (instant fail): the round is lost the instant any settled ball
+// occupies a slot whose letter doesn't match the target — no need to fill the
+// whole code and submit. A no-op when hard mode is off or play has already
+// ended. Called each frame after the entered slots are re-projected.
+export const checkInstantFail = (): void => {
+	if (!settings.instantFail || game.status !== "playing") return;
+	for (let i = 0; i < CODE_LENGTH; i++) {
+		if (game.entered[i] !== "" && game.entered[i] !== game.target[i]) {
+			game.status = "failure";
+			return;
+		}
+	}
+};
+
+// Regenerate just the target — used when the value set changes at a breakpoint.
+// Leaves the balls, entries, and progress in place (they re-project onto the new
+// board), so the game stays playable across a resize.
+export const newTarget = (): void => {
+	game.target = randomCode();
+};
+
+// Full reset — clears the balls, entries, and status. Only the "new code" /
+// result buttons do this (a resize or breakpoint never does).
+export const reset = (): void => {
+	clearBalls();
+	game.entered = empty();
+	game.dropped = 0;
+	game.status = "playing";
+	game.target = randomCode();
+};

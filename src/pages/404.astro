@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import CommandPalette from "../components/CommandPalette.astro";
+import CaptchaModal from "../components/CaptchaModal.astro";
 ---
 
 <!doctype html>
@@ -25,6 +26,7 @@ import CommandPalette from "../components/CommandPalette.astro";
       class="fixed inset-0 w-full h-full z-0 overflow-hidden bg-black flex items-center justify-center pointer-events-none"
     >
       <video
+        id="bg-video"
         class="min-w-full min-h-full object-cover opacity-80"
         src="https://occepykq6d5iw5pd.public.blob.vercel-storage.com/Never%20gonna%20Meow%20you%20up.mp4"
         autoplay
@@ -34,7 +36,8 @@ import CommandPalette from "../components/CommandPalette.astro";
 
     <!-- UI Overlay -->
     <main
-      class="relative z-10 w-full h-full flex flex-col items-center justify-center pointer-events-none p-4"
+      id="main-content"
+      class="relative z-10 w-full h-full flex flex-col items-center justify-center pointer-events-none p-4 transition-opacity duration-500"
     >
       <!-- 404 Glitch Text -->
       <div class="relative inline-block mb-8">
@@ -69,18 +72,22 @@ import CommandPalette from "../components/CommandPalette.astro";
       </p>
 
       <!-- Return Button -->
-      <a
-        href="/"
-        class="pointer-events-auto font-pixel text-sm uppercase tracking-widest text-text-primary bg-surface/90 backdrop-blur-md border border-highlight-med hover:border-primary hover:text-primary px-8 py-4 rounded-xl transition-all hover:-translate-y-1 active:translate-y-0 shadow-xl"
+      <button
+        type="button"
+        onclick="document.getElementById('bg-video')?.pause(); document.dispatchEvent(new CustomEvent('open-captcha-modal'));"
+        class="pointer-events-auto font-pixel text-sm uppercase tracking-widest text-text-primary bg-surface/90 backdrop-blur-md border border-highlight-med hover:border-primary hover:text-primary px-8 py-4 rounded-xl transition-all hover:-translate-y-1 active:translate-y-0 shadow-xl cursor-pointer"
       >
         Return to Home Page
-      </a>
+      </button>
     </main>
+
+    <CaptchaModal />
 
     <!-- Unmute Button -->
     <button
+      type="button"
       id="unmute-btn"
-      class="pointer-events-auto fixed bottom-8 right-8 z-50 bg-surface/90 backdrop-blur-md border-2 border-highlight-med hover:border-primary text-text-primary hover:text-primary px-5 py-4 rounded-xl font-pixel text-xs tracking-widest shadow-xl transition-all hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2 group"
+      class="pointer-events-auto fixed top-8 right-8 z-[250] bg-surface/90 backdrop-blur-md border-2 border-highlight-med hover:border-primary text-text-primary hover:text-primary px-5 py-4 rounded-xl font-pixel text-xs tracking-widest shadow-xl transition-all hover:-translate-y-1 active:translate-y-0 flex items-center justify-center gap-2 group"
     >
       <svg
         id="icon-muted"

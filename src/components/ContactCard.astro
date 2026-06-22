@@ -26,7 +26,7 @@ const links = [
   {
     name: 'Discord',
     href: 'https://discord.com/users/736465046317563915',
-    hint: 'gamingchimera · click to copy',
+    hint: 'gamingchimera',
     color: '#5865F2',
     hoverBg: 'rgba(88,101,242,0.12)',
     discord: true,
@@ -81,8 +81,22 @@ const links = [
 
 <script is:inline>
   document.querySelectorAll('[data-discord="true"]').forEach(el => {
-    el.addEventListener('click', () => {
+    el.addEventListener('click', (e) => {
       navigator.clipboard.writeText('gamingchimera').catch(() => {});
+      
+      const hintEl = el.querySelector('p:nth-of-type(2)');
+      if (hintEl) {
+        const originalText = hintEl.textContent;
+        hintEl.textContent = 'copied!';
+        hintEl.classList.add('text-primary');
+        hintEl.classList.remove('text-text-muted');
+        
+        setTimeout(() => {
+          hintEl.textContent = originalText;
+          hintEl.classList.remove('text-primary');
+          hintEl.classList.add('text-text-muted');
+        }, 2000);
+      }
     });
   });
 </script>

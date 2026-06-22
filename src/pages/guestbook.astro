@@ -183,7 +183,7 @@ const AVATAR_INDICES = Array.from({ length: 45 }, (_, i) => i);
             </div>
 
             <!-- Social handle (optional) -->
-            <div class="flex flex-col gap-1.5">
+            <div class="flex flex-col gap-1.5 relative">
               <label
                 for="gb-handle"
                 class="font-pixel text-[9px] text-text-muted uppercase tracking-widest"
@@ -193,14 +193,220 @@ const AVATAR_INDICES = Array.from({ length: 45 }, (_, i) => i);
                   >(optional)</span
                 >
               </label>
-              <input
-                id="gb-handle"
-                type="text"
-                name="handle"
-                placeholder="@you"
-                maxlength="40"
-                class="gb-input bg-overlay border border-highlight-med rounded-lg px-4 py-3 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-secondary transition-colors duration-200 w-full"
-              />
+              <div class="relative flex items-center">
+                <button
+                  type="button"
+                  id="gb-platform-btn"
+                  class="absolute left-1.5 p-1.5 rounded-md text-text-muted hover:text-text-primary hover:bg-highlight-med/30 transition-all duration-200 flex items-center gap-1 z-10"
+                  title="Select platform"
+                >
+                  <span id="gb-platform-icon">
+                    <svg
+                      class="w-4 h-4"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      ><circle cx="12" cy="12" r="4"></circle><path
+                        d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"
+                      ></path></svg
+                    >
+                  </span>
+                  <svg
+                    class="w-3 h-3 opacity-70"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    ><path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M19 9l-7 7-7-7"></path></svg
+                  >
+                </button>
+
+                <div
+                  id="gb-platform-menu"
+                  class="absolute top-full left-0 mt-2 w-36 bg-surface border border-highlight-med rounded-lg shadow-xl opacity-0 invisible transform -translate-y-2 transition-all duration-200 z-50 overflow-hidden"
+                >
+                  <div class="flex flex-col py-1">
+                    <button
+                      type="button"
+                      data-platform="instagram"
+                      class="platform-option flex items-center gap-3 px-3 py-2 hover:bg-highlight-med/30 text-sm text-text-primary transition-colors"
+                    >
+                      <svg
+                        class="w-4 h-4 text-text-muted"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        ><rect x="2" y="2" width="20" height="20" rx="5" ry="5"
+                        ></rect><path
+                          d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"
+                        ></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"
+                        ></line></svg
+                      >
+                      Instagram
+                    </button>
+                    <button
+                      type="button"
+                      data-platform="discord"
+                      class="platform-option flex items-center gap-3 px-3 py-2 hover:bg-highlight-med/30 text-sm text-text-primary transition-colors"
+                    >
+                      <svg class="w-4 h-4 text-text-muted" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" /></svg>
+                      Discord
+                    </button>
+                    <button
+                      type="button"
+                      data-platform="twitter"
+                      class="platform-option flex items-center gap-3 px-3 py-2 hover:bg-highlight-med/30 text-sm text-text-primary transition-colors"
+                    >
+                      <svg
+                        class="w-4 h-4 text-text-muted"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        ><path
+                          d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"
+                        ></path></svg
+                      >
+                      X
+                    </button>
+                    <button
+                      type="button"
+                      data-platform="github"
+                      class="platform-option flex items-center gap-3 px-3 py-2 hover:bg-highlight-med/30 text-sm text-text-primary transition-colors"
+                    >
+                      <svg
+                        class="w-4 h-4 text-text-muted"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        ><path
+                          d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
+                        ></path></svg
+                      >
+                      GitHub
+                    </button>
+                    <button
+                      type="button"
+                      data-platform="linkedin"
+                      class="platform-option flex items-center gap-3 px-3 py-2 hover:bg-highlight-med/30 text-sm text-text-primary transition-colors"
+                    >
+                      <svg
+                        class="w-4 h-4 text-text-muted"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        ><path
+                          d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
+                        ></path><rect x="2" y="9" width="4" height="12"
+                        ></rect><circle cx="4" cy="4" r="2"></circle></svg
+                      >
+                      LinkedIn
+                    </button>
+                    <button
+                      type="button"
+                      data-platform="youtube"
+                      class="platform-option flex items-center gap-3 px-3 py-2 hover:bg-highlight-med/30 text-sm text-text-primary transition-colors"
+                    >
+                      <svg
+                        class="w-4 h-4 text-text-muted"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        ><path
+                          d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"
+                        ></path><polygon
+                          points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"
+                        ></polygon></svg
+                      >
+                      YouTube
+                    </button>
+                    <button
+                      type="button"
+                      data-platform="twitch"
+                      class="platform-option flex items-center gap-3 px-3 py-2 hover:bg-highlight-med/30 text-sm text-text-primary transition-colors"
+                    >
+                      <svg
+                        class="w-4 h-4 text-text-muted"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        ><path d="M21 2H3v16h5v4l4-4h5l4-4V2zm-10 9V7m5 4V7"
+                        ></path></svg
+                      >
+                      Twitch
+                    </button>
+                    <button
+                      type="button"
+                      data-platform="spotify"
+                      class="platform-option flex items-center gap-3 px-3 py-2 hover:bg-highlight-med/30 text-sm text-text-primary transition-colors"
+                    >
+                      <svg
+                        class="w-4 h-4 text-text-muted"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        ><path
+                          d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.54.659.3 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.84.24 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.6.18-1.2.72-1.38 4.2-1.26 11.28-1.02 15.721 1.62.539.3.719 1.02.419 1.56-.239.54-.839.72-1.56.3z"
+                        ></path></svg
+                      >
+                      Spotify
+                    </button>
+                    <button
+                      type="button"
+                      data-platform="other"
+                      class="platform-option flex items-center gap-3 px-3 py-2 hover:bg-highlight-med/30 text-sm text-text-primary transition-colors"
+                    >
+                      <svg
+                        class="w-4 h-4 text-text-muted"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        ><circle cx="12" cy="12" r="4"></circle><path
+                          d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"
+                        ></path></svg
+                      >
+                      Other
+                    </button>
+                  </div>
+                </div>
+
+                <input
+                  type="hidden"
+                  id="gb-platform-input"
+                  name="platform"
+                  value=""
+                />
+
+                <input
+                  id="gb-handle"
+                  type="text"
+                  name="handle"
+                  placeholder="@you"
+                  maxlength="40"
+                  class="gb-input bg-overlay border border-highlight-med rounded-lg pl-14 pr-4 py-3 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-secondary transition-colors duration-200 w-full"
+                />
+              </div>
             </div>
 
             <!-- Website (optional) -->
@@ -460,6 +666,61 @@ const AVATAR_INDICES = Array.from({ length: 45 }, (_, i) => i);
       ? timeAgo(msg.created_at)
       : msg.date || "Just now";
 
+    const getPlatformIcon = (platform: string) => {
+      const p = platform?.toLowerCase() || "";
+      switch (p) {
+        case "twitter":
+          return `<svg class="w-[14px] h-[14px]" viewBox="0 0 24 24" fill="currentColor"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"></path></svg>`;
+        case "github":
+          return `<svg class="w-[14px] h-[14px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>`;
+        case "linkedin":
+          return `<svg class="w-[14px] h-[14px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>`;
+        case "youtube":
+          return `<svg class="w-[14px] h-[14px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>`;
+        case "dribbble":
+          return `<svg class="w-[14px] h-[14px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32"></path></svg>`;
+        case "twitch":
+          return `<svg class="w-[14px] h-[14px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2H3v16h5v4l4-4h5l4-4V2zm-10 9V7m5 4V7"></path></svg>`;
+        case "spotify":
+          return `<svg class="w-[14px] h-[14px]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.54.659.3 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.84.24 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.6.18-1.2.72-1.38 4.2-1.26 11.28-1.02 15.721 1.62.539.3.719 1.02.419 1.56-.239.54-.839.72-1.56.3z"/></svg>`;
+        case "instagram":
+          return `<svg class="w-[14px] h-[14px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>`;
+        case "discord":
+          return `<svg class="w-[14px] h-[14px]" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z" /></svg>`;
+        default:
+          return `<svg class="w-[14px] h-[14px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"></path></svg>`;
+      }
+    };
+
+    const getPlatformUrl = (platform: string, handle: string) => {
+      const p = platform?.toLowerCase() || "";
+      const cleanHandle = handle.replace(/^@/, "");
+      switch (p) {
+        case "twitter":
+          return `https://x.com/${cleanHandle}`;
+        case "github":
+          return `https://github.com/${cleanHandle}`;
+        case "linkedin":
+          return `https://linkedin.com/in/${cleanHandle}`;
+        case "youtube":
+          return `https://youtube.com/@${cleanHandle}`;
+        case "dribbble":
+          return `https://dribbble.com/${cleanHandle}`;
+        case "twitch":
+          return `https://twitch.tv/${cleanHandle}`;
+        case "spotify":
+          return `https://open.spotify.com/user/${cleanHandle}`;
+        case "instagram":
+          return `https://instagram.com/${cleanHandle}`;
+        case "discord":
+          return `https://discord.com/users/${cleanHandle}`;
+        case "other":
+          return handle.startsWith("http") ? handle : `https://${cleanHandle}`;
+        default:
+          return `https://x.com/${cleanHandle}`; // fallback for generic handles
+      }
+    };
+
     return `
       <div class="message-card bg-surface border-2 border-highlight-med rounded-xl p-5 hover:border-secondary/50 transition-all duration-300 group animate-fade-in">
         <div class="flex items-start gap-4">
@@ -467,23 +728,41 @@ const AVATAR_INDICES = Array.from({ length: 45 }, (_, i) => i);
              <div class="sprite-avatar" style="--sprite-idx: ${msg.avatarIdx};"></div>
           </div>
           <div class="flex-grow min-w-0">
-            <div class="flex items-baseline justify-between gap-2 mb-1 flex-wrap">
+            <div class="flex items-center justify-between gap-2 mb-1 flex-wrap">
               <div class="flex items-center gap-2 flex-wrap">
                 ${
                   safeWebsite
                     ? `
-                  <a href="${safeWebsite}" target="_blank" rel="noopener noreferrer" class="font-semibold text-sm text-secondary hover:text-primary transition-colors duration-200 flex items-center gap-1 group/link">
+                  <a href="${safeWebsite}" target="_blank" rel="noopener noreferrer" class="font-semibold text-sm text-secondary hover:text-primary hover:underline decoration-2 decoration-dotted underline-offset-[4px] transition-all duration-200">
                     ${safeName}
-                    <svg class="w-3 h-3 opacity-0 group-hover/link:opacity-100 transition-opacity duration-200 -translate-y-px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                   </a>
                 `
                     : `
                   <span class="font-semibold text-text-primary text-sm">${safeName}</span>
                 `
                 }
-                ${safeHandle ? `<span class="font-pixel text-[9px] text-text-muted">${safeHandle}</span>` : ""}
+                ${
+                  safeHandle
+                    ? msg.platform?.toLowerCase() === "discord"
+                      ? `
+                  <a href="${getPlatformUrl(msg.platform, safeHandle)}" target="_blank" rel="noopener noreferrer" class="discord-guest-copy-btn flex items-center gap-1.5 text-text-muted hover:text-[#5865F2] transition-colors duration-200 group" data-handle="${safeHandle}" title="Click to copy Discord handle">
+                    ${getPlatformIcon(msg.platform)}
+                    <span class="font-pixel text-[10px] tracking-wide mt-0.5">
+                      <span class="handle-text">${safeHandle}</span>
+                      <span class="copy-hint opacity-0 group-hover:opacity-100 transition-opacity text-text-muted/70 ml-1 whitespace-nowrap" data-original="· click to copy">· click to copy</span>
+                    </span>
+                  </a>
+                `
+                      : `
+                  <a href="${getPlatformUrl(msg.platform, safeHandle)}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-text-muted hover:text-primary transition-colors duration-200" title="${safeHandle}">
+                    ${getPlatformIcon(msg.platform)}
+                    <span class="font-pixel text-[10px] tracking-wide mt-0.5">${safeHandle}</span>
+                  </a>
+                `
+                    : ""
+                }
               </div>
-              <span class="font-pixel text-[9px] text-text-muted flex-shrink-0">${dateDisplay}</span>
+              <span class="font-pixel text-[9px] text-text-muted flex-shrink-0 mt-[2px]">${dateDisplay}</span>
             </div>
             <p class="text-text-muted text-sm leading-relaxed">${safeMsg}</p>
           </div>
@@ -501,7 +780,7 @@ const AVATAR_INDICES = Array.from({ length: 45 }, (_, i) => i);
   async function loadMessages() {
     try {
       // 1. Instantly load from cache
-      const cached = localStorage.getItem('guestbook_cache');
+      const cached = localStorage.getItem("guestbook_cache");
       if (cached) {
         const cachedMessages = JSON.parse(cached);
         wallEl.innerHTML = "";
@@ -512,12 +791,12 @@ const AVATAR_INDICES = Array.from({ length: 45 }, (_, i) => i);
       }
 
       // 2. Fetch fresh data in the background
-      const res = await fetch('/api/guestbook');
-      if (!res.ok) throw new Error('Failed to fetch');
+      const res = await fetch("/api/guestbook");
+      if (!res.ok) throw new Error("Failed to fetch");
       const messages = await res.json();
-      
+
       // 3. Save to cache
-      localStorage.setItem('guestbook_cache', JSON.stringify(messages));
+      localStorage.setItem("guestbook_cache", JSON.stringify(messages));
 
       // 4. Update UI with fresh data
       wallEl.innerHTML = "";
@@ -527,8 +806,9 @@ const AVATAR_INDICES = Array.from({ length: 45 }, (_, i) => i);
       updateEntryCount(messages.length);
     } catch (e) {
       console.error(e);
-      if (!localStorage.getItem('guestbook_cache')) {
-        wallEl.innerHTML = '<p class="text-text-muted text-sm text-center">Failed to load messages. Please try again later.</p>';
+      if (!localStorage.getItem("guestbook_cache")) {
+        wallEl.innerHTML =
+          '<p class="text-text-muted text-sm text-center">Failed to load messages. Please try again later.</p>';
       }
     }
   }
@@ -549,6 +829,13 @@ const AVATAR_INDICES = Array.from({ length: 45 }, (_, i) => i);
     let website = websiteEl?.value.trim() || "";
     const message = msgEl.value.trim();
     const avatarIdx = avatarInput.value;
+    const platformInputEl = document.getElementById(
+      "gb-platform-input",
+    ) as HTMLInputElement;
+    let platform = platformInputEl?.value || "";
+    if (handle && !platform) {
+      platform = "instagram";
+    }
 
     if (!name || !message) {
       showStatus("Name and message are required.", "error");
@@ -566,15 +853,22 @@ const AVATAR_INDICES = Array.from({ length: 45 }, (_, i) => i);
     shimmer.classList.add("shimmer-active");
 
     try {
-      const res = await fetch('/api/guestbook', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, handle, website, message, avatarIdx })
+      const res = await fetch("/api/guestbook", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          handle,
+          website,
+          message,
+          avatarIdx,
+          platform,
+        }),
       });
 
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.error || 'Failed to post message');
+        throw new Error(err.error || "Failed to post message");
       }
 
       const newMsg = await res.json();
@@ -582,19 +876,37 @@ const AVATAR_INDICES = Array.from({ length: 45 }, (_, i) => i);
       if (wallEl) {
         wallEl.insertAdjacentHTML("afterbegin", createMessageHTML(newMsg));
       }
-      
+
       // Update cache with the new message
       try {
-        const cached = JSON.parse(localStorage.getItem('guestbook_cache') || '[]');
-        localStorage.setItem('guestbook_cache', JSON.stringify([newMsg, ...cached]));
+        const cached = JSON.parse(
+          localStorage.getItem("guestbook_cache") || "[]",
+        );
+        localStorage.setItem(
+          "guestbook_cache",
+          JSON.stringify([newMsg, ...cached]),
+        );
       } catch (e) {}
-      
-      const currentCount = parseInt(entryCountEl.getAttribute("data-count") || "0");
+
+      const currentCount = parseInt(
+        entryCountEl.getAttribute("data-count") || "0",
+      );
       updateEntryCount(currentCount + 1);
 
       showStatus("Message posted successfully! ✨", "success");
       form.reset();
       countEl.textContent = "0 / 280";
+
+      // Reset platform picker
+      const platformInputEl = document.getElementById(
+        "gb-platform-input",
+      ) as HTMLInputElement;
+      const platformIcon = document.getElementById(
+        "gb-platform-icon",
+      ) as HTMLSpanElement;
+      if (platformInputEl) platformInputEl.value = "";
+      if (platformIcon)
+        platformIcon.innerHTML = `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"></path></svg>`;
 
       // Reset avatar picker
       avatarButtons.forEach((b) => b.classList.remove("avatar-selected"));
@@ -629,6 +941,100 @@ const AVATAR_INDICES = Array.from({ length: 45 }, (_, i) => i);
     }
     setTimeout(() => statusEl.classList.add("hidden"), 5000);
   }
+
+  // ── Platform Dropdown Logic ────────────────────────────────────
+  const platformBtn = document.getElementById(
+    "gb-platform-btn",
+  ) as HTMLButtonElement;
+  const platformMenu = document.getElementById(
+    "gb-platform-menu",
+  ) as HTMLDivElement;
+  const platformInputEl = document.getElementById(
+    "gb-platform-input",
+  ) as HTMLInputElement;
+  const platformIcon = document.getElementById(
+    "gb-platform-icon",
+  ) as HTMLSpanElement;
+
+  // Toggle dropdown on button click
+  platformBtn?.addEventListener("click", () => {
+    const isExpanded = platformMenu.classList.contains("opacity-100");
+    if (isExpanded) {
+      closeDropdown();
+    } else {
+      platformMenu.classList.remove("opacity-0", "invisible", "-translate-y-2");
+      platformMenu.classList.add("opacity-100", "visible", "translate-y-0");
+    }
+  });
+
+  function closeDropdown() {
+    platformMenu?.classList.remove("opacity-100", "visible", "translate-y-0");
+    platformMenu?.classList.add("opacity-0", "invisible", "-translate-y-2");
+  }
+
+  // Close dropdown on outside click
+  document.addEventListener("click", (e) => {
+    if (
+      !platformBtn?.contains(e.target as Node) &&
+      !platformMenu?.contains(e.target as Node)
+    ) {
+      closeDropdown();
+    }
+  });
+
+  // Select platform option
+  document.querySelectorAll(".platform-option").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const target = e.currentTarget as HTMLButtonElement;
+      const platform = target.dataset.platform || "instagram";
+      const svg = target.querySelector("svg")?.outerHTML || "";
+
+      if (platformInputEl) platformInputEl.value = platform;
+      if (platformIcon) platformIcon.innerHTML = svg;
+      closeDropdown();
+    });
+  });
+
+  // Enable/disable based on handle input
+  handleEl?.addEventListener("input", () => {
+    if (handleEl.value.trim().length > 0) {
+      if (!platformInputEl.value) {
+        platformInputEl.value = "instagram";
+        if (platformIcon)
+          platformIcon.innerHTML = `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>`;
+      }
+    } else {
+      // Clear platform if handle is emptied
+      platformInputEl.value = "";
+      if (platformIcon)
+        platformIcon.innerHTML = `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"></path></svg>`;
+      closeDropdown();
+    }
+  });
+
+  // Handle Discord click-to-copy
+  document.addEventListener("click", (e) => {
+    const target = e.target;
+    const btn = target && target.closest ? target.closest(".discord-guest-copy-btn") : null;
+    if (btn) {
+      const handle = btn.getAttribute("data-handle");
+      if (handle) {
+        navigator.clipboard.writeText(handle).catch(() => {});
+        const hint = btn.querySelector(".copy-hint");
+        if (hint) {
+          const originalText = hint.getAttribute("data-original") || "· click to copy";
+          hint.textContent = "· copied!";
+          hint.classList.add("text-primary");
+          hint.classList.remove("text-text-muted/70");
+          setTimeout(() => {
+            hint.textContent = originalText;
+            hint.classList.remove("text-primary");
+            hint.classList.add("text-text-muted/70");
+          }, 2000);
+        }
+      }
+    }
+  });
 
   // Initialize
   document.addEventListener("DOMContentLoaded", loadMessages);

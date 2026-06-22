@@ -36,7 +36,7 @@ export const GET: APIRoute = async () => {
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
-    const { name, handle, website, message, avatarIdx } = body;
+    const { name, handle, website, message, avatarIdx, platform } = body;
 
     if (!name || !message) {
       return new Response(JSON.stringify({ error: 'Name and message are required' }), {
@@ -54,6 +54,7 @@ export const POST: APIRoute = async ({ request }) => {
           website: website || null,
           message,
           avatarIdx: parseInt(avatarIdx) || 0,
+          platform: platform || null,
         }
       ])
       .select()

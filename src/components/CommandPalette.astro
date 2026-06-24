@@ -4,11 +4,11 @@
 
 <div
   id="command-palette-backdrop"
-  class="fixed inset-0 z-[10000] bg-surface/80 backdrop-blur-sm hidden items-start justify-center pt-[15vh] px-4 opacity-0 transition-opacity duration-200"
+  class="fixed inset-0 z-[10000] bg-black/60 hidden items-start justify-center pt-[15vh] px-4 opacity-0 transition-opacity duration-150 ease-out"
 >
   <div
     id="command-palette"
-    class="w-full max-w-2xl bg-surface-dim border-2 border-highlight-med rounded-xl shadow-2xl overflow-hidden flex flex-col transform scale-95 transition-transform duration-200"
+    class="w-full max-w-2xl bg-surface-dim border-2 border-highlight-med rounded-xl shadow-2xl overflow-hidden flex flex-col transform translate-y-4 opacity-0 transition-all duration-150 ease-out will-change-transform"
     role="dialog"
     aria-modal="true"
   >
@@ -84,7 +84,8 @@
     opacity: 1;
   }
   #command-palette-backdrop.is-open #command-palette {
-    transform: scale(1);
+    transform: translateY(0);
+    opacity: 1;
   }
 
   /* Active item styling */
@@ -274,20 +275,37 @@
   let filteredCommands = [...activeCommands];
 
   function openPalette() {
+    if (isOpen) return;
     isOpen = true;
+    
+    // 1. Prepare DOM state BEFORE making it visible or animating
+    input.value = "";
+    filterCommands("");
+    
+    // 2. Unhide the backdrop
     backdrop?.classList.remove("hidden");
-    // small delay to allow display:flex to apply before transition
+    
+    // 3. Force layout recalculation so the browser registers the initial scale/opacity
+    // This is the crucial step to prevent animation stuttering
+    void backdrop?.offsetWidth;
+    
+    // 4. Trigger the CSS transition
+    backdrop?.classList.add("is-open");
+    
+    // 5. Defer input focus slightly so it doesn't drop frames during the animation
     setTimeout(() => {
-      backdrop?.classList.add("is-open");
       input?.focus();
-      input.value = "";
-      filterCommands("");
-    }, 10);
+    }, 50);
   }
 
   function closePalette() {
+    if (!isOpen) return;
     isOpen = false;
+    
     backdrop?.classList.remove("is-open");
+    input?.blur(); // Immediately blur so keyboard drops on mobile
+    
+    // Wait for the transition to finish before hiding
     setTimeout(() => {
       backdrop?.classList.add("hidden");
     }, 200);

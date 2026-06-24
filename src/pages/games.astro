@@ -570,7 +570,11 @@ const games = [
 <script>
   let chimeraDeviceId = localStorage.getItem('chimera_arcade_device_id');
   if (!chimeraDeviceId) {
-    chimeraDeviceId = crypto.randomUUID();
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      chimeraDeviceId = crypto.randomUUID();
+    } else {
+      chimeraDeviceId = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    }
     localStorage.setItem('chimera_arcade_device_id', chimeraDeviceId);
   }
 
@@ -762,7 +766,7 @@ const games = [
     activeScore = null;
     
     try {
-      const res = await fetch(`/api/leaderboard?game=${gameId}`, {
+      const res = await fetch(`/api/leaderboard?game=${gameId}&deviceId=${chimeraDeviceId || ''}`, {
         headers: { 'x-device-id': chimeraDeviceId || '' }
       });
       if (!res.ok) throw new Error('Failed to load');
@@ -802,7 +806,7 @@ const games = [
           'Content-Type': 'application/json',
           'x-device-id': chimeraDeviceId || ''
         },
-        body: JSON.stringify({ game: active, player: username, score: activeScore })
+        body: JSON.stringify({ game: active, player: username, score: activeScore, deviceId: chimeraDeviceId || '' })
       });
       const data = await res.json();
       
@@ -841,7 +845,7 @@ const games = [
       } else {
         // They don't have a username, check if they got top 10
         try {
-          const res = await fetch(`/api/leaderboard?game=${active}`, {
+          const res = await fetch(`/api/leaderboard?game=${active}&deviceId=${chimeraDeviceId || ''}`, {
             headers: { 'x-device-id': chimeraDeviceId || '' }
           });
           if (!res.ok) return;

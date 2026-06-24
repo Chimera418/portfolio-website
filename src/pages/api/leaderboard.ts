@@ -1,0 +1,171 @@
+import type { APIRoute } from 'astro';
+import { Redis } from '@upstash/redis';
+import { getCurrentWeekKey } from '../../lib/timeUtils';
+
+const redis = new Redis({
+  url: import.meta.env.UPSTASH_REDIS_REST_URL || process.env.UPSTASH_REDIS_REST_URL,
+  token: import.meta.env.UPSTASH_REDIS_REST_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN,
+});
+
+// We can define which games sort ascending vs descending.
+// false = descending (high score is better)
+// true = ascending (lower is better, e.g. fewest moves/guesses)
+const gameConfig: Record<string, { ascending: boolean }> = {
+  'chrome-dino': { ascending: false },
+  'snake': { ascending: false },
+  'tetris': { ascending: false },
+  '2048': { ascending: false },
+  'flappy-bird': { ascending: false },
+  'color-guesser': { ascending: false },
+  'memory-match': { ascending: true }, // Fewest moves
+  'wordle': { ascending: false }, // Streak/Score
+  'dont-wordle': { ascending: true }, // Fewest guesses
+};
+
+// Gets the current leaderboard
+export const GET: APIRoute = async ({ request, url, clientAddress }) => {
+  const game = url.searchParams.get('game');
+  
+  if (!game || !gameConfig[game]) {
+    return new Response(JSON.stringify({ error: 'Invalid game' }), { status: 400 });
+  }
+
+  try {
+    const isAscending = gameConfig[game].ascending;
+    const weekId = getCurrentWeekKey();
+    const scoreKey = `leaderboard:${game}:${weekId}`;
+    let topRaw: (string | number)[];
+    
+    if (isAscending) {
+      topRaw = await redis.zrange(scoreKey, 0, 9, { withScores: true });
+    } else {
+      topRaw = await redis.zrange(scoreKey, 0, 9, { rev: true, withScores: true });
+    }
+
+    const top = [];
+    for (let i = 0; i < topRaw.length; i += 2) {
+      top.push({
+        player: topRaw[i] as string,
+        score: Math.floor(topRaw[i + 1] as number),
+      });
+    }
+
+    // Also check if this IP already has a registered username
+    const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || clientAddress || 'unknown';
+    
+    // Using a single Hash 'arcade_registry' to avoid cluttering the Redis database with keys
+    const existingInitials = await redis.hget<string>('arcade_registry', `ip:${ip}`);
+
+    return new Response(JSON.stringify({
+      top,
+      ascending: isAscending,
+      playerIPInitials: existingInitials || null
+    }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+  } catch (error) {
+    console.error('Redis error:', error);
+    return new Response(JSON.stringify({ error: 'Database error' }), { status: 500 });
+  }
+};
+
+// Submits a new score
+export const POST: APIRoute = async ({ request, clientAddress }) => {
+  try {
+    const body = await request.json();
+    const { game, player, score } = body;
+
+    if (!game || !player || score === undefined || typeof score !== 'number') {
+      return new Response(JSON.stringify({ error: 'Missing fields' }), { status: 400 });
+    }
+
+    if (!gameConfig[game]) {
+      return new Response(JSON.stringify({ error: 'Invalid game' }), { status: 400 });
+    }
+
+    // IP restriction: One initials per IP per game (or just globally for initials?)
+    // User requested "one initial per ipv4". Let's interpret this as:
+    // A specific IP address can only ever submit under ONE player name (initials) across all games.
+    // If they try to submit with a different name, we reject it or force the original name.
+    
+    // In dev, clientAddress might be ::1, let's just use it directly.
+    // If running on Vercel, clientAddress is automatically the real IP.
+    const ip = request.headers.get('x-forwarded-for') || clientAddress || 'unknown';
+    
+    let existingInitials = await redis.hget<string>('arcade_registry', `ip:${ip}`);
+
+    // Enforce 3-15 chars, alphanumeric and underscore only
+    let finalPlayer = player.replace(/[^a-zA-Z0-9_]/g, '').slice(0, 15).toUpperCase();
+    if (finalPlayer.length < 3) {
+      return new Response(JSON.stringify({ error: 'Username must be at least 3 valid characters' }), { status: 400 });
+    }
+
+    if (existingInitials) {
+      // They already have initials assigned to their IP
+      if (existingInitials !== finalPlayer) {
+        // Overwrite the request and use their original initials automatically
+        finalPlayer = existingInitials;
+      }
+    } else {
+      // This is a new IP claiming a username. Check if it's already taken.
+      const takenByIp = await redis.hget<string>('arcade_registry', `user:${finalPlayer}`);
+      if (takenByIp) {
+        return new Response(JSON.stringify({ error: 'Username is already taken by another player' }), { status: 400 });
+      }
+
+      // Save these initials for this IP inside the single Hash
+      await redis.hset('arcade_registry', {
+        [`ip:${ip}`]: finalPlayer,
+        [`user:${finalPlayer}`]: ip
+      });
+    }
+
+    // Add to sorted set
+    // ZADD automatically updates the score if the member already exists.
+    // But wait! Do we want to ONLY update if the new score is BETTER?
+    // For ascending (fewer is better), update if smaller.
+    // For descending (more is better), update if larger.
+    
+    const isAscending = gameConfig[game].ascending;
+    const weekId = getCurrentWeekKey();
+    const scoreKey = `leaderboard:${game}:${weekId}`;
+    
+    // Create the tie-breaker fraction based on time
+    const EPOCH_2024 = 1704067200; 
+    const currentSeconds = Math.floor(Date.now() / 1000);
+    const relativeSeconds = Math.max(0, currentSeconds - EPOCH_2024);
+    // fraction will be a small decimal between 0.001 and 0.1 for the next few decades
+    const fraction = relativeSeconds / 10000000000; 
+    
+    // For ascending (lowest score wins): earlier time -> lower fraction -> lower total
+    // For descending (highest score wins): earlier time -> higher fraction -> higher total
+    const scoreWithTieBreaker = isAscending 
+      ? score + fraction 
+      : score + (0.99 - fraction);
+    
+    const currentScore = await redis.zscore(scoreKey, finalPlayer);
+    let shouldUpdate = true;
+
+    if (currentScore !== null) {
+      const currentIntScore = Math.floor(currentScore);
+      if (isAscending && score >= currentIntScore) {
+        shouldUpdate = false;
+      } else if (!isAscending && score <= currentIntScore) {
+        shouldUpdate = false;
+      }
+    }
+
+    if (shouldUpdate) {
+      await redis.zadd(scoreKey, { score: scoreWithTieBreaker, member: finalPlayer });
+      // Keep leaderboards around for 7 days before expiring to auto-delete old ones
+      await redis.expire(scoreKey, 7 * 24 * 60 * 60);
+    }
+
+    return new Response(JSON.stringify({ success: true, player: finalPlayer, updated: shouldUpdate }), { 
+      status: 200, 
+      headers: { 'Content-Type': 'application/json' } 
+    });
+
+  } catch (error) {
+    console.error('Submission error:', error);
+    return new Response(JSON.stringify({ error: 'Server error' }), { status: 500 });
+  }
+};

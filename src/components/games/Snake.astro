@@ -106,6 +106,8 @@
         if (highScoreEl) highScoreEl.textContent = highScore.toString();
       }
       
+      window.dispatchEvent(new CustomEvent('arcade-game-over', { detail: { game: 'snake', score: score } }));
+      
       title.textContent = 'GAME OVER';
       startBtn.textContent = 'TRY AGAIN';
       overlay.classList.remove('hidden');

@@ -234,6 +234,8 @@
         if (highScoreEl) highScoreEl.textContent = highScore.toString();
       }
       
+      window.dispatchEvent(new CustomEvent('arcade-game-over', { detail: { game: 'flappy-bird', score: score } }));
+      
       title.textContent = 'GAME OVER';
       startBtn.textContent = 'TRY AGAIN';
       overlay.classList.remove('hidden');

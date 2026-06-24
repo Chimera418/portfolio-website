@@ -425,8 +425,10 @@
           if (r < 3 && grid[r][c] === grid[r+1][c]) return;
         }
       }
-      
       isGameOver = true;
+      
+      window.dispatchEvent(new CustomEvent('arcade-game-over', { detail: { game: '2048', score: score } }));
+      
       messageEl.textContent = 'Game Over!';
       retryBtn.textContent = 'Try Again';
       overlay.classList.remove('hidden');

@@ -1,0 +1,111 @@
+---
+// LeaderboardSidebar.astro
+---
+
+<div class="w-full h-full flex flex-col bg-surface overflow-hidden">
+  <div
+    class="p-4 border-b border-highlight-med bg-overlay shrink-0 flex items-center justify-between"
+  >
+    <h3
+      class="font-pixel text-primary text-sm uppercase tracking-wider flex items-center gap-2"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M6 9H4.5aa2.5 2.5 0 0 1 0-5H6"></path>
+        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+        <path d="M4 22h16"></path>
+        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"
+        ></path>
+        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"
+        ></path>
+        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+      </svg>
+      Top Players
+    </h3>
+    <div class="text-[10px] font-mono text-text-muted text-right leading-tight">
+      <div class="uppercase opacity-50 tracking-widest">Resets in</div>
+      <div
+        id="leaderboard-timer"
+        class="leaderboard-timer text-secondary font-bold text-xs whitespace-nowrap"
+      >
+        --:--:--
+      </div>
+    </div>
+  </div>
+
+  <div class="flex-grow overflow-y-auto p-4 space-y-3" id="leaderboard-list">
+    <!-- Populated by JS -->
+    <div
+      class="flex flex-col items-center justify-center h-full text-text-muted font-mono text-xs opacity-50"
+    >
+      <div class="animate-pulse mb-2">Loading scores...</div>
+    </div>
+  </div>
+
+  <div
+    id="leaderboard-submit-form"
+    class="p-4 border-t border-highlight-med bg-overlay shrink-0 hidden"
+  >
+    <div class="font-pixel text-xs text-secondary mb-2">New High Score!</div>
+    <div class="flex flex-col gap-2">
+      <input
+        type="text"
+        id="leaderboard-username"
+        maxlength="15"
+        minlength="3"
+        pattern="[a-zA-Z0-9_]+"
+        placeholder="PLAYER_1"
+        autocomplete="off"
+        spellcheck="false"
+        class="w-full bg-surface border border-highlight-med rounded px-3 py-2 font-mono text-sm text-primary focus:outline-none focus:border-primary transition-colors read-only:opacity-50 read-only:cursor-not-allowed read-only:border-transparent read-only:bg-surface-dim"
+      />
+      <button
+        id="leaderboard-submit-btn"
+        class="w-full bg-primary/10 text-primary border border-primary/50 hover:bg-primary/20 hover:border-primary font-pixel text-[10px] rounded transition-colors uppercase py-2.5"
+      >
+        Submit Score
+      </button>
+    </div>
+    <div
+      id="leaderboard-error"
+      class="text-red text-[10px] font-mono mt-2 hidden"
+    >
+    </div>
+    <div
+      id="leaderboard-warning"
+      class="mt-3 border-t border-highlight-med pt-2"
+    >
+      <details class="group border border-highlight-med/30 rounded bg-surface-dim mt-2">
+        <summary class="text-[10px] text-yellow cursor-pointer p-2 uppercase font-pixel tracking-wider hover:bg-highlight/20 transition-colors list-none flex items-center justify-between [&::-webkit-details-marker]:hidden">
+          Security Notice
+          <svg class="w-3 h-3 transition-transform group-open:rotate-180" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+        </summary>
+        <p
+          class="text-[10px] font-mono text-text-muted p-2 pt-0 opacity-90 leading-relaxed"
+        >
+          Your IP address will be securely logged to prevent cheating. <strong>Your chosen username will be permanently carried over to ALL games across the arcade.</strong> If you want to change your username or delete your ip, contact the almighty Chimera.
+        </p>
+      </details>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Override default browser autofill background styles */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    transition: background-color 5000s ease-in-out 0s;
+    -webkit-text-fill-color: var(--color-primary, #a5b4fc) !important;
+  }
+</style>

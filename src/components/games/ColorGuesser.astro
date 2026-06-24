@@ -205,11 +205,13 @@
       if (score > highScore) {
         highScore = score;
         localStorage.setItem('cg_hsl_highscore', highScore.toString());
-        msg = `Good job! New High Score: <b>${highScore}</b>`;
+        msg = `New High Score!<br><span style="font-size:1.5em;color:var(--color-primary);display:block;margin-top:0.5rem">${highScore}</span>`;
       } else {
-        msg  = `Oh no! Game over :(<br>Last Score: <b>${score}</b>`;
-        msg += `<br>Highest Score: <b>${highScore}</b>`;
+        msg  = `Game Over :(<br>Score: <b>${score}</b>`;
+        msg += `<br>Best: <b>${highScore}</b>`;
       }
+      
+      window.dispatchEvent(new CustomEvent('arcade-game-over', { detail: { game: 'color-guesser', score: score } }));
 
       if (messageEl) messageEl.innerHTML = msg;
       

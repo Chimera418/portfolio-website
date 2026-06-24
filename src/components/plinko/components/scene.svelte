@@ -47,7 +47,7 @@
 	let BALL_FILL = "#e5e5e5";
 	let TRAJECTORY_RGB = "255, 70, 70";
 	let TRAJECTORY_GREEN = "74, 222, 128"; // preview + slot go green when the shot lands on target
-	let TRAJECTORY_ALPHA = 0.55;
+	let TRAJECTORY_ALPHA = 0.95;
 	let TRAJECTORY_DASH_SPEED = 12; // px/sec the dots pan toward the target
 	let PEG_LINE = "rgba(255, 255, 255, 0.3)";
 	let EDGE_LINE = "rgba(255, 255, 255, 0.2)"; // light gray border at the stage edges
@@ -107,8 +107,8 @@
 		const fadeStart = total * 0.75; // last quarter fades to nothing
 		const march = (time / 1000) * TRAJECTORY_DASH_SPEED;
 
-		ctx.lineWidth = 2;
-		ctx.setLineDash([6, 6]);
+		ctx.lineWidth = 3;
+		ctx.setLineDash([8, 8]);
 		for (let i = 1; i < path.length; i++) {
 			const mid = (dist[i - 1] + dist[i]) / 2;
 			const fade = mid <= fadeStart ? 1 : Math.max(0, 1 - (mid - fadeStart) / (total - fadeStart));
@@ -222,7 +222,7 @@
 
 	// the letters sit in the catch slots between the domes
 	const drawLetters = (ctx: CanvasRenderingContext2D, world: World, glowX: number | null): void => {
-		ctx.font = "14px system-ui, sans-serif";
+		ctx.font = "bold 16px system-ui, sans-serif";
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle";
 		for (const cup of world.cups) {
@@ -231,10 +231,19 @@
 		}
 	};
 
-	const drawBall = (ctx: CanvasRenderingContext2D, ball: Ball): void => {
+	const drawBall = (ctx: CanvasRenderingContext2D, ball: Ball, alpha = 1): void => {
+		// interpolate between previous and current physics position for sub-frame smoothness
+		const prev = ball.prevPos ?? ball.pos;
+		const x = ball.resting ? ball.pos.x : prev.x + (ball.pos.x - prev.x) * alpha;
+		const y = ball.resting ? ball.pos.y : prev.y + (ball.pos.y - prev.y) * alpha;
+		const r = ball.radius;
+		// radial gradient for a soft, polished sphere look
+		const grad = ctx.createRadialGradient(x - r * 0.3, y - r * 0.3, r * 0.1, x, y, r);
+		grad.addColorStop(0, BALL_HIGHLIGHT);
+		grad.addColorStop(1, BALL_FILL);
 		ctx.beginPath();
-		ctx.fillStyle = BALL_FILL;
-		ctx.arc(ball.pos.x, ball.pos.y, ball.radius, 0, Math.PI * 2);
+		ctx.fillStyle = grad;
+		ctx.arc(x, y, r, 0, Math.PI * 2);
 		ctx.fill();
 	};
 
@@ -244,27 +253,39 @@
 		let sandbox!: World; // win-screen funnel world, rebuilt on resize alongside `world`
 		let stageX = 0; // left offset of the centered play area within the window
 
-		const computedStyle = getComputedStyle(document.body);
-		const hexToRgbTuple = (hex: string) => {
-			const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-			return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : "255, 255, 255";
+		// Create a temporary element to fully resolve CSS variables (handles var(--...) nesting)
+		const getResolvedColor = (cssVar: string, fallback: string) => {
+			const div = document.createElement('div');
+			div.style.color = `var(${cssVar}, ${fallback})`;
+			div.style.display = 'none';
+			document.body.appendChild(div);
+			const resolved = getComputedStyle(div).color; // returns "rgb(r, g, b)"
+			document.body.removeChild(div);
+			return resolved;
 		};
 
-		DOME_FILL = computedStyle.getPropertyValue('--surface-bright').trim() || "#313244";
+		const rgbStringToTuple = (rgbStr: string) => {
+			const match = rgbStr.match(/\d+/g);
+			return match ? `${match[0]}, ${match[1]}, ${match[2]}` : "255, 255, 255";
+		};
+
+		const getTuple = (cssVar: string, fallback: string) => rgbStringToTuple(getResolvedColor(cssVar, fallback));
+
+		DOME_FILL = getResolvedColor('--surface-bright', '#313244');
 		WEDGE_FILL = DOME_FILL;
-		OBSTACLE_FILL = computedStyle.getPropertyValue('--text-primary').trim() || "#cdd6f4";
-		LETTER_FILL = `rgba(${hexToRgbTuple(computedStyle.getPropertyValue('--text-muted').trim() || "#a6adc8")}, 0.7)`;
+		OBSTACLE_FILL = getResolvedColor('--secondary', '#7dc4e4'); // Using secondary color for pegs
+		LETTER_FILL = `rgba(${getTuple('--text-primary', '#cdd6f4')}, 1.0)`;
 		
-		const greenHex = computedStyle.getPropertyValue('--green').trim() || "#a6e3a1";
-		LETTER_GREEN = `rgba(${hexToRgbTuple(greenHex)}, 0.95)`;
-		TRAJECTORY_GREEN = hexToRgbTuple(greenHex);
+		const greenTuple = getTuple('--green', '#a6e3a1');
+		LETTER_GREEN = `rgba(${greenTuple}, 0.95)`;
+		TRAJECTORY_GREEN = greenTuple;
 		
-		const redHex = computedStyle.getPropertyValue('--red').trim() || "#f38ba8";
-		TRAJECTORY_RGB = hexToRgbTuple(redHex);
+		const redTuple = getTuple('--red', '#f38ba8');
+		TRAJECTORY_RGB = redTuple;
 		
-		BALL_FILL = computedStyle.getPropertyValue('--primary').trim() || "#cba6f7";
-		PEG_LINE = `rgba(${hexToRgbTuple(computedStyle.getPropertyValue('--text-muted').trim() || "#a6adc8")}, 0.3)`;
-		EDGE_LINE = `rgba(${hexToRgbTuple(computedStyle.getPropertyValue('--surface-bright').trim() || "#313244")}, 0.5)`;
+		BALL_FILL = getResolvedColor('--primary', '#cba6f7');
+		PEG_LINE = `rgba(${getTuple('--text-muted', '#a6adc8')}, 0.3)`;
+		EDGE_LINE = `rgba(${getTuple('--surface-bright', '#313244')}, 0.5)`;
 
 		// Size/position the canvas to the (width-capped, centered) play area and
 		// the device pixel ratio so the drawing stays crisp, then rebuild the cup
@@ -362,6 +383,8 @@
 			// down the shallow ramps and drain instead of settling into a locked pile.
 			acc += dt;
 			while (acc >= FIXED_DT) {
+				// snapshot positions before the step so we can interpolate at render time
+				for (const b of balls) { b.prevPos = { x: b.pos.x, y: b.pos.y }; }
 				const pegFromY = simWorld.obstacles.length ? simWorld.obstacles[0].center.y : pegs.y;
 				stepAll(balls, simWorld, FIXED_DT, pegFromY, playing ? pegs.y : pegFromY, !inSandbox);
 				acc -= FIXED_DT;
@@ -423,6 +446,9 @@
 				}
 			}
 
+			// sub-frame interpolation alpha: how far we are through the current physics step
+			const alpha = acc / FIXED_DT;
+
 			ctx.clearRect(0, 0, world.width, world.height);
 			if (glowX !== null) drawSlotGlow(ctx, world, glowX, time);
 			// the win/lose screen clears the playfield — only the cannon's aim
@@ -437,7 +463,7 @@
 			if (settings.guideline) drawTrajectory(ctx, world, time, glowX !== null, simWorld, blockers);
 			if (playing) drawLetters(ctx, world, glowX);
 			// balls render during play and in the win-screen sandbox (hidden on a loss)
-			if (game.status !== "failure") for (const ball of balls) drawBall(ctx, ball);
+			if (game.status !== "failure") for (const ball of balls) drawBall(ctx, ball, alpha);
 			drawEdges(ctx, world);
 
 			raf = requestAnimationFrame(frame);

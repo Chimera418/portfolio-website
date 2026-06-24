@@ -1,5 +1,4 @@
-import { ClawCaptcha } from './playcaptcha/index.ts';
-import './playcaptcha/clawcaptcha.css';
+import PixelClaw from './pixelclaw/PixelClaw';
 import { useEffect, useState } from 'react';
 
 export default function PlaycaptchaWrapper() {
@@ -12,11 +11,10 @@ export default function PlaycaptchaWrapper() {
   }, []);
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center">
-      <ClawCaptcha 
+    <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <PixelClaw 
         key={resetKey}
-        assetBase="/toys/" 
-        onVerify={() => {
+        onSuccess={() => {
           document.dispatchEvent(new CustomEvent('captcha-success'));
         }} 
       />

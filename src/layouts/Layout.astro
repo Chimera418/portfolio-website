@@ -3,6 +3,7 @@ import "../styles/global.css";
 import CommandPalette from "../components/CommandPalette.astro";
 import SpeedInsights from "@vercel/speed-insights/astro";
 import ThemePullCord from "../components/ThemePullCord.tsx";
+import { ClientRouter } from "astro:transitions";
 
 interface Props {
   title: string;
@@ -27,6 +28,7 @@ const { title } = Astro.props;
     <link rel="icon" type="image/x-icon" href="/chimera-favicon.ico" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
+    <ClientRouter />
 
     <!-- Google Fonts: Inter and Press Start 2P -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -37,37 +39,38 @@ const { title } = Astro.props;
     />
 
     <!-- Preload media assets for 404 and music player -->
-    <link rel="preload" as="video" type="video/mp4" href="https://occepykq6d5iw5pd.public.blob.vercel-storage.com/Never%20gonna%20Meow%20you%20up.mp4" />
-    <link rel="preload" as="audio" type="audio/mpeg" href="https://occepykq6d5iw5pd.public.blob.vercel-storage.com/Voice%20of%20no%20Return%20-%20Normal%20%28NieR_Automata%20Original%20Soundtrack%29%E3%80%90Audio%E3%80%91.mp3" />
+    <link rel="preload" as="video" type="video/mp4" href="/video/never-gonna-meow-you-up.mp4" />
+    <link rel="preload" as="audio" type="audio/mpeg" href="/audio/voice-of-no-return.mp3" />
 
     <!-- Initialize Theme Script -->
     <script is:inline>
-      let theme = localStorage.getItem("theme");
-      if (!theme) {
-        theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? "latte" : "mocha";
+      function applyTheme() {
+        let theme = localStorage.getItem("theme");
+        if (!theme) {
+          theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? "latte" : "mocha";
+        }
+        const crtMode = localStorage.getItem("crtMode") === "true";
+        const pixelMode = localStorage.getItem("pixelMode") === "true";
+        const accentColor = localStorage.getItem("secondaryAccentColor") || "mauve";
+        const primaryValue = accentColor.startsWith("#") ? accentColor : `var(--${accentColor})`;
+
+        document.documentElement.setAttribute("data-theme", theme);
+        document.documentElement.setAttribute("data-crt-mode", String(crtMode));
+        document.documentElement.setAttribute("data-pixel-mode", String(pixelMode));
+
+        document.documentElement.style.setProperty("--primary", primaryValue);
+        document.documentElement.style.setProperty("--secondary", primaryValue);
       }
-      const crtMode = localStorage.getItem("crtMode") === "true";
-      const pixelMode = localStorage.getItem("pixelMode") === "true";
-      const accentColor =
-        localStorage.getItem("secondaryAccentColor") || "mauve";
-      const primaryValue = accentColor.startsWith("#") ? accentColor : `var(--${accentColor})`;
 
-      document.documentElement.setAttribute("data-theme", theme);
-      document.documentElement.setAttribute("data-crt-mode", String(crtMode));
-      document.documentElement.setAttribute(
-        "data-pixel-mode",
-        String(pixelMode),
-      );
-
-      document.documentElement.style.setProperty("--primary", primaryValue);
-      document.documentElement.style.setProperty("--secondary", primaryValue);
+      applyTheme();
+      document.addEventListener('astro:after-swap', applyTheme);
     </script>
   </head>
   <body class="relative min-h-screen flex flex-col items-center overflow-x-hidden overflow-hidden">
     <ThemePullCord client:load />
 
     <!-- Phase 1: Loading Screen -->
-    <div id="loader-phase-1" class="fixed inset-0 z-[10001] bg-[#11111b] flex flex-col items-center justify-center transition-opacity duration-700">
+    <div id="loader-phase-1" class="fixed inset-0 z-[10001] bg-[#11111b] flex flex-col items-center justify-center transition-opacity duration-700" transition:persist="loader-1">
       <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#313244]/20 via-[#11111b] to-[#11111b]"></div>
       <div class="font-mono text-center select-none flex flex-col items-center relative z-10">
         <div class="relative mb-12">
@@ -92,7 +95,7 @@ const { title } = Astro.props;
     </div>
 
     <!-- Phase 2: Click to Enter Screen -->
-    <div id="loader-phase-2" class="fixed inset-0 z-[10000] bg-[#11111b] flex flex-col items-center justify-center transition-opacity duration-700">
+    <div id="loader-phase-2" class="fixed inset-0 z-[10000] bg-[#11111b] flex flex-col items-center justify-center transition-opacity duration-700" transition:persist="loader-2">
       <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#313244]/20 via-[#11111b] to-[#11111b]"></div>
       <div class="font-mono text-center select-none flex flex-col items-center relative z-10">
         <div class="relative mb-12">
@@ -184,8 +187,8 @@ const { title } = Astro.props;
           }
         }, 200);
 
-        const videoUrl = "https://occepykq6d5iw5pd.public.blob.vercel-storage.com/Never%20gonna%20Meow%20you%20up.mp4";
-        const audioUrl = "https://occepykq6d5iw5pd.public.blob.vercel-storage.com/Voice%20of%20no%20Return%20-%20Normal%20%28NieR_Automata%20Original%20Soundtrack%29%E3%80%90Audio%E3%80%91.mp3";
+        const videoUrl = "/video/never-gonna-meow-you-up.mp4";
+        const audioUrl = "/audio/voice-of-no-return.mp3";
 
         const preloadAudio = new Promise(resolve => {
           const audio = new Audio();
@@ -456,7 +459,7 @@ const { title } = Astro.props;
     </div>
 
     <script is:inline>
-      var _webringVal = "catppuccin";
+      var _webringVal = sessionStorage.getItem("webringVal") || "catppuccin";
 
       function toggleWebringDropdown() {
         var dd = document.getElementById("webring-dropdown");
@@ -473,6 +476,7 @@ const { title } = Astro.props;
 
       function selectWebring(val) {
         _webringVal = val;
+        sessionStorage.setItem("webringVal", val);
         var dd = document.getElementById("webring-dropdown");
         if (dd) dd.classList.add("hidden");
         var chv = document.getElementById("webring-chevron");

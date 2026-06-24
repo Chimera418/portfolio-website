@@ -36,11 +36,9 @@
       color: #333;
     }
 
-    @media (prefers-color-scheme: dark) {
-      body {
-        background: #202124;
-        color: #eee;
-      }
+    body.dark-mode {
+      background: #202124;
+      color: #eee;
     }
 
     /* The interstitial-wrapper – let it be full width so Runner sizes correctly */
@@ -186,15 +184,34 @@
           document.dispatchEvent(evUp);
         }, 150);
       }, true);
+
+      // Monkey-patch gameOver to post score
+      var originalGameOver = Runner.prototype.gameOver;
+      Runner.prototype.gameOver = function() {
+        originalGameOver.apply(this, arguments);
+        var currentScore = Math.floor(this.distanceMeter.getActualDistance(Math.ceil(this.distanceRan)));
+        window.parent.postMessage({ type: 'GAME_OVER', game: 'chrome-dino', score: currentScore }, '*');
+      };
     });
 
-    // Relay key events from parent
+    // Relay events from parent
     window.addEventListener('message', function (e) {
-      if (e.data && e.data.type === 'KEY') {
+      if (!e.data) return;
+      if (e.data.type === 'KEY') {
         var ev = new KeyboardEvent(e.data.eventType, { bubbles: true, cancelable: true });
         Object.defineProperty(ev, 'keyCode', { get: function() { return e.data.keyCode; } });
         Object.defineProperty(ev, 'which', { get: function() { return e.data.keyCode; } });
         document.dispatchEvent(ev);
+      } else if (e.data.type === 'THEME') {
+        var isDark = e.data.theme !== 'latte';
+        if (isDark) {
+          document.body.classList.add('dark-mode');
+        } else {
+          document.body.classList.remove('dark-mode');
+        }
+        if (window.Runner && Runner.instance_) {
+          Runner.instance_.isDarkMode = isDark;
+        }
       }
     });
   </script>

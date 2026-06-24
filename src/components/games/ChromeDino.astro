@@ -118,5 +118,71 @@
       }
     }).observe(gameContainer, { attributes: true, attributeFilter: ['class'] });
   }
+
+  /* ── Forward wrapper clicks to iframe ───────────────────────────────────── */
+  const wrapper = document.getElementById('dino-wrapper');
+  if (wrapper) {
+    wrapper.addEventListener('pointerdown', (e) => {
+      if ((e.target as Element).closest('#dino-custom-select')) return;
+      iframe.contentWindow?.postMessage(
+        { type: 'KEY', eventType: 'keydown', keyCode: 32 },
+        '*'
+      );
+      setTimeout(() => {
+        iframe.contentWindow?.postMessage(
+          { type: 'KEY', eventType: 'keyup', keyCode: 32 },
+          '*'
+        );
+      }, 150);
+    });
+  }
+
+  /* ── Forward keyboard events to iframe ───────────────────────────────────── */
+  window.addEventListener('keydown', (e) => {
+    if (gameContainer && !gameContainer.classList.contains('hidden')) {
+      if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'ArrowDown') {
+        e.preventDefault();
+        iframe.contentWindow?.postMessage(
+          { type: 'KEY', eventType: 'keydown', keyCode: e.keyCode },
+          '*'
+        );
+      }
+    }
+  });
+
+  window.addEventListener('keyup', (e) => {
+    if (gameContainer && !gameContainer.classList.contains('hidden')) {
+      if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'ArrowDown') {
+        e.preventDefault();
+        iframe.contentWindow?.postMessage(
+          { type: 'KEY', eventType: 'keyup', keyCode: e.keyCode },
+          '*'
+        );
+      }
+    }
+  });
+
+  /* ── Theme syncing ─────────────────────────────────────────────────────── */
+  function sendTheme() {
+    const theme = document.documentElement.getAttribute('data-theme') || 'mocha';
+    if (iframe.contentWindow) {
+      iframe.contentWindow.postMessage({ type: 'THEME', theme: theme }, '*');
+    }
+  }
+
+  iframe.addEventListener('load', sendTheme);
+  
+  new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.attributeName === 'data-theme') {
+        sendTheme();
+      }
+    });
+  }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  
+  // Initial sync attempt just in case iframe already loaded
+  if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
+    sendTheme();
+  }
 })();
 </script>

@@ -608,8 +608,10 @@ const AVATAR_INDICES = Array.from({ length: 45 }, (_, i) => i);
 </style>
 
 <script>
-  // ── Avatar picker ─────────────────────────────────────────────
-  const avatarInput = document.getElementById("gb-avatar") as HTMLInputElement;
+  document.addEventListener("astro:page-load", () => {
+    // ── Avatar picker ─────────────────────────────────────────────
+    const avatarInput = document.getElementById("gb-avatar") as HTMLInputElement;
+    if (!avatarInput) return; // Exit if not on guestbook page
   const avatarPreview = document.getElementById(
     "gb-avatar-preview",
   ) as HTMLElement;
@@ -1027,27 +1029,28 @@ const AVATAR_INDICES = Array.from({ length: 45 }, (_, i) => i);
     }
   });
 
-  // Handle Discord click-to-copy
-  document.addEventListener("click", (e) => {
-    const target = e.target;
-    const btn = target && target.closest ? target.closest(".discord-guest-copy-btn") : null;
-    if (btn) {
-      const handle = btn.getAttribute("data-handle");
-      if (handle) {
-        navigator.clipboard.writeText(handle).catch(() => {});
-        const hint = btn.querySelector(".handle-text");
-        if (hint) {
-          hint.textContent = "copied!";
-          hint.classList.add("text-secondary");
-          setTimeout(() => {
-            hint.textContent = handle;
-            hint.classList.remove("text-secondary");
-          }, 2000);
+    // Handle Discord click-to-copy
+    document.addEventListener("click", (e) => {
+      const target = e.target;
+      const btn = target && (target as Element).closest ? (target as Element).closest(".discord-guest-copy-btn") : null;
+      if (btn) {
+        const handle = btn.getAttribute("data-handle");
+        if (handle) {
+          navigator.clipboard.writeText(handle).catch(() => {});
+          const hint = btn.querySelector(".handle-text");
+          if (hint) {
+            hint.textContent = "copied!";
+            hint.classList.add("text-secondary");
+            setTimeout(() => {
+              hint.textContent = handle;
+              hint.classList.remove("text-secondary");
+            }, 2000);
+          }
         }
       }
-    }
-  });
+    });
 
-  // Initialize
-  document.addEventListener("DOMContentLoaded", loadMessages);
+    // Initialize
+    loadMessages();
+  });
 </script>

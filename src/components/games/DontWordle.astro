@@ -183,6 +183,7 @@
     let validWords: string[] = [];
     let undosLeft = 3;
     let isGameOver = true;
+    let hintUsed = false;
     let wins = parseInt(localStorage.getItem('dw-wins') || '0');
 
     // Constraints tracking
@@ -221,6 +222,7 @@
       validWords = [...dictionary];
       undosLeft = 3;
       isGameOver = false;
+      hintUsed = false;
       constraints = {
         greens: ['', '', '', '', ''],
         yellows: [],
@@ -506,6 +508,9 @@
       } else if (guesses.length >= ROWS) {
         // Survived
         gameOver(true, `You survived! The word was ${targetWord}.`);
+      } else if (validWords.length === 1 && validWords[0] === targetWord) {
+        // Cornered the word
+        gameOver(true, `You cornered the word in ${guesses.length} guesses!`);
       }
     }
 
@@ -611,6 +616,9 @@
       if (win) {
         wins = isNaN(wins) ? 1 : wins + 1;
         localStorage.setItem('dw-wins', wins.toString());
+        if (!hintUsed) {
+           window.dispatchEvent(new CustomEvent('arcade-game-over', { detail: { game: 'dont-wordle', score: guesses.length } }));
+        }
         updateUI();
       }
       if(resultEl) resultEl.textContent = win ? "You Won!" : "Game Over";
@@ -640,6 +648,7 @@
     if(hintBtn) hintBtn.addEventListener('click', () => {
       if (!hintContainer || isGameOver) return;
       hintContainer.classList.remove('hidden');
+      hintUsed = true;
       updateValidWords(); // Will populate the list
     });
     if(resetBtn) resetBtn.addEventListener('click', () => {

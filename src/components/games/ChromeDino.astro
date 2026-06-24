@@ -184,5 +184,14 @@
   if (iframe.contentDocument && iframe.contentDocument.readyState === 'complete') {
     sendTheme();
   }
+
+  /* ── Listen for game over from iframe ───────────────────────────────────── */
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.type === 'GAME_OVER' && e.data.game === 'chrome-dino') {
+      window.dispatchEvent(new CustomEvent('arcade-game-over', { 
+        detail: { game: 'chrome-dino', score: e.data.score } 
+      }));
+    }
+  });
 })();
 </script>

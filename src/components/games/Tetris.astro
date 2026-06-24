@@ -424,6 +424,8 @@
         localStorage.setItem("tetris_highscore", highScore.toString());
         if (highScoreEl) highScoreEl.textContent = highScore.toString();
       }
+      
+      window.dispatchEvent(new CustomEvent('arcade-game-over', { detail: { game: 'tetris', score: score } }));
 
       title.textContent = "GAME OVER";
       startBtn.textContent = "TRY AGAIN";

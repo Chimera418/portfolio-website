@@ -51,6 +51,8 @@
     let animationId: number;
     let isPlaying = false;
     let frames = 0;
+    let lastTime = 0;
+    const fpsInterval = 1000 / 60;
 
     const theme1 = new Image();
     theme1.src = '/games/flappy-bird/img/og-theme.png';
@@ -241,30 +243,38 @@
       overlay.classList.remove('hidden');
     }
 
-    function loop() {
+    function loop(time: number) {
       if (!isPlaying) return;
-      
-      // Clear canvas
-      ctx.fillStyle = '#70c5ce';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-      bg.update();
-      bg.draw();
-      
-      pipes.update();
-      pipes.draw();
-      
-      bird.update();
-      bird.draw();
-      
-      frames++;
       animationId = requestAnimationFrame(loop);
+      
+      if (!lastTime) lastTime = time;
+      const elapsed = time - lastTime;
+      
+      if (elapsed >= fpsInterval) {
+        lastTime = time - (elapsed % fpsInterval);
+
+        // Clear canvas
+        ctx.fillStyle = '#70c5ce';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        bg.update();
+        bg.draw();
+        
+        pipes.update();
+        pipes.draw();
+        
+        bird.update();
+        bird.draw();
+        
+        frames++;
+      }
     }
 
     startBtn.addEventListener('click', () => {
       overlay.classList.add('hidden');
       initGame();
       isPlaying = true;
+      lastTime = performance.now();
       animationId = requestAnimationFrame(loop);
     });
 

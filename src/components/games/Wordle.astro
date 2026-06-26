@@ -350,6 +350,11 @@ import { VALID_WORDS } from "../../data/words";
       return `${d.getUTCFullYear()}-${d.getUTCMonth()}-${d.getUTCDate()}`;
     }
 
+    function getUTCDayNumber() {
+      const d = new Date();
+      return Math.floor(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()) / 86400000);
+    }
+
     // ── Word Selection ─────────────────────────────────────────────────────
     function getDailyWord() {
       const seed = getUTCDateString();
@@ -623,23 +628,37 @@ import { VALID_WORDS } from "../../data/words";
           ];
           statusEl.textContent = "Game Over";
 
-          let streak = parseInt(
-            localStorage.getItem("wordle-streak") || "0",
-            10,
-          );
-          streak++;
-          localStorage.setItem("wordle-streak", streak.toString());
-          window.dispatchEvent(
-            new CustomEvent("arcade-game-over", {
-              detail: { game: "wordle", score: streak },
-            }),
-          );
+          let streakText = "";
+          if (currentMode === "daily") {
+            const currentDayNum = getUTCDayNumber();
+            const lastWinDayNum = parseInt(localStorage.getItem("wordle-last-win-day") || "0", 10);
+            
+            let streak = parseInt(localStorage.getItem("wordle-streak") || "0", 10);
+            
+            if (lastWinDayNum === 0 || lastWinDayNum === currentDayNum - 1) {
+              // First win or consecutive win
+              streak++;
+            } else if (lastWinDayNum < currentDayNum - 1) {
+              // Gap of at least 1 day, reset streak to 1
+              streak = 1;
+            }
+            
+            localStorage.setItem("wordle-streak", streak.toString());
+            localStorage.setItem("wordle-last-win-day", currentDayNum.toString());
+            
+            window.dispatchEvent(
+              new CustomEvent("arcade-game-over", {
+                detail: { game: "wordle", score: streak },
+              }),
+            );
+            streakText = `<br><span style="font-size:0.8em;color:var(--color-text-muted)">Win Streak: ${streak}</span>`;
+          }
 
           setTimeout(
             () =>
               showOverlay(
                 labels[rowIdx] ?? "Splendid!",
-                `The word was ${wordSpan(targetWord)}<br><span style="font-size:0.8em;color:var(--color-text-muted)">Win Streak: ${streak}</span>`,
+                `The word was ${wordSpan(targetWord)}${streakText}`,
                 currentMode === "daily" ? "PLAY RANDOM" : "PLAY AGAIN",
               ),
             1600,
@@ -647,7 +666,9 @@ import { VALID_WORDS } from "../../data/words";
         } else if (guesses.length >= ROWS) {
           isGameOver = true;
           statusEl.textContent = "Game Over";
-          localStorage.setItem("wordle-streak", "0");
+          if (currentMode === "daily") {
+            localStorage.setItem("wordle-streak", "0");
+          }
           setTimeout(
             () =>
               showOverlay(

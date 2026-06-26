@@ -348,14 +348,14 @@ const { title } = Astro.props;
             </button>
             <div class="h-px bg-highlight-med mx-3"></div>
             <button
-              onclick="selectWebring('threadlocked')"
+              onclick="selectWebring('lanyard')"
               class="webring-opt w-full flex items-center gap-2.5 px-4 py-2.5 text-left text-text-muted hover:text-text-primary hover:bg-overlay transition-colors"
             >
               <span
-                id="dot-threadlocked"
+                id="dot-lanyard"
                 class="w-1 h-1 rounded-full bg-primary opacity-0 transition-opacity flex-shrink-0"
               ></span>
-              <span class="leading-none translate-y-[1px]">THREADLOCKED</span>
+              <span class="leading-none translate-y-[1px]">LANYARD</span>
             </button>
           </div>
         </div>
@@ -494,22 +494,27 @@ const { title } = Astro.props;
         var homeLink = document.getElementById("webring-home");
         var homeTxt = document.getElementById("webring-home-text");
         var dotCat = document.getElementById("dot-catppuccin");
-        var dotThr = document.getElementById("dot-threadlocked");
+        var dotLan = document.getElementById("dot-lanyard");
 
         if (dotCat) dotCat.classList.replace("opacity-100", "opacity-0");
-        if (dotThr) dotThr.classList.replace("opacity-100", "opacity-0");
+        if (dotLan) dotLan.classList.replace("opacity-100", "opacity-0");
 
-        if (val === "threadlocked") {
-          prev.href = "https://ring.seggs.lol/redirect?from=chimera&dir=prev";
-          next.href = "https://ring.seggs.lol/redirect?from=chimera&dir=next";
-          rand.href = "https://ring.seggs.lol/random";
-          rand.title = "Random site on Threadlocked webring";
+        if (val === "lanyard") {
+          fetch('https://lanyard.cafe/api/ring?url=' + encodeURIComponent(location.hostname.replace(/^www\./, '')))
+            .then(res => res.json())
+            .then(data => {
+              if (data.prev) prev.href = data.prev.url;
+              if (data.next) next.href = data.next.url;
+              if (data.random) rand.href = data.random.url;
+            }).catch(e => console.error('Failed to fetch Lanyard webring data:', e));
+          
+          rand.title = "Random site on Lanyard webring";
           randText.textContent = "RANDOM";
-          homeLink.href = "https://ring.seggs.lol";
-          homeTxt.textContent = "THREADLOCKED";
+          homeLink.href = "https://lanyard.cafe/";
+          homeTxt.textContent = "LANYARD";
           iconDice.classList.remove("hidden");
           iconHome.classList.add("hidden");
-          if (dotThr) dotThr.classList.replace("opacity-0", "opacity-100");
+          if (dotLan) dotLan.classList.replace("opacity-0", "opacity-100");
         } else {
           prev.href = "https://ctp-webr.ing/chimera/previous";
           next.href = "https://ctp-webr.ing/chimera/next";

@@ -11,7 +11,19 @@ const { class: className } = Astro.props;
   <div class="flex flex-col justify-between h-full space-y-4">
     <div class="space-y-4">
       <p class="text-text-muted text-sm leading-relaxed">
-        CSE-AI student passionate about <span class="text-secondary">full-stack development</span>, <span class="text-secondary">cybersecurity</span>, and building unconventional projects. I enjoy exploring how systems work, finding ways to break them, and finding increasingly elaborate ways to avoid repetitive work.
+        A <span class="relative group cursor-pointer border-b border-text-muted/30 hover:border-primary/50 border-dashed hover:text-primary transition-colors">
+          <span id="base-age">20</span> year old
+          <span class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-max opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-50 translate-y-1 group-hover:translate-y-0">
+            <span class="bg-overlay border border-highlight-med rounded-lg px-2.5 py-1.5 shadow-xl shadow-black/50 backdrop-blur-sm flex items-center gap-2">
+              <svg class="w-3.5 h-3.5 text-text-muted translate-y-[-1px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v2"/><path d="M12 8v2"/><path d="M17 8v2"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></svg>
+              <span class="flex items-center gap-1.5">
+                <span id="age-tooltip-text" class="text-xs font-bold text-text-primary font-mono tabular-nums tracking-tight">20.000000000</span>
+                <span class="text-[10px] font-pixel text-text-muted uppercase tracking-wider translate-y-[1px]">years</span>
+              </span>
+            </span>
+            <span class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-overlay border-r border-b border-highlight-med rotate-45"></span>
+          </span>
+        </span> CSE-AI student passionate about <span class="text-secondary">full-stack development</span>, <span class="text-secondary">cybersecurity</span>, and building unconventional projects. I enjoy exploring how systems work, finding ways to break them, and finding increasingly elaborate ways to avoid repetitive work.
       </p>
       <p class="text-text-muted text-sm leading-relaxed">
         Half my projects start as experiments. The other half started as experiments too.
@@ -25,3 +37,40 @@ const { class: className } = Astro.props;
     </div>
   </div>
 </BentoCard>
+
+<script>
+  function initAgeCounter() {
+    // 23/03/2006 midnight IST (UTC+5:30)
+    const dob = new Date('2006-03-23T00:00:00+05:30').getTime();
+    const MS_PER_YEAR = 1000 * 60 * 60 * 24 * 365.25;
+
+    const baseAgeEl = document.getElementById('base-age');
+    const tooltipTextEl = document.getElementById('age-tooltip-text');
+
+    function updateAge() {
+      if (!baseAgeEl || !tooltipTextEl) return;
+      
+      const now = new Date().getTime();
+      const ageInYears = (now - dob) / MS_PER_YEAR;
+      
+      const baseAge = Math.floor(ageInYears);
+      if (baseAgeEl.textContent !== baseAge.toString()) {
+        baseAgeEl.textContent = baseAge;
+      }
+
+      tooltipTextEl.textContent = ageInYears.toFixed(9);
+    }
+
+    // Update immediately and then every 50ms for a smooth ticking effect
+    updateAge();
+    setInterval(updateAge, 50);
+  }
+
+  // Run on initial load and after Astro page transitions (if view transitions are used)
+  document.addEventListener('astro:page-load', initAgeCounter);
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    initAgeCounter();
+  } else {
+    document.addEventListener('DOMContentLoaded', initAgeCounter);
+  }
+</script>

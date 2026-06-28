@@ -141,6 +141,8 @@ async function getIgdbToken(clientId: string, clientSecret: string) {
 async function getIgdbCover(gameName: string, clientId: string, token: string): Promise<string | null> {
   const normalized = normalizeGameName(gameName);
   
+
+
   if (coverCache.has(normalized)) {
     const cached = coverCache.get(normalized)!;
     if (Date.now() - cached.timestamp < CACHE_TTL) {
@@ -150,22 +152,41 @@ async function getIgdbCover(gameName: string, clientId: string, token: string): 
     }
   }
 
-  const query = `
-    search "${normalized.replace(/"/g, '\\"')}";
+  const slug = normalized.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  const slugQuery = `
     fields name, cover.url, cover.image_id;
+    where slug = "${slug}";
     limit 1;
   `;
   try {
-    const res = await fetch('https://api.igdb.com/v4/games', {
+    let res = await fetch('https://api.igdb.com/v4/games', {
       method: 'POST',
       headers: {
         'Client-ID': clientId,
         'Authorization': `Bearer ${token}`
       },
-      body: query
+      body: slugQuery
     });
-    if (!res.ok) return null;
-    const data = await res.json();
+    
+    let data = res.ok ? await res.json() : [];
+    
+    if (!data || data.length === 0) {
+      const fallbackQuery = `
+        search "${normalized.replace(/"/g, '\\"')}";
+        fields name, cover.url, cover.image_id;
+        limit 1;
+      `;
+      res = await fetch('https://api.igdb.com/v4/games', {
+        method: 'POST',
+        headers: {
+          'Client-ID': clientId,
+          'Authorization': `Bearer ${token}`
+        },
+        body: fallbackQuery
+      });
+      data = res.ok ? await res.json() : [];
+    }
+    
     const game = data[0];
     
     if (game?.cover?.image_id) {

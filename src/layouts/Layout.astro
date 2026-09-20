@@ -63,7 +63,7 @@ const {
         if (conn && (conn.saveData || /^(slow-2g|2g)$/.test(conn.effectiveType || ""))) return;
 
         var warm = function () {
-          ["/video/never-gonna-meow-you-up.mp4", "/audio/voice-of-no-return.opus"].forEach(function (href) {
+          ["/video/never-gonna-meow-you-up.mp4", "/audio/voice-of-no-return.opus", "/audio/song-of-the-ancients.opus"].forEach(function (href) {
             var link = document.createElement("link");
             link.rel = "prefetch";
             link.href = href;

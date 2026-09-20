@@ -7,7 +7,7 @@ import ThemeDrawer from './ThemeDrawer.astro';
     <div class="flex items-center gap-3">
       <!-- Logo -->
       <img id="navbar-logo" src="/chimera-logo.png" alt="Chimera Logo" class="w-8 h-8 rounded-sm shadow-[2px_2px_0_var(--color-highlight-med)] object-cover bg-surface-dim cursor-pointer hover:scale-105 transition-transform" onerror="this.style.display='none'" />
-      <a href="/" class="font-bold text-lg text-text-primary tracking-tight">
+      <a href="/" data-astro-reload class="font-bold text-lg text-text-primary tracking-tight">
         Chimera's Realm
       </a>
       
@@ -15,14 +15,14 @@ import ThemeDrawer from './ThemeDrawer.astro';
     </div>
 
     <div class="hidden md:flex items-center gap-8 font-pixel text-[10px] uppercase tracking-widest text-text-muted">
-      <a href="/" class="hover:text-primary transition-colors">Home</a>
-      <a href="/about" class="hover:text-primary transition-colors">About</a>
-      <a href="/projects" class="hover:text-primary transition-colors">Projects</a>
-      <a href="/archive" class="hover:text-primary transition-colors">Archive</a>
-      <a href="/labs" id="nav-labs-link" class="hover:text-primary transition-colors hidden">Labs</a>
-      <a href="/games" id="nav-games-link" class="hover:text-primary transition-colors hidden">Games</a>
-      <a href="/guestbook" class="hover:text-primary transition-colors">Guestbook</a>
-      <a href="/contact" class="hover:text-primary transition-colors">Contact</a>
+      <a href="/" data-astro-reload class="hover:text-primary transition-colors">Home</a>
+      <a href="/about" data-astro-reload class="hover:text-primary transition-colors">About</a>
+      <a href="/projects" data-astro-reload class="hover:text-primary transition-colors">Projects</a>
+      <a href="/archive" data-astro-reload class="hover:text-primary transition-colors">Archive</a>
+      <a href="/labs" id="nav-labs-link" data-astro-reload class="hover:text-primary transition-colors hidden">Labs</a>
+      <a href="/games" id="nav-games-link" data-astro-reload class="hover:text-primary transition-colors hidden">Games</a>
+      <a href="/guestbook" data-astro-reload class="hover:text-primary transition-colors">Guestbook</a>
+      <a href="/contact" data-astro-reload class="hover:text-primary transition-colors">Contact</a>
     </div>
 
     <div class="flex items-center gap-4">
@@ -51,14 +51,47 @@ import ThemeDrawer from './ThemeDrawer.astro';
 <ThemeDrawer />
 
 <!-- Music Player Island (Bottom) -->
-<div id="music-indicator" class="fixed bottom-6 right-6 z-[999] flex items-center gap-4 bg-surface/90 backdrop-blur-md border border-highlight-med rounded-full px-5 py-2.5 shadow-2xl transition-all duration-500 opacity-0 translate-y-8 pointer-events-none" transition:persist="music-indicator">
-  <div class="relative flex h-3 w-3">
-    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-    <span class="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
-  </div>
-  <div class="flex flex-col">
-    <span class="text-[9px] font-pixel uppercase tracking-widest text-text-muted leading-none mb-1">Now Playing</span>
-    <span class="text-xs font-bold text-text-primary leading-none">Voice of no Return</span>
+<div id="music-indicator" class="fixed bottom-6 right-6 z-[999] transition-all duration-500 opacity-0 translate-y-8 pointer-events-none" transition:persist="music-indicator">
+  <!-- Collapsed pill (always visible when playing) -->
+  <div id="music-pill" class="flex items-center gap-3 bg-surface/90 backdrop-blur-md border border-highlight-med rounded-full px-4 py-2.5 shadow-2xl cursor-pointer select-none hover:border-primary/50 transition-all duration-300 group">
+    <!-- Animated dot -->
+    <div class="relative flex h-2.5 w-2.5 shrink-0">
+      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+      <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span>
+    </div>
+
+    <!-- Track info -->
+    <div class="flex flex-col min-w-0 max-w-[130px]">
+      <span class="text-[8px] font-pixel uppercase tracking-widest text-text-muted leading-none mb-0.5">Now Playing</span>
+      <span id="music-track-name" class="text-[11px] font-bold text-text-primary leading-none truncate">Voice of no Return</span>
+    </div>
+
+    <!-- Controls -->
+    <div class="flex items-center gap-1 shrink-0 ml-1">
+      <!-- Prev -->
+      <button id="music-prev" class="p-1.5 text-text-muted hover:text-primary transition-colors rounded-full hover:bg-primary/10" aria-label="Previous track">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/>
+        </svg>
+      </button>
+
+      <!-- Play/Pause -->
+      <button id="music-playpause" class="p-1.5 text-text-primary hover:text-primary transition-colors rounded-full hover:bg-primary/10" aria-label="Play / Pause">
+        <svg id="music-play-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+        <svg id="music-pause-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="hidden">
+          <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+        </svg>
+      </button>
+
+      <!-- Next -->
+      <button id="music-next" class="p-1.5 text-text-muted hover:text-primary transition-colors rounded-full hover:bg-primary/10" aria-label="Next track">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M6 18l8.5-6L6 6v12zm2.5-6 5.5 4V8l-5.5 4zM16 6h2v12h-2z"/>
+        </svg>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -146,51 +179,109 @@ import ThemeDrawer from './ThemeDrawer.astro';
   // Spawn pet naturally after a short delay
   setTimeout(spawnPet, 1000);
 
-  // Lofi Music Player on Logo Click
-  const logoBtn = document.getElementById('navbar-logo');
-  const musicIndicator = document.getElementById('music-indicator');
-  
-  // Lazy load audio
-  let lofiAudio = null;
-  let isPlaying = false;
-  
-  const initAudio = () => {
-    if (!lofiAudio) {
-      // Use Opus (35% smaller, transparent quality) with MP3 fallback for old browsers
-      const canOpus = (new Audio()).canPlayType('audio/ogg; codecs=opus') !== '';
-      lofiAudio = new Audio(canOpus ? '/audio/voice-of-no-return.opus' : '/audio/voice-of-no-return.mp3');
-      lofiAudio.preload = 'auto';
-      lofiAudio.loop = true;
-      lofiAudio.volume = 0.35;
-    }
-  };
+  // ── Multi-track Music Player ──────────────────────────────────────────
+  const canOpus = (new Audio()).canPlayType('audio/ogg; codecs=opus') !== '';
+  const ext = canOpus ? 'opus' : 'mp3';
 
-  // Preload on hover
-  if (logoBtn) {
-    logoBtn.addEventListener('mouseenter', initAudio, { once: true });
+  const PLAYLIST = [
+    { title: 'Voice of no Return',   file: `voice-of-no-return.${ext}` },
+    { title: 'Song of the Ancients', file: `song-of-the-ancients.${ext}` },
+  ];
+
+  const logoBtn         = document.getElementById('navbar-logo');
+  const musicIndicator  = document.getElementById('music-indicator');
+  const trackNameEl     = document.getElementById('music-track-name');
+  const playPauseBtn    = document.getElementById('music-playpause');
+  const prevBtn         = document.getElementById('music-prev');
+  const nextBtn         = document.getElementById('music-next');
+  const playIcon        = document.getElementById('music-play-icon');
+  const pauseIcon       = document.getElementById('music-pause-icon');
+
+  let audio: HTMLAudioElement | null = null;
+  let isPlaying = false;
+  let currentIndex = 0;
+
+  function loadTrack(index: number, autoplay = false) {
+    currentIndex = ((index % PLAYLIST.length) + PLAYLIST.length) % PLAYLIST.length;
+    const track = PLAYLIST[currentIndex];
+
+    if (audio) {
+      audio.pause();
+    }
+    audio = new Audio(`/audio/${track.file}`);
+    audio.preload = 'auto';
+    audio.volume = 0.35;
+
+    audio.addEventListener('ended', () => playNext());
+
+    if (trackNameEl) trackNameEl.textContent = track.title;
+
+    if (autoplay) {
+      audio.play().catch(e => console.log('Audio play failed:', e));
+      setPlaying(true);
+    } else {
+      setPlaying(false);
+    }
   }
-  
-  const toggleMusic = () => {
-    initAudio(); // Ensure it's initialized if they clicked without hovering (e.g. mobile)
-    if (isPlaying) {
-      lofiAudio.pause();
-      logoBtn.classList.remove('animate-pulse');
-      if (musicIndicator) {
+
+  function setPlaying(playing: boolean) {
+    isPlaying = playing;
+
+    if (playIcon)  playIcon.classList.toggle('hidden', playing);
+    if (pauseIcon) pauseIcon.classList.toggle('hidden', !playing);
+
+    if (logoBtn) {
+      logoBtn.classList.toggle('animate-pulse', playing);
+    }
+
+    if (musicIndicator) {
+      if (playing) {
+        musicIndicator.classList.remove('opacity-0', 'translate-y-8', 'pointer-events-none');
+        musicIndicator.classList.add('opacity-100', 'translate-y-0');
+      } else {
         musicIndicator.classList.add('opacity-0', 'translate-y-8', 'pointer-events-none');
         musicIndicator.classList.remove('opacity-100', 'translate-y-0');
       }
-    } else {
-      lofiAudio.play().catch(e => console.log("Audio play failed:", e));
-      logoBtn.classList.add('animate-pulse');
-      if (musicIndicator) {
-        musicIndicator.classList.remove('opacity-0', 'translate-y-8', 'pointer-events-none');
-        musicIndicator.classList.add('opacity-100', 'translate-y-0');
-      }
     }
-    isPlaying = !isPlaying;
+  }
+
+  function playNext() {
+    loadTrack(currentIndex + 1, isPlaying);
+  }
+
+  function playPrev() {
+    // Restart current track if past 3 seconds, else go previous
+    if (audio && audio.currentTime > 3) {
+      audio.currentTime = 0;
+    } else {
+      loadTrack(currentIndex - 1, isPlaying);
+    }
+  }
+
+  // Initial load (no autoplay)
+  loadTrack(0, false);
+
+  // Logo click → toggle play/pause
+  const toggleMusic = () => {
+    if (!audio) loadTrack(currentIndex, false);
+    if (isPlaying) {
+      audio!.pause();
+      setPlaying(false);
+    } else {
+      audio!.play().catch(e => console.log('Audio play failed:', e));
+      setPlaying(true);
+    }
   };
 
+  if (logoBtn)     logoBtn.addEventListener('click', toggleMusic);
+  if (playPauseBtn) playPauseBtn.addEventListener('click', toggleMusic);
+  if (prevBtn)     prevBtn.addEventListener('click', playPrev);
+  if (nextBtn)     nextBtn.addEventListener('click', playNext);
+
+  // Preload on logo hover
   if (logoBtn) {
-    logoBtn.addEventListener('click', toggleMusic);
+    logoBtn.addEventListener('mouseenter', () => {
+      if (audio) audio.preload = 'auto';
+    }, { once: true });
   }
 </script>

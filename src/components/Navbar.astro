@@ -52,19 +52,46 @@ import ThemeDrawer from './ThemeDrawer.astro';
 
 <!-- Music Player Island (Bottom) -->
 <div id="music-indicator" class="fixed bottom-6 right-6 z-[999] transition-all duration-500 opacity-0 translate-y-8 pointer-events-none" transition:persist="music-indicator">
-  <!-- Collapsed pill (always visible when playing) -->
-  <div id="music-pill" class="flex items-center gap-3 bg-surface/90 backdrop-blur-md border border-highlight-med rounded-full px-4 py-2.5 shadow-2xl cursor-pointer select-none hover:border-primary/50 transition-all duration-300 group">
+
+  <!-- Custom track dropdown panel (floats above pill) -->
+  <div
+    id="music-track-dropdown"
+    class="absolute bottom-full right-0 mb-2 w-52 hidden"
+    role="listbox"
+    aria-label="Select track"
+  >
+    <div class="bg-surface/95 backdrop-blur-xl border border-highlight-med rounded-xl shadow-2xl overflow-hidden">
+      <div class="px-3 pt-2.5 pb-1.5">
+        <p class="text-[8px] font-pixel uppercase tracking-widest text-text-muted">Select Track</p>
+      </div>
+      <div id="music-track-list" class="pb-1.5"></div>
+    </div>
+  </div>
+
+  <!-- Collapsed pill -->
+  <div id="music-pill" class="flex items-center gap-3 bg-surface/90 backdrop-blur-md border border-highlight-med rounded-full px-4 py-2.5 shadow-2xl select-none hover:border-primary/50 transition-all duration-300 group">
     <!-- Animated dot -->
     <div class="relative flex h-2.5 w-2.5 shrink-0">
       <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
       <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span>
     </div>
 
-    <!-- Track info -->
-    <div class="flex flex-col min-w-0 max-w-[130px]">
+    <!-- Track info trigger -->
+    <button
+      id="music-track-trigger"
+      class="flex flex-col min-w-0 max-w-[130px] text-left cursor-pointer group/track"
+      aria-haspopup="listbox"
+      aria-expanded="false"
+      aria-label="Select track"
+    >
       <span class="text-[8px] font-pixel uppercase tracking-widest text-text-muted leading-none mb-0.5">Now Playing</span>
-      <span id="music-track-name" class="text-[11px] font-bold text-text-primary leading-none truncate">Voice of no Return</span>
-    </div>
+      <span class="flex items-center gap-1">
+        <span id="music-track-name" class="text-[11px] font-bold text-text-primary leading-none truncate">—</span>
+        <svg class="w-2.5 h-2.5 shrink-0 text-text-muted opacity-50 group-hover/track:opacity-100 group-hover/track:text-primary transition-all duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </span>
+    </button>
 
     <!-- Controls -->
     <div class="flex items-center gap-1 shrink-0 ml-1">
@@ -190,6 +217,9 @@ import ThemeDrawer from './ThemeDrawer.astro';
 
   const logoBtn         = document.getElementById('navbar-logo');
   const musicIndicator  = document.getElementById('music-indicator');
+  const trackTrigger    = document.getElementById('music-track-trigger');
+  const trackDropdown   = document.getElementById('music-track-dropdown');
+  const trackList       = document.getElementById('music-track-list');
   const trackNameEl     = document.getElementById('music-track-name');
   const playPauseBtn    = document.getElementById('music-playpause');
   const prevBtn         = document.getElementById('music-prev');
@@ -215,6 +245,7 @@ import ThemeDrawer from './ThemeDrawer.astro';
     audio.addEventListener('ended', () => playNext());
 
     if (trackNameEl) trackNameEl.textContent = track.title;
+    updateTrackListHighlight();
 
     if (autoplay) {
       audio.play().catch(e => console.log('Audio play failed:', e));
@@ -257,6 +288,80 @@ import ThemeDrawer from './ThemeDrawer.astro';
       loadTrack(currentIndex - 1, isPlaying);
     }
   }
+
+  // ── Custom dropdown logic ────────────────────────────────────────────
+  function updateTrackListHighlight() {
+    if (!trackList) return;
+    trackList.querySelectorAll('[data-track-index]').forEach((el) => {
+      const idx = parseInt((el as HTMLElement).dataset.trackIndex ?? '-1', 10);
+      const isActive = idx === currentIndex;
+      (el as HTMLElement).setAttribute('aria-selected', String(isActive));
+      el.classList.toggle('bg-primary/15', isActive);
+      el.classList.toggle('text-primary', isActive);
+      el.classList.toggle('text-text-primary', !isActive);
+    });
+  }
+
+  function openDropdown() {
+    if (!trackDropdown) return;
+    trackDropdown.classList.remove('hidden');
+    trackDropdown.classList.add('animate-fade-in');
+    trackTrigger?.setAttribute('aria-expanded', 'true');
+  }
+
+  function closeDropdown() {
+    if (!trackDropdown) return;
+    trackDropdown.classList.add('hidden');
+    trackTrigger?.setAttribute('aria-expanded', 'false');
+  }
+
+  // Build track list items
+  if (trackList) {
+    trackList.innerHTML = PLAYLIST.map((track, i) => `
+      <button
+        data-track-index="${i}"
+        role="option"
+        aria-selected="false"
+        class="w-full flex items-center gap-2.5 px-3 py-2 text-left transition-colors duration-150 hover:bg-primary/10 text-text-primary"
+      >
+        <svg class="w-3 h-3 shrink-0 opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+        </svg>
+        <span class="text-[11px] font-medium leading-none truncate">${track.title}</span>
+      </button>
+    `).join('');
+
+    trackList.querySelectorAll('[data-track-index]').forEach((el) => {
+      el.addEventListener('click', () => {
+        const idx = parseInt((el as HTMLElement).dataset.trackIndex ?? '0', 10);
+        loadTrack(idx, true);
+        closeDropdown();
+      });
+    });
+  }
+
+  if (trackTrigger) {
+    trackTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (trackDropdown?.classList.contains('hidden')) {
+        openDropdown();
+      } else {
+        closeDropdown();
+      }
+    });
+  }
+
+  // Close dropdown on outside click
+  document.addEventListener('click', (e) => {
+    if (!musicIndicator?.contains(e.target as Node)) {
+      closeDropdown();
+    }
+  });
+
+  // Close on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeDropdown();
+  });
 
   // Initial load (no autoplay)
   loadTrack(0, false);

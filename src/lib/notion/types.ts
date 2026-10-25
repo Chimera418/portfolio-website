@@ -1,4 +1,4 @@
-export type ArchiveType = 'devlogs' | 'blogs' | 'writeups' | 'notes';
+export type ArchiveType = 'devlogs' | 'blogs' | 'writeups' | 'notes' | 'projects';
 
 export interface ArchiveListItem {
   id: string;
@@ -11,6 +11,7 @@ export interface ArchiveListItem {
   image?: string;
   link?: string;
   github?: string;
+  order?: number;
 }
 
 export interface ArchiveEntry extends ArchiveListItem {

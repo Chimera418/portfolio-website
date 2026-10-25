@@ -83,12 +83,19 @@ export async function getArchiveEntries(type: ArchiveType): Promise<ArchiveListI
           }
         ]
       },
-      sorts: [
-        {
-          property: 'Date',
-          direction: 'descending'
-        }
-      ]
+      sorts: type === 'projects'
+        ? [
+            {
+              property: 'Order',
+              direction: 'ascending'
+            }
+          ]
+        : [
+            {
+              property: 'Date',
+              direction: 'descending'
+            }
+          ]
     });
 
     const entries = response.results.map(normalizeEntry);

@@ -37,6 +37,7 @@
     "pullcord": "^0.1.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "resend": "^6.32.1",
     "svelte": "^5.56.3",
     "tailwindcss": "^4.3.0"
   },

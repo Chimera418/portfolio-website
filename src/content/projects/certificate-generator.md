@@ -2,7 +2,7 @@
 title: "Certificate Generator"
 description: "A Flask application for event-based certificate distribution. Features participant validation, server-side Pillow rendering, and bulk email delivery."
 tags: ["Flask", "Python", "Pillow", "HTML/CSS"]
-link: "https://csi-certificate-generator-odhy.onrender.com"
+link: "https://certificates.chimera-realm.foo/"
 github: "https://github.com/Chimera418/Certificate-Generator"
 order: 5
 ---

@@ -39,6 +39,13 @@ function extractUrl(property: any): string | undefined {
   return undefined;
 }
 
+function extractNumber(property: any): number | undefined {
+  if (property?.type === 'number' && typeof property.number === 'number') {
+    return property.number;
+  }
+  return undefined;
+}
+
 export function normalizeEntry(page: any): ArchiveListItem {
   const props = page.properties;
 
@@ -50,6 +57,7 @@ export function normalizeEntry(page: any): ArchiveListItem {
   const tags = extractTags(props.Tags);
   const type = extractSelect(props.Type).toLowerCase() as ArchiveType;
   const link = extractUrl(props.Link);
+  const order = extractNumber(props.Order || props.order);
 
   // 'Github' (lowercase h) is a files property in this database, not a url property
   let github = undefined;
@@ -79,6 +87,7 @@ export function normalizeEntry(page: any): ArchiveListItem {
     date,
     image,
     link,
-    github
+    github,
+    order
   };
 }

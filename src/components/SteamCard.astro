@@ -90,6 +90,20 @@ const { class: className, style } = Astro.props;
     </a>
 
     <button
+      id="ga-perfect-btn"
+      type="button"
+      aria-label="Show 100% completed games"
+      title="100% Completed Games"
+      class="recent-btn flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg border-2 bg-overlay text-amber-400 hover:bg-surface transition-all duration-200"
+      style="--accent:#f59e0b; border-color: color-mix(in srgb, #f59e0b 45%, transparent);"
+    >
+      <!-- Trophy icon -->
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.504-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.004 0H9.496m5.004 0a4.5 4.5 0 004.243-3.182l.9-3.6A2.25 2.25 0 0017.458 8H6.542a2.25 2.25 0 00-2.185 2.568l.9 3.6a4.5 4.5 0 004.243 3.182"></path>
+      </svg>
+    </button>
+
+    <button
       id="ga-recent-btn"
       type="button"
       aria-label="Show recently played games"
@@ -110,31 +124,59 @@ const { class: className, style } = Astro.props;
   </div>
 </BentoCard>
 
-<!-- Recently played games modal -->
+<!-- Recently played & 100% games modal -->
 <div
   id="ga-modal"
   class="fixed inset-0 z-[200] hidden items-center justify-center p-4"
 >
   <div class="ga-modal-backdrop absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
   <div
-    class="relative z-10 w-full max-w-md bg-surface border-2 border-highlight-med rounded-xl shadow-2xl shadow-black/50 max-h-[80vh] flex flex-col overflow-hidden"
+    class="relative z-10 w-full max-w-sm bg-surface border-2 border-highlight-med rounded-2xl shadow-2xl shadow-black/60 max-h-[80vh] flex flex-col overflow-hidden"
   >
-    <div class="flex items-center justify-between px-4 py-3 border-b border-highlight-med">
-      <div class="flex items-center gap-2">
-        <svg class="w-4 h-4 text-[#66c0f4]" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0z"></path>
-        </svg>
-        <h3 class="font-pixel text-[11px] uppercase tracking-widest text-text-primary">
-          Recently Played
-        </h3>
+    <!-- Modal Header with Tabs -->
+    <div class="flex items-center justify-between px-4 py-3 border-b border-highlight-med/60">
+      <div class="flex items-center gap-1 p-0.5 bg-overlay rounded-lg border border-highlight-med/40">
+        <button
+          id="ga-tab-recent"
+          type="button"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded text-[10px] font-pixel uppercase tracking-wider transition-all duration-150 bg-surface-dim text-[#66c0f4] font-bold shadow-sm"
+        >
+          <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Recent
+        </button>
+        <button
+          id="ga-tab-perfect"
+          type="button"
+          class="flex items-center gap-1.5 px-3 py-1.5 rounded text-[10px] font-pixel uppercase tracking-wider transition-all duration-150 text-text-muted hover:text-amber-400"
+        >
+          <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.504-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.004 0H9.496m5.004 0a4.5 4.5 0 004.243-3.182l.9-3.6A2.25 2.25 0 0017.458 8H6.542a2.25 2.25 0 00-2.185 2.568l.9 3.6a4.5 4.5 0 004.243 3.182"/></svg>
+          <span id="ga-tab-perfect-label">100% Club</span>
+        </button>
       </div>
-      <button
-        class="ga-modal-close text-text-muted hover:text-text-primary transition-colors p-1 -mr-1"
-        aria-label="Close"
-      >
-        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-      </button>
+
+      <div class="flex items-center gap-1.5">
+        <a
+          id="ga-steam-link"
+          href="https://steamcommunity.com/id/gamingchimera/games/?tab=perfect"
+          target="_blank"
+          rel="noopener"
+          title="Open Steam profile"
+          class="text-text-muted hover:text-[#66c0f4] transition-colors p-1 rounded"
+        >
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0z"/>
+          </svg>
+        </a>
+        <button
+          class="ga-modal-close text-text-muted hover:text-text-primary transition-colors p-1 rounded"
+          aria-label="Close"
+        >
+          <svg class="w-4.5 h-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
     </div>
+    
+    <!-- List container -->
     <div id="ga-list" class="overflow-y-auto p-2 flex-1">
       <p class="text-text-muted text-sm text-center py-8 font-pixel text-[10px] uppercase tracking-widest animate-pulse">
         Loading...
@@ -440,11 +482,17 @@ const { class: className, style } = Astro.props;
       }
     });
 
-    /* ── Recently played games modal ───────────────────────────────────── */
+    /* ── Recently played & 100% games modal ───────────────────────────── */
     const gaModal = document.getElementById("ga-modal");
-    const gaOpenBtn = document.getElementById("ga-recent-btn");
+    const gaRecentBtn = document.getElementById("ga-recent-btn");
+    const gaPerfectBtn = document.getElementById("ga-perfect-btn");
+    const gaTabRecent = document.getElementById("ga-tab-recent");
+    const gaTabPerfect = document.getElementById("ga-tab-perfect");
     const gaListEl = document.getElementById("ga-list");
-    let gaLoaded = false;
+    
+    let activeTab = "recent"; // "recent" | "perfect"
+    let recentGamesCache = null;
+    let perfectGamesCache = null;
 
     function gaEscape(str) {
       return String(str ?? "").replace(
@@ -460,7 +508,7 @@ const { class: className, style } = Astro.props;
       );
     }
 
-    function gaRenderList(games) {
+    function gaRenderRecent(games) {
       if (!gaListEl) return;
       if (!games || games.length === 0) {
         gaListEl.innerHTML =
@@ -470,44 +518,136 @@ const { class: className, style } = Astro.props;
       gaListEl.innerHTML = games
         .map((g) => {
           const cover = g.image
-            ? `<img src="${gaEscape(g.image)}" alt="" class="w-10 h-10 rounded object-cover flex-shrink-0 border border-highlight-med" onerror="this.style.display='none'">`
-            : `<div class="w-10 h-10 rounded bg-overlay border border-highlight-med flex-shrink-0"></div>`;
+            ? `<img src="${gaEscape(g.image)}" alt="" class="w-12 h-12 rounded object-cover flex-shrink-0 border border-highlight-med" onerror="this.style.display='none'">`
+            : `<div class="w-12 h-12 rounded bg-overlay border border-highlight-med flex-shrink-0"></div>`;
           const sub = g.lastSeen ? relativeTime(g.lastSeen) : "";
           return `
             <a href="${gaEscape(g.url)}" target="_blank" rel="noopener"
-               class="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-overlay transition-colors group">
+               class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-overlay transition-colors group">
               ${cover}
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-semibold text-text-primary truncate group-hover:text-[#66c0f4] transition-colors">${gaEscape(g.name)}</p>
-                <p class="text-[9px] font-pixel uppercase tracking-wider text-text-muted truncate">${gaEscape(sub)}</p>
+                <p class="text-[9px] font-pixel uppercase tracking-wider text-text-muted truncate mt-0.5">${gaEscape(sub)}</p>
               </div>
+              <svg class="w-3.5 h-3.5 text-text-muted/40 group-hover:text-[#66c0f4] transition-colors flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
             </a>`;
         })
         .join("");
     }
 
+    function gaRenderPerfect(games) {
+      if (!gaListEl) return;
+      if (!games || games.length === 0) {
+        gaListEl.innerHTML =
+          '<p class="text-text-muted text-sm text-center py-8 font-pixel text-[10px] uppercase tracking-widest">No 100% games found</p>';
+        return;
+      }
+
+      // Update the tab label with count
+      const tabLabel = document.getElementById('ga-tab-perfect-label');
+      if (tabLabel) tabLabel.textContent = `100% Club (${games.length})`;
+
+      gaListEl.innerHTML = `
+        <div class="px-3 pt-2 pb-1">
+          <p class="font-pixel text-[9px] uppercase tracking-widest text-amber-400/70">
+            ${games.length} perfect completion${games.length !== 1 ? 's' : ''}
+          </p>
+        </div>
+        <div class="space-y-1">
+          ${games.map((g) => {
+            const cover = g.image
+              ? `<img src="${gaEscape(g.image)}" alt="${gaEscape(g.name)}" class="w-10 h-10 rounded-md object-cover flex-shrink-0 border border-highlight-med/60" onerror="this.parentElement.querySelector('.ga-fallback').style.display='flex'; this.style.display='none'">
+                 <div class="ga-fallback w-10 h-10 rounded-md bg-amber-400/10 border border-amber-400/20 flex-shrink-0 items-center justify-center hidden">
+                   <svg class="w-4 h-4 text-amber-400/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.504-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.004 0H9.496m5.004 0a4.5 4.5 0 004.243-3.182l.9-3.6A2.25 2.25 0 0017.458 8H6.542a2.25 2.25 0 00-2.185 2.568l.9 3.6a4.5 4.5 0 004.243 3.182"/></svg>
+                 </div>`
+              : `<div class="w-10 h-10 rounded-md bg-amber-400/10 border border-amber-400/20 flex-shrink-0 flex items-center justify-center">
+                   <svg class="w-4 h-4 text-amber-400/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.504-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.004 0H9.496m5.004 0a4.5 4.5 0 004.243-3.182l.9-3.6A2.25 2.25 0 0017.458 8H6.542a2.25 2.25 0 00-2.185 2.568l.9 3.6a4.5 4.5 0 004.243 3.182"/></svg>
+                 </div>`;
+            const achText = `${g.achievements.unlocked}/${g.achievements.total}`;
+            const playtime = g.playtime && g.playtime !== 'Played' ? g.playtime : null;
+            return `
+              <a href="${gaEscape(g.url)}" target="_blank" rel="noopener"
+                 class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-overlay/80 transition-colors group border border-transparent hover:border-amber-400/20">
+                <div class="flex-shrink-0 relative flex">${cover}</div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-semibold text-text-primary truncate group-hover:text-amber-400 transition-colors leading-tight">${gaEscape(g.name)}</p>
+                  <div class="flex items-center gap-2 mt-0.5">
+                    <span class="inline-flex items-center gap-1 font-pixel text-[8px] uppercase tracking-wider text-amber-400/80">
+                      <svg class="w-2 h-2 fill-amber-400" viewBox="0 0 24 24"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
+                      ${gaEscape(achText)} ach
+                    </span>
+                    ${playtime ? `<span class="text-[9px] font-mono text-text-muted/60">${gaEscape(playtime)}</span>` : ''}
+                  </div>
+                </div>
+                <svg class="w-3 h-3 text-text-muted/30 group-hover:text-amber-400/60 transition-colors flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+              </a>`;
+          }).join('')}
+        </div>
+      `;
+    }
+
     async function gaLoadRecent() {
       if (!gaListEl) return;
+      if (recentGamesCache) {
+        gaRenderRecent(recentGamesCache);
+        return;
+      }
+      gaListEl.innerHTML = '<p class="text-text-muted text-sm text-center py-8 font-pixel text-[10px] uppercase tracking-widest animate-pulse">Loading recent games...</p>';
       try {
         const res = await fetch("/api/steam-recent");
         const data = await res.json();
-        gaRenderList(data.games);
+        recentGamesCache = data.games || [];
+        gaRenderRecent(recentGamesCache);
       } catch (err) {
         console.error("Failed to load recent games:", err);
-        gaListEl.innerHTML =
-          '<p class="text-text-muted text-sm text-center py-8 font-pixel text-[10px] uppercase tracking-widest">Failed to load</p>';
+        gaListEl.innerHTML = '<p class="text-text-muted text-sm text-center py-8 font-pixel text-[10px] uppercase tracking-widest">Failed to load</p>';
       }
     }
 
-    function gaOpen() {
+    async function gaLoadPerfect() {
+      if (!gaListEl) return;
+      if (perfectGamesCache) {
+        gaRenderPerfect(perfectGamesCache);
+        return;
+      }
+      gaListEl.innerHTML = '<p class="text-text-muted text-sm text-center py-8 font-pixel text-[10px] uppercase tracking-widest animate-pulse">Loading 100% games...</p>';
+      try {
+        const res = await fetch("/api/steam-perfect");
+        const data = await res.json();
+        perfectGamesCache = data.games || [];
+        gaRenderPerfect(perfectGamesCache);
+      } catch (err) {
+        console.error("Failed to load perfect games:", err);
+        gaListEl.innerHTML = '<p class="text-text-muted text-sm text-center py-8 font-pixel text-[10px] uppercase tracking-widest">Failed to load</p>';
+      }
+    }
+
+    function switchTab(tab) {
+      activeTab = tab;
+      const BASE = "flex items-center gap-1.5 px-3 py-1.5 rounded text-[10px] font-pixel uppercase tracking-wider transition-all duration-150";
+      if (tab === "recent") {
+        gaTabRecent.className = `${BASE} bg-surface-dim text-[#66c0f4] font-bold shadow-sm`;
+        gaTabPerfect.className = `${BASE} text-text-muted hover:text-amber-400`;
+        // Update steam link to recent tab URL
+        const sl = document.getElementById("ga-steam-link");
+        if (sl) sl.href = "https://steamcommunity.com/id/gamingchimera/games/";
+        gaLoadRecent();
+      } else {
+        gaTabPerfect.className = `${BASE} bg-surface-dim text-amber-400 font-bold shadow-sm`;
+        gaTabRecent.className = `${BASE} text-text-muted hover:text-[#66c0f4]`;
+        // Update steam link to perfect tab URL
+        const sl = document.getElementById("ga-steam-link");
+        if (sl) sl.href = "https://steamcommunity.com/id/gamingchimera/games/?tab=perfect";
+        gaLoadPerfect();
+      }
+    }
+
+    function gaOpen(defaultTab = "recent") {
       if (!gaModal) return;
       gaModal.classList.remove("hidden");
       gaModal.classList.add("flex");
       document.body.style.overflow = "hidden";
-      if (!gaLoaded) {
-        gaLoaded = true;
-        gaLoadRecent();
-      }
+      switchTab(defaultTab);
     }
 
     function gaClose() {
@@ -517,7 +657,11 @@ const { class: className, style } = Astro.props;
       document.body.style.overflow = "";
     }
 
-    if (gaOpenBtn) gaOpenBtn.addEventListener("click", gaOpen);
+    if (gaRecentBtn) gaRecentBtn.addEventListener("click", () => gaOpen("recent"));
+    if (gaPerfectBtn) gaPerfectBtn.addEventListener("click", () => gaOpen("perfect"));
+    if (gaTabRecent) gaTabRecent.addEventListener("click", () => switchTab("recent"));
+    if (gaTabPerfect) gaTabPerfect.addEventListener("click", () => switchTab("perfect"));
+
     if (gaModal) {
       gaModal
         .querySelector(".ga-modal-backdrop")

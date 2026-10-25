@@ -1,9 +1,11 @@
 ---
 import NotionBlockRenderer from './NotionBlockRenderer.astro';
 export interface Props {
-  blocks: any[];
+  blocks?: any[];
+  block?: any;
 }
-const { blocks } = Astro.props;
+const { blocks: rawBlocks, block: singleBlock } = Astro.props;
+const blocks = Array.isArray(rawBlocks) ? rawBlocks : (singleBlock ? [singleBlock] : []);
 
 function getRichText(richTextArr: any[]) {
   if (!richTextArr) return '';

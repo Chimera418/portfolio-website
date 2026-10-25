@@ -4,6 +4,7 @@ scratch/
 .vscode/
 .cursor/
 misc/
+scripts/
 .env
 node_modules/
 dist/

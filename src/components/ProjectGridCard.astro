@@ -10,8 +10,9 @@ interface Props {
   github?: string;
   slug: string;
   date?: string;
+  image?: string;
 }
-const { title, description, tags, link, github, slug, date } = Astro.props;
+const { title, description, tags, link, github, slug, date, image } = Astro.props;
 
 // Tag colors for pills
 const colors = ['text-red-400 bg-red-400/10', 'text-blue-400 bg-blue-400/10', 'text-green-400 bg-green-400/10', 'text-yellow-400 bg-yellow-400/10', 'text-purple-400 bg-purple-400/10', 'text-pink-400 bg-pink-400/10', 'text-cyan-400 bg-cyan-400/10'];
@@ -21,9 +22,20 @@ const getTagColor = (tag: string) => {
   return colors[Math.abs(hash) % colors.length];
 };
 
-const imagePath = `/images/projects/${slug}.jpg`;
-const absoluteImagePath = path.join(process.cwd(), 'public', 'images', 'projects', `${slug}.jpg`);
-const hasImage = fs.existsSync(absoluteImagePath);
+let displayImage = image;
+if (!displayImage) {
+  const pngPath = `/images/projects/${slug}.png`;
+  const absPng = path.join(process.cwd(), 'public', 'images', 'projects', `${slug}.png`);
+  const jpgPath = `/images/projects/${slug}.jpg`;
+  const absJpg = path.join(process.cwd(), 'public', 'images', 'projects', `${slug}.jpg`);
+  
+  if (fs.existsSync(absPng)) {
+    displayImage = pngPath;
+  } else if (fs.existsSync(absJpg)) {
+    displayImage = jpgPath;
+  }
+}
+const hasImage = Boolean(displayImage);
 ---
 <div class="bg-surface-dim border-2 border-highlight-med rounded-xl overflow-hidden hover:border-primary transition-colors flex flex-col group h-full relative">
   <!-- Main Link covering the card -->
@@ -32,7 +44,7 @@ const hasImage = fs.existsSync(absoluteImagePath);
   <!-- Image/Banner -->
   <div class="aspect-video w-full bg-overlay relative overflow-hidden flex items-center justify-center border-b border-highlight-med/50">
     {hasImage ? (
-      <img src={imagePath} alt={title} class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
+      <img src={displayImage} alt={title} class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
     ) : (
       <div class="absolute inset-0 bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
         <span class="font-pixel text-text-muted text-[10px] uppercase opacity-50 group-hover:opacity-100 transition-opacity">

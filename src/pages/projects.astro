@@ -1,29 +1,68 @@
 ---
-export const prerender = true;
-
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import ProjectGridCard from '../components/ProjectGridCard.astro';
+import { getArchiveEntries } from '../lib/notion/queries';
 
-// Bypass Astro content collections and fetch directly
-const projectFiles = Object.values(import.meta.glob('../content/projects/*.md', { eager: true }));
+// Fetch from Notion with graceful fallback to local markdown files
+let projects: any[] = [];
 
-const projects = projectFiles.map((file: any) => ({
-  id: file.file.split('/').pop().replace('.md', ''),
-  data: file.frontmatter
-})).sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+try {
+  const notionProjects = await getArchiveEntries('projects' as any);
+  if (notionProjects && notionProjects.length > 0) {
+    projects = notionProjects
+      .sort((a, b) => {
+        const orderA = a.order !== undefined && a.order !== null ? a.order : 999;
+        const orderB = b.order !== undefined && b.order !== null ? b.order : 999;
+        if (orderA !== orderB) return orderA - orderB;
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
+      })
+      .map((p) => ({
+        id: p.slug,
+        data: {
+          title: p.title,
+          description: p.description,
+          tags: p.tags,
+          link: p.link,
+          github: p.github,
+          date: p.date ? p.date.slice(0, 7) : undefined,
+          image: p.image,
+          order: p.order
+        }
+      }));
+  }
+} catch (error) {
+  console.warn('[Projects] Failed to fetch from Notion, falling back to local files:', error);
+}
+
+// Fallback to local files if Notion is unreachable or returned empty
+if (projects.length === 0) {
+  const projectFiles = Object.values(import.meta.glob('../content/projects/*.md', { eager: true }));
+  projects = projectFiles.map((file: any) => ({
+    id: file.file.split('/').pop().replace('.md', ''),
+    data: file.frontmatter
+  })).sort((a, b) => {
+    if (a.data.order !== undefined && b.data.order !== undefined) {
+      return a.data.order - b.data.order;
+    }
+    if (a.data.date && b.data.date) {
+      return new Date(b.data.date).getTime() - new Date(a.data.date).getTime();
+    }
+    return (a.data.order ?? 99) - (b.data.order ?? 99);
+  });
+}
 ---
 <Layout title="Projects | Chimera's Realm">
   <Navbar />
   
-  <div class="mt-8 max-w-6xl mx-auto space-y-12 animate-fade-in">
+  <div class="mt-8 max-w-6xl mx-auto space-y-12 animate-fade-in px-4 md:px-0">
     <!-- Header -->
     <section class="text-center max-w-2xl mx-auto">
       <h1 class="text-4xl md:text-5xl font-bold text-text-primary mb-4">
         Project <span class="text-secondary font-pixel text-2xl md:text-3xl align-middle">Database</span>
       </h1>
       <p class="text-lg text-text-muted">
-        Recent work, experiments, and side projects. 
+        Recent work, experiments, and side projects.
       </p>
     </section>
 
@@ -33,11 +72,12 @@ const projects = projectFiles.map((file: any) => ({
         <ProjectGridCard 
           title={project.data.title}
           description={project.data.description}
-          tags={project.data.tags}
+          tags={project.data.tags || []}
           link={project.data.link}
           github={project.data.github}
           slug={project.id}
           date={project.data.date}
+          image={project.data.image}
         />
       ))}
     </section>

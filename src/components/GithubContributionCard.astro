@@ -9,9 +9,9 @@ const { class: className } = Astro.props;
 ---
 
 <BentoCard
-  title="Commit History"
+  title="GitHub Contribution History"
   className={`${className || ""} group/commits relative hover:border-primary/50 transition-colors duration-300 flex flex-col justify-between`}
-  tag="COMMITS"
+  tag="GITHUB"
 >
   <div class="flex flex-col h-full justify-between gap-3">
     <!-- Sub-header metadata bar -->
@@ -61,7 +61,7 @@ const { class: className } = Astro.props;
       target="_blank"
       rel="noopener noreferrer"
       class="commits-graph block relative w-full rounded-xl overflow-hidden border-2 border-text-muted/30 bg-[#0d1117] hover:border-primary/60 transition-[border-color,box-shadow] duration-300 group/graph"
-      title="View GitHub Profile & Commit History"
+      title="View GitHub Profile & Contribution History"
     >
       <!-- Subtle highlight on hover -->
       <div
@@ -74,8 +74,8 @@ const { class: className } = Astro.props;
         class="w-full overflow-x-auto no-scrollbar flex items-center justify-center p-2.5 sm:p-3 bg-[#0d1117]"
       >
         <img
-          src="/api/commit-history"
-          alt="Chimera418 GitHub Commit History"
+          src="/api/contribution-history"
+          alt="Chimera418 GitHub Contribution History"
           loading="lazy"
           decoding="async"
           class="commits-img w-full min-w-[580px] md:min-w-0 h-auto object-contain select-none"

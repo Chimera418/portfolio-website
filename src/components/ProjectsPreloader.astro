@@ -1,0 +1,98 @@
+---
+import { ALL_PROJECT_PRELOAD_URLS } from '../lib/projectImages';
+
+// Serialize the high-priority project images list for client-side speculative preloading
+const imageUrlsJson = JSON.stringify(ALL_PROJECT_PRELOAD_URLS);
+---
+
+<script is:inline define:vars={{ imageUrlsJson }}>
+  (function () {
+    const urls = JSON.parse(imageUrlsJson);
+    let preloaded = false;
+
+    // Speculatively preload and cache all project images
+    function preloadProjectImages() {
+      if (preloaded || !Array.isArray(urls)) return;
+      preloaded = true;
+      window.__projectsPreloaded = true;
+
+      // 1. Dual-cache in Cache Storage API (persists across sessions)
+      if ('caches' in window) {
+        caches.open('chimera-projects-images-v1').then(function (cache) {
+          urls.forEach(function (url) {
+            cache.match(url).then(function (matched) {
+              if (!matched) {
+                fetch(url, { cache: 'force-cache', priority: 'high' })
+                  .then(function (res) {
+                    if (res.ok) cache.put(url, res);
+                  })
+                  .catch(function () {});
+              }
+            });
+          });
+        }).catch(function () {});
+      }
+
+      // 2. Preload into browser image decode memory cache
+      urls.forEach(function (url) {
+        const img = new Image();
+        img.decoding = 'async';
+        img.src = url;
+        if (typeof img.decode === 'function') {
+          img.decode().catch(function () {});
+        }
+      });
+    }
+
+    // Attach speculative preload listeners to all links pointing to /projects
+    function attachListeners() {
+      // Find all anchors pointing to /projects
+      const links = document.querySelectorAll('a[href="/projects"], a[href^="/projects/"]');
+      links.forEach(function (link) {
+        // Trigger on hover / cursor approach
+        link.addEventListener('pointerenter', preloadProjectImages, { passive: true, once: true });
+        link.addEventListener('mouseenter', preloadProjectImages, { passive: true, once: true });
+        // Trigger on mobile touch down (fires ~150ms before click)
+        link.addEventListener('touchstart', preloadProjectImages, { passive: true, once: true });
+        // Trigger on keyboard focus
+        link.addEventListener('focus', preloadProjectImages, { passive: true, once: true });
+      });
+
+      // Also trigger if hovering the navbar header container
+      const navHeader = document.getElementById('navbar-header');
+      if (navHeader) {
+        navHeader.addEventListener('pointerenter', function () {
+          // Warm up top 6 project images quietly when hovering header
+          if (!preloaded) preloadProjectImages();
+        }, { passive: true, once: true });
+      }
+    }
+
+    // Initialize listeners on DOM ready and after Astro page transitions
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', attachListeners);
+    } else {
+      attachListeners();
+    }
+    document.addEventListener('astro:page-load', attachListeners);
+
+    // Idle-time background prefetch after 2.5 seconds (if connection is not constrained)
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    const isConstrained = conn && (conn.saveData || /^(slow-2g|2g)$/.test(conn.effectiveType || ''));
+    if (!isConstrained) {
+      if ('requestIdleCallback' in window) {
+        window.addEventListener('load', function () {
+          requestIdleCallback(preloadProjectImages, { timeout: 4000 });
+        });
+      } else {
+        window.addEventListener('load', function () {
+          setTimeout(preloadProjectImages, 2500);
+        });
+      }
+    }
+
+    // Expose global helper for programmatic invocation
+    window.__preloadProjectImages = preloadProjectImages;
+  })();
+</script>
+

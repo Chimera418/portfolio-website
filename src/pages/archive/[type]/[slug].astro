@@ -44,6 +44,8 @@ const displayDate = new Date(entry.date).toLocaleDateString('en-US', {
         <img 
           src={entry.image} 
           alt={entry.title} 
+          loading="eager"
+          decoding="async"
           class="w-full h-64 md:h-96 object-cover rounded-xl mb-8 border-2 border-surface0"
         />
       )}
@@ -98,6 +100,13 @@ const displayDate = new Date(entry.date).toLocaleDateString('en-US', {
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-in {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
   }
   
   /* Custom prose styles to match the theme */

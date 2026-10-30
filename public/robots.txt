@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://chimera-realm.foo/sitemap-index.xml
+Sitemap: https://chimera-realm.foo/sitemap.xml

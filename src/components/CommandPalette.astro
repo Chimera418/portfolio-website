@@ -8,9 +8,10 @@
 >
   <div
     id="command-palette"
-    class="w-full max-w-2xl bg-surface-dim border-2 border-highlight-med rounded-xl shadow-2xl overflow-hidden flex flex-col transform translate-y-4 opacity-0 transition-all duration-150 ease-out will-change-transform"
+    class="w-full max-w-2xl bg-surface-dim border-2 border-highlight-med rounded-xl shadow-2xl overflow-hidden flex flex-col transform translate-y-4 opacity-0 transition-[transform,opacity] duration-150 ease-out will-change-transform"
     role="dialog"
     aria-modal="true"
+    aria-label="Command Palette"
   >
     <div
       class="flex items-center px-4 py-4 border-b border-highlight-med bg-overlay"
@@ -33,6 +34,7 @@
         placeholder="Type a command or search..."
         autocomplete="off"
         spellcheck="false"
+        aria-label="Type a command or search"
       />
       <div
         class="text-xs text-text-muted font-mono ml-3 px-2 py-1 bg-surface border border-highlight-med rounded hidden sm:block"
@@ -99,6 +101,14 @@
   }
   .cmd-item.active .text-text-muted {
     color: var(--text-primary) !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #command-palette-backdrop,
+    #command-palette {
+      transition: none !important;
+      transform: none !important;
+    }
   }
 </style>
 

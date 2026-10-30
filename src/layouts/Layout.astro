@@ -3,6 +3,7 @@ import "../styles/global.css";
 import CommandPalette from "../components/CommandPalette.astro";
 import SpeedInsights from "@vercel/speed-insights/astro";
 import ThemePullCord from "../components/ThemePullCord.tsx";
+import ProjectsPreloader from "../components/ProjectsPreloader.astro";
 import { ClientRouter } from "astro:transitions";
 
 interface Props {
@@ -15,9 +16,9 @@ interface Props {
 
 const { 
   title, 
-  description = "Chimera's Realm - Developer Portfolio",
+  description = "Chimera's Realm — portfolio of Aneesh Sagar Reddy, full-stack developer, cybersecurity enthusiast, and AI engineering student based in Bengaluru.",
   ogTitle = title,
-  canonicalUrl = "https://chimerasrealm.com",
+  canonicalUrl = Astro.url ? Astro.url.href : "https://chimera-realm.foo/",
   ogImage = "/og-default.png"
 } = Astro.props;
 ---
@@ -42,6 +43,12 @@ const {
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={ogTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="robots" content="index, follow" />
     <title>{title}</title>
     <ClientRouter />
 
@@ -49,7 +56,7 @@ const {
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Press+Start+2P&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Press+Start+2P&family=Geist+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
 
@@ -107,8 +114,24 @@ const {
       applyTheme();
       document.addEventListener('astro:after-swap', applyTheme);
     </script>
+      <script is:inline type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Aneesh Sagar Reddy",
+        "alternateName": "Chimera",
+        "url": "https://chimera-realm.foo/",
+        "jobTitle": "Full Stack Developer & AI Engineering Student",
+        "knowsAbout": ["Full Stack Development", "Cybersecurity", "Artificial Intelligence", "Web Exploitation"],
+        "sameAs": [
+          "https://github.com/Chimera418",
+          "https://www.linkedin.com/in/aneesh-sagar-reddy/",
+          "https://discord.com/users/736465046317563915"
+        ]
+      }
+    </script>
   </head>
-  <body class="relative min-h-screen flex flex-col items-center overflow-x-hidden">
+  <body class="relative min-h-screen flex flex-col items-center overflow-x-clip">
     <ThemePullCord client:load />
 
     <!-- Navbar will be injected here by pages -->
@@ -623,6 +646,7 @@ const {
         }, 5000);
       })();
     </script>
+    <ProjectsPreloader />
     <SpeedInsights />
   </body>
 </html>

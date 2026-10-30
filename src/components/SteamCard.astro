@@ -59,7 +59,7 @@ const { class: className, style } = Astro.props;
       href="#"
       target="_blank"
       rel="noopener noreferrer"
-      class="flex flex-1 min-w-0 items-center justify-between gap-3 px-4 py-2.5 rounded-lg border-2 border-highlight-med bg-overlay hover:bg-surface hover:border-[#66c0f4] transition-all duration-200 group pointer-events-none opacity-50"
+      class="flex flex-1 min-w-0 items-center justify-between gap-3 px-4 py-2.5 rounded-lg border-2 border-highlight-med bg-overlay hover:bg-surface hover:border-[#66c0f4] transition-[background-color,border-color,opacity] duration-200 group pointer-events-none opacity-50"
     >
       <div class="flex items-center gap-2 min-w-0">
         <!-- Steam icon -->
@@ -79,7 +79,7 @@ const { class: className, style } = Astro.props;
         >
       </div>
       <svg
-        class="w-3.5 h-3.5 text-text-muted group-hover:text-[#66c0f4] group-hover:translate-x-0.5 transition-all flex-shrink-0"
+        class="w-3.5 h-3.5 text-text-muted group-hover:text-[#66c0f4] group-hover:translate-x-0.5 transition-[color,transform] motion-reduce:transform-none flex-shrink-0"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
@@ -94,7 +94,7 @@ const { class: className, style } = Astro.props;
       type="button"
       aria-label="Show 100% completed games"
       title="100% Completed Games"
-      class="recent-btn flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg border-2 bg-overlay text-amber-400 hover:bg-surface transition-all duration-200"
+      class="recent-btn flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg border-2 bg-overlay text-amber-400 hover:bg-surface transition-[background-color,border-color,transform] duration-200 motion-reduce:transform-none"
       style="--accent:#f59e0b; border-color: color-mix(in srgb, #f59e0b 45%, transparent);"
     >
       <!-- Trophy icon -->
@@ -108,7 +108,7 @@ const { class: className, style } = Astro.props;
       type="button"
       aria-label="Show recently played games"
       title="Recent games"
-      class="recent-btn flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg border-2 bg-overlay text-[#66c0f4] hover:bg-surface transition-all duration-200"
+      class="recent-btn flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg border-2 bg-overlay text-[#66c0f4] hover:bg-surface transition-[background-color,border-color,transform] duration-200 motion-reduce:transform-none"
       style="--accent:#66c0f4; border-color: color-mix(in srgb, #66c0f4 45%, transparent);"
     >
       <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

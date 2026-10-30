@@ -1,0 +1,112 @@
+---
+import BentoCard from "./BentoCard.astro";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<BentoCard
+  title="Commit History"
+  className={`${className || ""} group/commits relative hover:border-primary/50 transition-colors duration-300 flex flex-col justify-between`}
+  tag="COMMITS"
+>
+  <div class="flex flex-col h-full justify-between gap-3">
+    <!-- Sub-header metadata bar -->
+    <div
+      class="flex items-center justify-between text-[10px] font-pixel text-text-muted gap-2"
+    >
+      <div class="flex items-center gap-2">
+        <span class="relative flex h-2 w-2">
+          <span
+            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"
+          ></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"
+          ></span>
+        </span>
+        <span
+          class="text-text-muted tracking-wider uppercase text-[9px] sm:text-[10px]"
+        >
+          Live GitHub Activity
+        </span>
+      </div>
+
+      <a
+        href="https://github.com/Chimera418"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-1.5 text-[9px] sm:text-[10px] text-text-muted hover:text-primary transition-colors flex-shrink-0"
+        title="View Chimera418 on GitHub"
+      >
+        <span class="hidden sm:inline">github.com/</span>Chimera418
+        <svg
+          class="w-3 h-3 flex-shrink-0"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"></path>
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <line x1="10" y1="14" x2="21" y2="3"></line>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Commit Graph Container with light visible border -->
+    <a
+      href="https://github.com/Chimera418"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="commits-graph block relative w-full rounded-xl overflow-hidden border-2 border-text-muted/30 bg-[#0d1117] hover:border-primary/60 transition-[border-color,box-shadow] duration-300 group/graph"
+      title="View GitHub Profile & Commit History"
+    >
+      <!-- Subtle highlight on hover -->
+      <div
+        class="pointer-events-none absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-primary/5 opacity-0 group-hover/graph:opacity-100 transition-opacity duration-300 z-10"
+      >
+      </div>
+
+      <!-- Horizontal scroll container on mobile with smooth touch scrolling -->
+      <div
+        class="w-full overflow-x-auto no-scrollbar flex items-center justify-center p-2.5 sm:p-3 bg-[#0d1117]"
+      >
+        <img
+          src="/api/commit-history"
+          alt="Chimera418 GitHub Commit History"
+          loading="lazy"
+          decoding="async"
+          class="commits-img w-full min-w-[580px] md:min-w-0 h-auto object-contain select-none"
+          onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/Chimera418/Chimera418/main/assets/contribution-game.svg';"
+        />
+      </div>
+    </a>
+
+    <!-- Footer summary -->
+    <div
+      class="flex items-center text-[9px] font-pixel text-text-muted/70 pt-0.5"
+    >
+      <span class="tracking-wider uppercase truncate">
+        activity: public repositories • open source contributions
+      </span>
+    </div>
+  </div>
+</BentoCard>
+
+<style>
+  .commits-img {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>

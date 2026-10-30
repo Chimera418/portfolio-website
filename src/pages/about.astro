@@ -125,7 +125,10 @@ const facts = [
 ];
 ---
 
-<Layout title="About | Chimera's Realm">
+<Layout 
+  title="About | Chimera's Realm"
+  description="Background, experience timeline, technical skills loadout, and verified certifications of Aneesh Sagar Reddy (Chimera)."
+>
   <Navbar />
 
   <!-- Enable reveal state before paint so timeline items don't flash in -->
@@ -137,13 +140,11 @@ const facts = [
 
   <div class="mt-8 max-w-4xl mx-auto space-y-20 pb-20">
     <!-- Header -->
-    <section>
-      <p class="font-pixel text-xs text-primary mb-4 tracking-widest">WHO AM I</p>
+    <section class="border-b border-highlight-med/30 pb-12">
       <h1
         class="text-4xl md:text-5xl font-bold text-text-primary mb-6 leading-tight"
       >
-        I am<br />
-        <span class="text-primary">Aneesh Sagar Reddy.</span>
+        Aneesh Sagar Reddy
       </h1>
       <div class="text-lg text-text-muted leading-relaxed space-y-4 max-w-2xl">
         <p>

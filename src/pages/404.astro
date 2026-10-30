@@ -16,7 +16,7 @@ import CaptchaModal from "../components/CaptchaModal.astro";
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Press+Start+2P&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Press+Start+2P&display=swap"
       rel="stylesheet"
     />
     <!-- Aggressively preload heavy 404 assets so they're ready on first visit -->
@@ -184,6 +184,11 @@ import CaptchaModal from "../components/CaptchaModal.astro";
       const iconUnmuted = document.getElementById("icon-unmuted");
       const bgVideo = document.querySelector("video");
 
+      // Check prefers-reduced-motion
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches && bgVideo) {
+        bgVideo.pause();
+      }
+
       if (unmuteBtn && bgVideo) {
         bgVideo.volume = 0.5;
         bgVideo.muted = false;
@@ -196,17 +201,17 @@ import CaptchaModal from "../components/CaptchaModal.astro";
             // Browser blocked unmuted autoplay.
             // Play it muted for now so the background is moving.
             bgVideo.muted = true;
-            unmuteText.textContent = "UNMUTE";
-            iconMuted.classList.remove("hidden");
-            iconUnmuted.classList.add("hidden");
+            if (unmuteText) unmuteText.textContent = "UNMUTE";
+            iconMuted?.classList.remove("hidden");
+            iconUnmuted?.classList.add("hidden");
             bgVideo.play();
 
             // Setup a one-time click listener on the whole document to unmute
             const unlockAudio = () => {
               bgVideo.muted = false;
-              unmuteText.textContent = "MUTE";
-              iconMuted.classList.add("hidden");
-              iconUnmuted.classList.remove("hidden");
+              if (unmuteText) unmuteText.textContent = "MUTE";
+              iconMuted?.classList.add("hidden");
+              iconUnmuted?.classList.remove("hidden");
               document.removeEventListener("click", unlockAudio);
               document.removeEventListener("keydown", unlockAudio);
             };
@@ -220,14 +225,14 @@ import CaptchaModal from "../components/CaptchaModal.astro";
           if (bgVideo.muted) {
             bgVideo.muted = false;
             bgVideo.volume = 0.5;
-            unmuteText.textContent = "MUTE";
-            iconMuted.classList.add("hidden");
-            iconUnmuted.classList.remove("hidden");
+            if (unmuteText) unmuteText.textContent = "MUTE";
+            iconMuted?.classList.add("hidden");
+            iconUnmuted?.classList.remove("hidden");
           } else {
             bgVideo.muted = true;
-            unmuteText.textContent = "UNMUTE";
-            iconMuted.classList.remove("hidden");
-            iconUnmuted.classList.add("hidden");
+            if (unmuteText) unmuteText.textContent = "UNMUTE";
+            iconMuted?.classList.remove("hidden");
+            iconUnmuted?.classList.add("hidden");
           }
         });
       }

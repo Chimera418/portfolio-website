@@ -57,7 +57,7 @@ export default function PixelClaw({ className, onSuccess, targetLabel, targetToy
   const [pile, setPile] = useState<ToyState[]>([])
   
   // Refs for loops
-  const requestRef = useRef<number>()
+  const requestRef = useRef<number | undefined>(undefined)
   const keys = useRef({ up: false, down: false, left: false, right: false })
   
   // Message

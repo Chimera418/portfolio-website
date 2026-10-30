@@ -55,11 +55,11 @@ const links: ConnectLink[] = [
 ];
 ---
 
-<BentoCard title="Connect" className={`${className || ''} group/bento relative hover:border-primary/50 transition-colors duration-300`} tag="NETWORK">
+<BentoCard title="Connect" className={`${className || ''} group/bento relative hover:border-primary/50 transition-colors duration-300 flex flex-col justify-between`} tag="NETWORK">
   <!-- Invisible overlay link to /contact -->
   <a href="/contact" class="absolute inset-0 z-0" aria-label="Go to Contact Page"></a>
   
-  <div class="flex flex-col h-full justify-start gap-2 pt-2 relative z-10 pointer-events-none">
+  <div class="flex flex-col h-full justify-between gap-1.5 pt-1 relative z-10 pointer-events-none">
     {links.map(link => (
       <div class="relative" style={`--link-color: ${link.color};`}>
         <a
@@ -67,21 +67,21 @@ const links: ConnectLink[] = [
           target="_blank"
           rel="noopener noreferrer"
           data-discord={link.discord ? 'true' : undefined}
-          class={`connect-link group flex items-center gap-3 px-3 py-2.5 rounded-xl border-2 border-transparent transition-all duration-200 hover:border-white/10 pointer-events-auto ${link.copy ? 'pr-12' : ''}`}
+          class={`connect-link group flex items-center gap-2.5 px-2.5 py-1.5 sm:py-2 rounded-xl border-2 border-transparent transition-[border-color,background-color] duration-200 hover:border-white/10 pointer-events-auto ${link.copy ? 'pr-9' : ''}`}
           style={`--link-color: ${link.color}; --link-bg: ${link.hoverBg};`}
         >
           <!-- Icon -->
-          <div class="link-icon text-text-muted group-hover:text-[var(--link-color)] transition-colors duration-200" set:html={link.icon} />
+          <div class="link-icon text-text-muted group-hover:text-[var(--link-color)] transition-colors duration-200 flex-shrink-0" set:html={link.icon} />
 
           <!-- Text -->
           <div class="flex-1 min-w-0">
-            <p class="text-sm font-semibold text-text-primary group-hover:text-[var(--link-color)] transition-colors duration-200 leading-tight">{link.name}</p>
-            <p class="text-[10px] font-pixel text-text-muted leading-tight mt-0.5 truncate">{link.hint}</p>
+            <p class="text-xs sm:text-sm font-semibold text-text-primary group-hover:text-[var(--link-color)] transition-colors duration-200 leading-tight truncate">{link.name}</p>
+            <p class="text-[9px] sm:text-[10px] font-pixel text-text-muted leading-tight mt-0.5 truncate">{link.hint}</p>
           </div>
 
           <!-- Arrow (hidden when a copy button is present) -->
           {!link.copy && (
-            <svg class="w-4 h-4 text-text-muted group-hover:text-[var(--link-color)] group-hover:translate-x-0.5 transition-all duration-200 flex-shrink-0 opacity-0 group-hover:opacity-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            <svg class="w-3.5 h-3.5 text-text-muted group-hover:text-[var(--link-color)] group-hover:translate-x-0.5 transition-[color,transform,opacity] motion-reduce:transform-none duration-200 flex-shrink-0 opacity-0 group-hover:opacity-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           )}
         </a>
 
@@ -92,10 +92,10 @@ const links: ConnectLink[] = [
             data-copy={link.copy}
             aria-label={`Copy ${link.name.toLowerCase()} address`}
             title="Copy to clipboard"
-            class="copy-btn absolute right-2.5 top-1/2 -translate-y-1/2 z-20 p-1.5 rounded-md text-text-muted hover:text-[var(--link-color)] hover:bg-white/5 transition-colors pointer-events-auto"
+            class="copy-btn absolute right-2 top-1/2 -translate-y-1/2 z-20 p-1 rounded-md text-text-muted hover:text-[var(--link-color)] hover:bg-white/5 transition-colors pointer-events-auto"
           >
-            <svg class="copy-icon w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-            <svg class="check-icon w-4 h-4 hidden text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M20 6L9 17l-5-5"/></svg>
+            <svg class="copy-icon w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            <svg class="check-icon w-3.5 h-3.5 hidden text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M20 6L9 17l-5-5"/></svg>
           </button>
         )}
       </div>

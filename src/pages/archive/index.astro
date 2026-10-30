@@ -34,7 +34,10 @@ const ALL_FOLDERS = [
 const publishedTypes = await getPublishedTypes();
 const folders = ALL_FOLDERS.filter(f => publishedTypes.includes(f.type as any));
 ---
-<Layout title="Archive | Chimera's Realm">
+<Layout 
+  title="Archive | Chimera's Realm" 
+  description="Technical devlogs, CTF security writeups, architecture notes, and personal essays."
+>
   <Navbar />
 
   <div class="mt-8 max-w-5xl mx-auto space-y-8 animate-fade-in px-4 md:px-0">
@@ -113,5 +116,12 @@ const folders = ALL_FOLDERS.filter(f => publishedTypes.includes(f.type as any));
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(8px); }
     to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-in {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
   }
 </style>

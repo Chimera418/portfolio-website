@@ -15,9 +15,13 @@ import LastFmCard from "../components/LastFmCard.astro";
 import ClickerGameCard from "../components/ClickerGameCard.astro";
 import LocationCard from "../components/LocationCard.astro";
 import SteamCard from "../components/SteamCard.astro";
+import GithubContributionCard from "../components/GithubContributionCard.astro";
 ---
 
-<Layout title="Chimera's Realm">
+<Layout 
+  title="Chimera's Realm — Portfolio of Aneesh Sagar Reddy"
+  description="Personal portfolio and developer playground of Aneesh Sagar Reddy (Chimera) — Full-stack developer, cybersecurity CTF player, and AI engineering student based in Bengaluru."
+>
   <Navbar />
 
   <!-- Bento Grid Container -->
@@ -78,14 +82,19 @@ import SteamCard from "../components/SteamCard.astro";
       <AchievementsCard class="w-full h-full" />
     </div>
 
-    <!-- Contact -->
-    <div class="md:col-span-4 lg:col-span-4 md:row-span-3 flex">
-      <ContactCard class="w-full h-full" />
+    <!-- Secrets / System Manual -->
+    <div class="md:col-span-4 lg:col-span-4 md:row-span-2 flex">
+      <SecretsCard class="w-full h-full" />
     </div>
 
-    <!-- Secrets -->
-    <div class="md:col-span-8 lg:col-span-8 flex">
-      <SecretsCard class="w-full h-full" />
+    <!-- Contribution Arcade (GitHub) -->
+    <div class="md:col-span-8 lg:col-span-9 md:row-span-2 flex">
+      <GithubContributionCard class="w-full h-full" />
+    </div>
+
+    <!-- Connect (Contact) -->
+    <div class="md:col-span-4 lg:col-span-3 md:row-span-2 flex">
+      <ContactCard class="w-full h-full" />
     </div>
   </div>
 </Layout>

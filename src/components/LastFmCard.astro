@@ -58,7 +58,7 @@ const LASTFM_LOGO =
         href="https://www.last.fm"
         target="_blank"
         rel="noopener"
-        class="flex flex-1 min-w-0 items-center justify-between gap-3 px-4 py-2.5 rounded-lg border-2 border-highlight-med bg-overlay hover:bg-surface transition-all duration-200 group"
+        class="flex flex-1 min-w-0 items-center justify-between gap-3 px-4 py-2.5 rounded-lg border-2 border-highlight-med bg-overlay hover:bg-surface transition-[background-color,border-color] duration-200 group"
         style={`--accent: ${ACCENT};`}
       >
         <div class="flex items-center gap-2 min-w-0">
@@ -77,7 +77,7 @@ const LASTFM_LOGO =
           >
         </div>
         <svg
-          class="w-3.5 h-3.5 text-text-muted group-hover:text-[var(--accent)] group-hover:translate-x-0.5 transition-all flex-shrink-0"
+          class="w-3.5 h-3.5 text-text-muted group-hover:text-[var(--accent)] group-hover:translate-x-0.5 transition-[color,transform] motion-reduce:transform-none flex-shrink-0"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -92,7 +92,7 @@ const LASTFM_LOGO =
         type="button"
         aria-label="Show recent tracks"
         title="Recent tracks"
-        class="recent-btn flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg border-2 bg-overlay text-[var(--accent)] hover:bg-surface transition-all duration-200"
+        class="recent-btn flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg border-2 bg-overlay text-[var(--accent)] hover:bg-surface transition-[background-color,border-color,transform] duration-200 motion-reduce:transform-none"
         style={`--accent: ${ACCENT}; border-color: color-mix(in srgb, ${ACCENT} 45%, transparent);`}
       >
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

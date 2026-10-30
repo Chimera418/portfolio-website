@@ -3,6 +3,9 @@ scratch/
 .astro/
 .vscode/
 .cursor/
+.claude/
+.agents/
+skills-lock.json
 misc/
 scripts/
 .env

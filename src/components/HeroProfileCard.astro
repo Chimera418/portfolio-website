@@ -9,7 +9,7 @@ interface Props {
 const { class: className } = Astro.props;
 ---
 
-<BentoCard className={`hero-card-element ${className || ""} z-20`} glow={true}>
+<BentoCard className={`hero-card-element ${className || ""} z-20`}>
   <div class="flex flex-col justify-between h-full gap-4 py-1">
     <!-- Top: name block -->
     <div class="flex flex-col sm:flex-row justify-between items-start gap-6">
@@ -23,7 +23,7 @@ const { class: className } = Astro.props;
           <h1
             id="hero-title"
             data-text="CHIMERA"
-            class="w-fit text-[2.5rem] sm:text-5xl md:text-6xl font-bold text-text-primary tracking-tight font-pixel uppercase leading-none drop-shadow-sm cursor-default break-words hyphens-none"
+            class="w-fit text-[2.5rem] sm:text-5xl md:text-6xl font-bold text-text-primary tracking-normal font-pixel uppercase leading-none drop-shadow-sm cursor-default break-words hyphens-none min-w-0"
           >
             Chimera
           </h1>
@@ -85,7 +85,7 @@ const { class: className } = Astro.props;
           >
           <!-- Tooltip -->
           <div
-            class="absolute bottom-full left-0 sm:left-1/2 sm:-translate-x-1/2 mb-3 w-max opacity-0 group-hover/location:opacity-100 group-focus/location:opacity-100 transition-all duration-200 pointer-events-none z-50 translate-y-1 group-hover/location:translate-y-0 group-focus/location:translate-y-0"
+            class="absolute bottom-full left-0 sm:left-1/2 sm:-translate-x-1/2 mb-3 w-max opacity-0 group-hover/location:opacity-100 group-focus/location:opacity-100 transition-[opacity,transform] motion-reduce:transform-none duration-200 pointer-events-none z-50 translate-y-1 group-hover/location:translate-y-0 group-focus/location:translate-y-0"
           >
             <div
               class="bg-overlay border border-highlight-med rounded-lg px-2.5 py-1.5 shadow-xl shadow-black/50 backdrop-blur-sm"
@@ -147,7 +147,7 @@ const { class: className } = Astro.props;
           >
           <!-- Tooltip -->
           <div
-            class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-max opacity-0 group-hover/edu:opacity-100 group-focus/edu:opacity-100 transition-all duration-200 pointer-events-none z-50 translate-y-1 group-hover/edu:translate-y-0 group-focus/edu:translate-y-0"
+            class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-max opacity-0 group-hover/edu:opacity-100 group-focus/edu:opacity-100 transition-[opacity,transform] motion-reduce:transform-none duration-200 pointer-events-none z-50 translate-y-1 group-hover/edu:translate-y-0 group-focus/edu:translate-y-0"
           >
             <div
               class="bg-overlay border border-highlight-med rounded-lg px-2.5 py-1.5 shadow-xl shadow-black/50 backdrop-blur-sm"
@@ -271,6 +271,7 @@ const { class: className } = Astro.props;
 
       titleEl.addEventListener("mouseenter", () => {
         if (isAnimating) return;
+        if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
         isAnimating = true;
 
         let iteration = 0;

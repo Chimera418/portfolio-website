@@ -1,11 +1,16 @@
 ---
+const currentPath = Astro.url.pathname;
+const isActive = (href: string) => {
+  if (href === '/') return currentPath === '/' || currentPath === '';
+  return currentPath.startsWith(href);
+};
 ---
 
-<div id="theme-drawer" class="fixed top-0 right-0 h-full w-80 bg-surface border-l border-highlight-med shadow-2xl transform translate-x-full transition-transform duration-300 z-[100] overflow-y-auto" transition:persist="theme-drawer">
+<div id="theme-drawer" class="fixed top-0 right-0 h-full w-80 bg-surface border-l border-highlight-med shadow-2xl transform translate-x-full transition-transform duration-300 z-[100] overflow-y-auto" transition:persist="theme-drawer" role="dialog" aria-modal="true" aria-label="Settings and navigation menu">
   <div class="p-6">
     <div class="flex justify-between items-center mb-8">
       <h2 class="font-bold text-xl text-text-primary tracking-tight">Settings</h2>
-      <button id="theme-drawer-close" class="text-text-muted hover:text-primary transition-colors">
+      <button id="theme-drawer-close" class="text-text-muted hover:text-primary transition-colors p-1 rounded-md" aria-label="Close settings drawer">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"></line>
           <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -14,16 +19,16 @@
     </div>
 
     <!-- Mobile Navigation (Visible only on mobile) -->
-    <div class="flex flex-col gap-6 font-pixel text-[10px] uppercase tracking-widest text-text-muted md:hidden mb-8 border-b border-highlight-med pb-8">
-      <a href="/" data-astro-reload class="hover:text-primary transition-colors">Home</a>
-      <a href="/about" data-astro-reload class="hover:text-primary transition-colors">About</a>
-      <a href="/projects" data-astro-reload class="hover:text-primary transition-colors">Projects</a>
-      <a href="/archive" data-astro-reload class="hover:text-primary transition-colors">Archive</a>
-      <a href="/labs" id="theme-nav-labs-link-mobile" data-astro-reload class="hover:text-primary transition-colors hidden">Labs</a>
-      <a href="/games" id="theme-nav-games-link-mobile" data-astro-reload class="hover:text-primary transition-colors hidden">Games</a>
-      <a href="/guestbook" data-astro-reload class="hover:text-primary transition-colors">Guestbook</a>
-      <a href="/contact" data-astro-reload class="hover:text-primary transition-colors">Contact</a>
-    </div>
+    <nav aria-label="Mobile navigation" class="flex flex-col gap-6 font-pixel text-[10px] uppercase tracking-widest text-text-muted md:hidden mb-8 border-b border-highlight-med pb-8">
+      <a href="/" data-astro-reload aria-current={isActive('/') ? 'page' : undefined} class={`hover:text-primary transition-colors ${isActive('/') ? 'text-primary font-bold' : ''}`}>Home</a>
+      <a href="/about" data-astro-reload aria-current={isActive('/about') ? 'page' : undefined} class={`hover:text-primary transition-colors ${isActive('/about') ? 'text-primary font-bold' : ''}`}>About</a>
+      <a href="/projects" data-astro-reload aria-current={isActive('/projects') ? 'page' : undefined} class={`hover:text-primary transition-colors ${isActive('/projects') ? 'text-primary font-bold' : ''}`}>Projects</a>
+      <a href="/archive" data-astro-reload aria-current={isActive('/archive') ? 'page' : undefined} class={`hover:text-primary transition-colors ${isActive('/archive') ? 'text-primary font-bold' : ''}`}>Archive</a>
+      <a href="/labs" id="theme-nav-labs-link-mobile" data-astro-reload aria-current={isActive('/labs') ? 'page' : undefined} class={`hover:text-primary transition-colors hidden ${isActive('/labs') ? 'text-primary font-bold' : ''}`}>Labs</a>
+      <a href="/games" id="theme-nav-games-link-mobile" data-astro-reload aria-current={isActive('/games') ? 'page' : undefined} class={`hover:text-primary transition-colors hidden ${isActive('/games') ? 'text-primary font-bold' : ''}`}>Games</a>
+      <a href="/guestbook" data-astro-reload aria-current={isActive('/guestbook') ? 'page' : undefined} class={`hover:text-primary transition-colors ${isActive('/guestbook') ? 'text-primary font-bold' : ''}`}>Guestbook</a>
+      <a href="/contact" data-astro-reload aria-current={isActive('/contact') ? 'page' : undefined} class={`hover:text-primary transition-colors ${isActive('/contact') ? 'text-primary font-bold' : ''}`}>Contact</a>
+    </nav>
 
     <!-- Theme Config -->
     <div class="mb-6">
@@ -120,7 +125,7 @@
       const activeClasses = isActive ? 'outline outline-2 outline-offset-2 outline-text-primary border-transparent scale-110' : 'border-highlight-med';
       return `
       <button 
-        class="accent-btn w-6 h-6 rounded-md transition-all border hover:scale-110 ${activeClasses}" 
+        class="accent-btn w-6 h-6 rounded-md transition-[transform,outline-color] hover:scale-110 motion-reduce:hover:scale-100 border ${activeClasses}" 
         style="background-color: var(--${acc});"
         data-color="${acc}"
         aria-label="${acc}"

@@ -1,12 +1,18 @@
 ---
 import ThemeDrawer from './ThemeDrawer.astro';
+
+const currentPath = Astro.url.pathname;
+const isActive = (href: string) => {
+  if (href === '/') return currentPath === '/' || currentPath === '';
+  return currentPath.startsWith(href);
+};
 ---
 
-<header id="navbar-header" class="fixed top-0 left-0 w-full z-50 flex justify-center px-5 sm:px-16 pt-4 pb-2 transition-all duration-300" transition:persist="header">
-  <nav class="w-full max-w-7xl backdrop-blur-md bg-overlay/80 border-2 border-highlight-med rounded-xl px-6 py-4 flex items-center justify-between shadow-[0_4px_30px_rgba(0,0,0,0.1)] transition-all duration-300">
+<header id="navbar-header" class="fixed top-0 left-0 w-full z-50 flex justify-center px-5 sm:px-16 pt-4 pb-2 transition-[padding,transform] duration-300" transition:persist="header">
+  <nav class="w-full max-w-7xl backdrop-blur-md bg-overlay/80 border-2 border-highlight-med rounded-xl px-6 py-4 flex items-center justify-between shadow-[0_4px_30px_rgba(0,0,0,0.1)] transition-[border-color,background-color] duration-300">
     <div class="flex items-center gap-3">
       <!-- Logo -->
-      <img id="navbar-logo" src="/chimera-logo.png" alt="Chimera Logo" class="w-8 h-8 rounded-sm shadow-[2px_2px_0_var(--color-highlight-med)] object-cover bg-surface-dim cursor-pointer hover:scale-105 transition-transform" onerror="this.style.display='none'" />
+      <img id="navbar-logo" src="/chimera-logo.png" alt="Chimera Logo" width="32" height="32" class="w-8 h-8 rounded-sm shadow-[2px_2px_0_var(--color-highlight-med)] object-cover bg-surface-dim cursor-pointer hover:scale-105 transition-transform" onerror="this.style.display='none'" />
       <a href="/" data-astro-reload class="font-bold text-lg text-text-primary tracking-tight">
         Chimera's Realm
       </a>
@@ -15,14 +21,14 @@ import ThemeDrawer from './ThemeDrawer.astro';
     </div>
 
     <div class="hidden md:flex items-center gap-8 font-pixel text-[10px] uppercase tracking-widest text-text-muted">
-      <a href="/" data-astro-reload class="hover:text-primary transition-colors">Home</a>
-      <a href="/about" data-astro-reload class="hover:text-primary transition-colors">About</a>
-      <a href="/projects" data-astro-reload class="hover:text-primary transition-colors">Projects</a>
-      <a href="/archive" data-astro-reload class="hover:text-primary transition-colors">Archive</a>
-      <a href="/labs" id="nav-labs-link" data-astro-reload class="hover:text-primary transition-colors hidden">Labs</a>
-      <a href="/games" id="nav-games-link" data-astro-reload class="hover:text-primary transition-colors hidden">Games</a>
-      <a href="/guestbook" data-astro-reload class="hover:text-primary transition-colors">Guestbook</a>
-      <a href="/contact" data-astro-reload class="hover:text-primary transition-colors">Contact</a>
+      <a href="/" data-astro-reload aria-current={isActive('/') ? 'page' : undefined} class={`hover:text-primary transition-colors ${isActive('/') ? 'text-primary font-bold' : ''}`}>Home</a>
+      <a href="/about" data-astro-reload aria-current={isActive('/about') ? 'page' : undefined} class={`hover:text-primary transition-colors ${isActive('/about') ? 'text-primary font-bold' : ''}`}>About</a>
+      <a href="/projects" data-astro-reload aria-current={isActive('/projects') ? 'page' : undefined} class={`hover:text-primary transition-colors ${isActive('/projects') ? 'text-primary font-bold' : ''}`}>Projects</a>
+      <a href="/archive" data-astro-reload aria-current={isActive('/archive') ? 'page' : undefined} class={`hover:text-primary transition-colors ${isActive('/archive') ? 'text-primary font-bold' : ''}`}>Archive</a>
+      <a href="/labs" id="nav-labs-link" data-astro-reload aria-current={isActive('/labs') ? 'page' : undefined} class={`hover:text-primary transition-colors hidden ${isActive('/labs') ? 'text-primary font-bold' : ''}`}>Labs</a>
+      <a href="/games" id="nav-games-link" data-astro-reload aria-current={isActive('/games') ? 'page' : undefined} class={`hover:text-primary transition-colors hidden ${isActive('/games') ? 'text-primary font-bold' : ''}`}>Games</a>
+      <a href="/guestbook" data-astro-reload aria-current={isActive('/guestbook') ? 'page' : undefined} class={`hover:text-primary transition-colors ${isActive('/guestbook') ? 'text-primary font-bold' : ''}`}>Guestbook</a>
+      <a href="/contact" data-astro-reload aria-current={isActive('/contact') ? 'page' : undefined} class={`hover:text-primary transition-colors ${isActive('/contact') ? 'text-primary font-bold' : ''}`}>Contact</a>
     </div>
 
     <div class="flex items-center gap-4">
@@ -51,7 +57,7 @@ import ThemeDrawer from './ThemeDrawer.astro';
 <ThemeDrawer />
 
 <!-- Music Player Island (Bottom) -->
-<div id="music-indicator" class="fixed bottom-6 right-6 z-[999] transition-all duration-500 opacity-0 translate-y-8 pointer-events-none" transition:persist="music-indicator">
+<div id="music-indicator" aria-live="polite" class="fixed bottom-6 right-6 z-[999] transition-[opacity,transform] duration-500 opacity-0 translate-y-8 pointer-events-none" transition:persist="music-indicator">
 
   <!-- Custom track dropdown panel (floats above pill) -->
   <div
@@ -69,7 +75,7 @@ import ThemeDrawer from './ThemeDrawer.astro';
   </div>
 
   <!-- Collapsed pill -->
-  <div id="music-pill" class="flex items-center gap-3 bg-surface/90 backdrop-blur-md border border-highlight-med rounded-full px-4 py-2.5 shadow-2xl select-none hover:border-primary/50 transition-all duration-300 group">
+  <div id="music-pill" class="flex items-center gap-3 bg-surface/90 backdrop-blur-md border border-highlight-med rounded-full px-4 py-2.5 shadow-2xl select-none hover:border-primary/50 transition-[border-color,box-shadow] duration-300 group">
     <!-- Animated dot -->
     <div class="relative flex h-2.5 w-2.5 shrink-0">
       <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
@@ -87,7 +93,7 @@ import ThemeDrawer from './ThemeDrawer.astro';
       <span class="text-[8px] font-pixel uppercase tracking-widest text-text-muted leading-none mb-0.5">Now Playing</span>
       <span class="flex items-center gap-1">
         <span id="music-track-name" class="text-[11px] font-bold text-text-primary leading-none truncate">—</span>
-        <svg class="w-2.5 h-2.5 shrink-0 text-text-muted opacity-50 group-hover/track:opacity-100 group-hover/track:text-primary transition-all duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="w-2.5 h-2.5 shrink-0 text-text-muted opacity-50 group-hover/track:opacity-100 group-hover/track:text-primary transition-[opacity,color] duration-200" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="6 9 12 15 18 9"></polyline>
         </svg>
       </span>

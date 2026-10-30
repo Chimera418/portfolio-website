@@ -13,7 +13,8 @@
   --color-text-muted: var(--text-muted);
   --color-highlight-med: var(--highlight-med);
 
-  --font-sans: 'Inter', sans-serif;
+  --font-sans: 'Geist', 'Geist Fallback', sans-serif;
+  --font-mono: 'Geist Mono', 'Courier New', monospace;
   --font-pixel: 'Press Start 2P', monospace;
   
   --color-rosewater: var(--rosewater);
@@ -158,11 +159,25 @@
   }
 
   html {
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   body {
+    overflow-x: clip;
     @apply bg-surface-dim text-text-primary font-sans antialiased transition-colors duration-300;
+  }
+
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
   }
 
   /* CRT Mode Effects */
@@ -336,5 +351,16 @@
   .invert-theme video,
   .invert-theme canvas {
     filter: invert(1) hue-rotate(180deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bento-card,
+    .fox-zzz,
+    .back-to-top {
+      animation: none !important;
+      transition: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
   }
 }

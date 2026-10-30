@@ -10,11 +10,11 @@ interface Props {
 const { className = '', style, glow = false, title, tag } = Astro.props;
 
 const glowClass = glow 
-  ? 'shadow-[0_0_40px_rgba(var(--color-secondary),0.15)] hover:border-secondary' 
+  ? 'shadow-[0_0_32px_color-mix(in_srgb,var(--secondary)_16%,transparent)] hover:border-secondary' 
   : 'hover:border-secondary';
 ---
 
-<div class={`bento-card relative bg-surface border-2 border-highlight-med rounded-xl p-6 transition-all duration-300 flex flex-col gap-4 ${glowClass} ${className}`} style={style}>
+<div class={`bento-card relative bg-surface border-2 border-highlight-med rounded-xl p-6 transition-[border-color,box-shadow,transform] duration-300 flex flex-col gap-4 ${glowClass} ${className}`} style={style}>
   {(title || tag) && (
     <div class="flex justify-between items-start mb-2">
       {title && <h3 class="text-xl font-semibold text-text-primary">{title}</h3>}
@@ -44,5 +44,13 @@ const glowClass = glow
 
   .bento-card {
     animation: bento-in 0.5s ease both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bento-card {
+      animation: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+    }
   }
 </style>

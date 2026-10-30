@@ -364,7 +364,10 @@ const games = [
 ];
 ---
 
-<Layout title="Games | Chimera's Realm">
+<Layout 
+  title="Games Arcade | Chimera's Realm"
+  description="Browser games, retro arcade classics, and leaderboards built into Chimera's Realm."
+>
   <Navbar />
 
   <!-- Page content sits inside Layout's <main> which already has pt-24 px-5 sm:px-16 -->
@@ -430,7 +433,7 @@ const games = [
     <section class="mt-16 border-t border-highlight-med pt-10 pb-20">
       <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-3">
         <h2 class="text-2xl md:text-3xl font-pixel text-text-primary flex items-center gap-4 uppercase tracking-wider drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-yellow -translate-y-[2px] animate-pulse drop-shadow-[0_0_5px_rgba(var(--color-yellow),0.8)]" viewBox="0 0 24 24" fill="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-yellow -translate-y-[2px] animate-pulse drop-shadow-[0_0_8px_color-mix(in_srgb,var(--yellow)_80%,transparent)]" viewBox="0 0 24 24" fill="currentColor">
             <path d="M4 2h16v2H4zM5 4h14v3c0 4.42-3.13 8-7 8s-7-3.58-7-8V4zm0 1H3c-1.1 0-2 .9-2 2v2c0 2 1.5 3.5 3.5 3.5H5v-2H3.5c-.83 0-1.5-.67-1.5-1.5V7c0-.55.45-1 1-1h2V5zm14 0h2c1.1 0 2 .9 2 2v2c0 2-1.5 3.5-3.5 3.5H19v-2h1.5c.83 0 1.5-.67 1.5-1.5V7c0-.55-.45-1-1-1h-2V5zM10 14.5h4l2 3.5H8l2-3.5zM7 19h10v3H7v-3z" />
           </svg>
           Hall of Fame
@@ -864,8 +867,8 @@ const games = [
             isTop10 = true;
           } else {
             const worstScore = top[top.length - 1].score;
-            if (ascending && activeScore <= worstScore) isTop10 = true;
-            if (!ascending && activeScore >= worstScore) isTop10 = true;
+            if (activeScore !== null && ascending && activeScore <= worstScore) isTop10 = true;
+            if (activeScore !== null && !ascending && activeScore >= worstScore) isTop10 = true;
           }
           
           if (isTop10 && lbForm) {
@@ -934,9 +937,9 @@ const games = [
         if (!info) return;
         
         html += `
-          <div class="bg-surface border-2 border-highlight-med rounded-md p-5 flex flex-col items-center justify-center text-center relative overflow-hidden group hover:border-primary transition-all duration-300 hover:shadow-[0_0_20px_rgba(var(--color-primary),0.15)]">
+          <div class="bg-surface border-2 border-highlight-med rounded-md p-5 flex flex-col items-center justify-center text-center relative overflow-hidden group hover:border-primary transition-[border-color,box-shadow] duration-300 hover:shadow-[0_0_20px_color-mix(in_srgb,var(--primary)_20%,transparent)]">
             <div class="absolute inset-0 opacity-[0.03] pointer-events-none" style="background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, #fff 2px, #fff 4px);"></div>
-            <div class="text-[10px] text-primary font-pixel uppercase tracking-widest mb-4 z-10 drop-shadow-[0_0_5px_rgba(var(--color-primary),0.5)]">${info.title}</div>
+            <div class="text-[10px] text-primary font-pixel uppercase tracking-widest mb-4 z-10 drop-shadow-[0_0_6px_color-mix(in_srgb,var(--primary)_50%,transparent)]">${info.title}</div>
             ${top 
               ? `<div class="text-lg md:text-xl font-bold text-text-primary font-pixel z-10 drop-shadow-[0_0_8px_rgba(255,255,255,0.2)] w-full truncate px-2">${top.player}</div>
                  <div class="text-sm text-yellow font-pixel mt-3 z-10 font-bold">${top.score} <span class="opacity-70 text-[10px] font-normal uppercase tracking-widest ml-1">${info.unit}</span></div>`

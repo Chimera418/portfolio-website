@@ -93,14 +93,14 @@ export const GET: APIRoute = async (ctx) => {
       // Make month timeline text high-contrast Catppuccin text (#cdd6f4)
       svg = svg.replace(/fill="#57606a"/g, 'fill="#cdd6f4" font-weight="600"');
 
-      // Theme empty cells to Catppuccin surface-container (#181825) instead of raw gray
-      svg = svg.replace(/fill="#ebedf0"/g, 'fill="#181825"');
+      // Theme empty cells to Catppuccin surface-container (#181825) across static fill & animate values
+      svg = svg.replace(/#ebedf0/gi, '#181825');
 
-      // Theme contribution squares to vibrant Catppuccin green/teal hues
-      svg = svg.replace(/fill="#40c463"/g, 'fill="#a6e3a1"');
-      svg = svg.replace(/fill="#9be9a8"/g, 'fill="#89dceb"');
-      svg = svg.replace(/fill="#30a14e"/g, 'fill="#94e2d5"');
-      svg = svg.replace(/fill="#216e39"/g, 'fill="#74c7ec"');
+      // Theme contribution squares to vibrant Catppuccin green/teal hues across static fill & animate values
+      svg = svg.replace(/#40c463/gi, '#a6e3a1');
+      svg = svg.replace(/#9be9a8/gi, '#89dceb');
+      svg = svg.replace(/#30a14e/gi, '#94e2d5');
+      svg = svg.replace(/#216e39/gi, '#74c7ec');
 
       // Append styles for light borders around day cells and crisp font rendering
       const arcadeCustomCss = `

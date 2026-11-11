@@ -2,27 +2,32 @@ import type { APIRoute } from 'astro';
 
 export const prerender = false;
 
-const SNAKE_SVG_URL = 'https://raw.githubusercontent.com/Chimera418/Chimera418/gh-pages/github-contribution-grid-snake-dark.svg';
 const ARCADE_SVG_URL = 'https://raw.githubusercontent.com/Chimera418/Chimera418/main/assets/contribution-game.svg';
+const SNAKE_SVG_URL = 'https://raw.githubusercontent.com/Chimera418/Chimera418/gh-pages/github-contribution-grid-snake-dark.svg';
 
 export const GET: APIRoute = async (ctx) => {
   try {
     const url = ctx?.url || (ctx?.request ? new URL(ctx.request.url) : new URL('http://localhost/api/contribution-history'));
-    const wantsArcade = url.searchParams.get('game') === 'arcade' || url.searchParams.get('type') === 'arcade';
+    const wantsSnake = url.searchParams.get('game') === 'snake';
 
-    let targetUrl = wantsArcade ? ARCADE_SVG_URL : SNAKE_SVG_URL;
+    // Default to the rotating GitHub contribution game (Pac-Man, Bomberman, Snake, etc.)
+    let targetUrl = wantsSnake ? SNAKE_SVG_URL : ARCADE_SVG_URL;
 
-    let response = await fetch(targetUrl, {
+    // Cache-bust upstream fetch with a 5-minute bucket so new commits from GitHub Actions are picked up live
+    const cacheBuster = Math.floor(Date.now() / (1000 * 300));
+    const fetchUrl = `${targetUrl}?v=${cacheBuster}`;
+
+    let response = await fetch(fetchUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Accept': 'image/svg+xml,image/*,*/*'
       }
     });
 
-    // Fallback if snake SVG on gh-pages is 404 or fails
-    if (!response.ok && targetUrl === SNAKE_SVG_URL) {
-      targetUrl = ARCADE_SVG_URL;
-      response = await fetch(targetUrl, {
+    // Fallback if arcade SVG fails, try snake
+    if (!response.ok && targetUrl === ARCADE_SVG_URL) {
+      targetUrl = SNAKE_SVG_URL;
+      response = await fetch(`${targetUrl}?v=${cacheBuster}`, {
         headers: {
           'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
           'Accept': 'image/svg+xml,image/*,*/*'
@@ -40,8 +45,6 @@ export const GET: APIRoute = async (ctx) => {
 
     if (isSnake) {
       // ── Snake Game (Platane/snk) Theming ──────────────────────────────────
-      // Retain the SVG's native viewBox (880x192) so coordinates and animations are not distorted.
-      // Replace :root color variables to align with Catppuccin Mocha & make days/snake visible.
       const replaceVar = (name: string, val: string) => {
         const reg = new RegExp(`(--${name}:\\s*)[^;}]+`, 'g');
         svg = svg.replace(reg, `$1${val}`);
@@ -56,7 +59,7 @@ export const GET: APIRoute = async (ctx) => {
       replaceVar('c3', '#489d5f');                   // Level 3 commits
       replaceVar('c4', '#a6e3a1');                   // Level 4 commits (vibrant Catppuccin green)
 
-      // Add high-contrast glowing snake and visible day cell borders without wiping existing keyframes
+      // Add high-contrast glowing snake and visible day cell borders
       const snakeCustomCss = `
         .s { fill: #cba6f7 !important; stroke: #f5e0dc !important; stroke-width: 0.75px !important; filter: drop-shadow(0 0 5px rgba(203, 166, 247, 0.8)); }
         .s.s0 { fill: #f5c2e7 !important; stroke: #ffffff !important; stroke-width: 1px !important; filter: drop-shadow(0 0 8px rgba(245, 194, 231, 0.95)); }
@@ -69,25 +72,18 @@ export const GET: APIRoute = async (ctx) => {
         svg = svg.replace('<svg', `<svg><style>${snakeCustomCss}</style>`);
       }
 
-      // Strip any full white background rects if present
+      // Strip any full white background rects
       svg = svg.replace(/<rect[^>]*fill=["']#(?:fff(?:fff)?|ffffff)["'][^>]*\/>/gi, '');
       svg = svg.replace(/<rect[^>]*fill=["']white["'][^>]*\/>/gi, '');
     } else {
-      // ── Arcade Games (Pac-Man, Bomberman, Breakout, Galaga, etc.) ─────────
-      // Ensure viewBox includes left-side margin for Mon/Wed/Fri labels on 1166x169 graphs
-      if (svg.includes('viewBox="0 0 1166 169"') || (svg.includes('width="1166"') && !svg.includes('viewBox='))) {
-        svg = svg.replace(/<svg(\s+[^>]*)>/, (match, attrs) => {
-          const cleanedAttrs = attrs.replace(/\s*viewBox=["'][^"']*["']/g, '');
-          return `<svg${cleanedAttrs} viewBox="-36 0 1202 169">`;
-        });
+      // ── Arcade Games (Pac-Man, Bomberman, Breakout, etc.) ─────────────────
+      // Detect SVG height dynamically so neither Pac-Man (184), Bomberman (169), nor others clip
+      const heightMatch = svg.match(/height=["'](\d+)["']/);
+      const svgHeight = heightMatch ? Number(heightMatch[1]) : 184;
 
-        // Prepend visible day-of-week labels ("Mon", "Wed", "Fri")
-        const dayLabels = '<g id="day-labels"><text x="-8" y="49" text-anchor="end" font-size="10" fill="#cdd6f4" font-weight="600">Mon</text><text x="-8" y="93" text-anchor="end" font-size="10" fill="#cdd6f4" font-weight="600">Wed</text><text x="-8" y="137" text-anchor="end" font-size="10" fill="#cdd6f4" font-weight="600">Fri</text></g>';
-        if (svg.includes('</defs>')) {
-          svg = svg.replace('</defs>', '</defs>' + dayLabels);
-        } else {
-          svg = svg.replace(/<svg[^>]*>/, (m) => m + `<defs>${dayLabels}</defs>`);
-        }
+      // Add viewBox if missing to ensure fluid, sharp responsive scaling
+      if (!svg.includes('viewBox=')) {
+        svg = svg.replace('<svg', `<svg viewBox="0 0 1166 ${svgHeight}"`);
       }
 
       // Strip hardcoded white background rect
@@ -106,7 +102,7 @@ export const GET: APIRoute = async (ctx) => {
       svg = svg.replace(/fill="#30a14e"/g, 'fill="#94e2d5"');
       svg = svg.replace(/fill="#216e39"/g, 'fill="#74c7ec"');
 
-      // Append styles for light borders around day cells and crisp font rendering without replacing existing styles
+      // Append styles for light borders around day cells and crisp font rendering
       const arcadeCustomCss = `
         image { image-rendering: pixelated; image-rendering: -moz-crisp-edges; }
         text { fill: #cdd6f4 !important; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-weight: 600; }
@@ -124,12 +120,12 @@ export const GET: APIRoute = async (ctx) => {
       status: 200,
       headers: {
         'Content-Type': 'image/svg+xml; charset=utf-8',
-        'Cache-Control': 'public, max-age=1800, s-maxage=3600, stale-while-revalidate=86400',
+        'Cache-Control': 'public, max-age=300, s-maxage=600, stale-while-revalidate=1800',
         'Access-Control-Allow-Origin': '*'
       }
     });
   } catch (err) {
     console.error('Error fetching contribution SVG from GitHub:', err);
-    return Response.redirect(SNAKE_SVG_URL, 302);
+    return Response.redirect(ARCADE_SVG_URL, 302);
   }
 };

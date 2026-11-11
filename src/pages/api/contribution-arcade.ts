@@ -96,14 +96,19 @@ export const GET: APIRoute = async (ctx) => {
       // Theme empty cells to Catppuccin surface-container (#181825) across static fill & animate values
       svg = svg.replace(/#ebedf0/gi, '#181825');
 
-      // Theme contribution squares to vibrant Catppuccin secondary teal at different density levels
-      // Level 1 (least): subtle teal-dark
-      svg = svg.replace(/#9be9a8/gi, '#2a4a5a');
-      // Level 2: medium teal
-      svg = svg.replace(/#40c463/gi, '#3a7a8e');
-      // Level 3: brighter teal
-      svg = svg.replace(/#30a14e/gi, '#56b6c8');
-      // Level 4 (most): full secondary teal
+      // Make maze walls (fill="#000000") visible against dark background
+      // #45475a = Catppuccin surface2 — slightly elevated surface, clearly distinct from #181825 background
+      svg = svg.replace(/fill="#000000"/gi, 'fill="#45475a"');
+
+      // Theme contribution squares — secondary color is --sapphire (#74c7ec) in Catppuccin Mocha
+      // Use a 4-step ramp from dim sapphire → full sky (#89dceb), all clearly visible
+      // Level 1 (least active, 1-9 commits): dim sapphire
+      svg = svg.replace(/#9be9a8/gi, '#3d8aaa');
+      // Level 2 (10-19 commits): mid sapphire
+      svg = svg.replace(/#40c463/gi, '#5aadcf');
+      // Level 3 (20-29 commits): bright sapphire
+      svg = svg.replace(/#30a14e/gi, '#74c7ec');
+      // Level 4 (30+ commits): full sky — brightest secondary
       svg = svg.replace(/#216e39/gi, '#89dceb');
 
       // Inject stroke attributes directly onto each day-cell rect (works in <img> context unlike CSS)

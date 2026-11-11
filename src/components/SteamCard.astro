@@ -89,19 +89,32 @@ const { class: className, style } = Astro.props;
         </svg>
       </a>
 
-      <!-- Tactile 100% Vault Trigger -->
+      <!-- Achievement Ribbon 100% Vault Trigger -->
       <button
         id="ga-perfect-btn"
         type="button"
         aria-label="View 100% Completed Games Vault"
-        title="100% Completion Vault"
-        class="recent-btn flex-shrink-0 inline-flex items-center gap-1 px-2.5 py-2 rounded-lg border-2 bg-amber-400/10 text-amber-300 hover:bg-amber-400/20 transition-all duration-200 cursor-pointer"
-        style="--accent:#f59e0b; border-color: rgba(245, 158, 11, 0.45);"
+        title="100% Completion Vault (7 Perfect Games)"
+        class="recent-btn flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg border-2 bg-overlay hover:bg-surface transition-all duration-200 cursor-pointer group"
+        style="--accent:#38bdf8; border-color: rgba(56, 189, 248, 0.45);"
       >
-        <svg class="w-3.5 h-3.5 fill-amber-400 text-amber-400 flex-shrink-0" viewBox="0 0 24 24">
-          <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
+        <svg viewBox="0 0 40 40" class="w-7 h-7 drop-shadow-sm group-hover:scale-110 transition-transform duration-150" fill="none">
+          <!-- Left Ribbon Tail -->
+          <path d="M 14 20 L 9 36 L 14 32 L 18 36 L 17 22 Z"
+                fill="#38bdf8" stroke="#0284c7" stroke-width="1.2" stroke-linejoin="round" />
+          <!-- Right Ribbon Tail -->
+          <path d="M 23 22 L 22 36 L 26 32 L 31 36 L 26 20 Z"
+                fill="#38bdf8" stroke="#0284c7" stroke-width="1.2" stroke-linejoin="round" />
+          <!-- Rosette Outer Starburst (16 points) -->
+          <path d="M 20.00,2.50 L 22.19,5.02 L 25.17,3.53 L 26.22,6.69 L 29.55,6.45 L 29.31,9.78 L 32.47,10.83 L 30.98,13.81 L 33.50,16.00 L 30.98,18.19 L 32.47,21.17 L 29.31,22.22 L 29.55,25.55 L 26.22,25.31 L 25.17,28.47 L 22.19,26.98 L 20.00,29.50 L 17.81,26.98 L 14.83,28.47 L 13.78,25.31 L 10.45,25.55 L 10.69,22.22 L 7.53,21.17 L 9.02,18.19 L 6.50,16.00 L 9.02,13.81 L 7.53,10.83 L 10.69,9.78 L 10.45,6.45 L 13.78,6.69 L 14.83,3.53 L 17.81,5.02 Z"
+                fill="#38bdf8" stroke="#0284c7" stroke-width="1.2" stroke-linejoin="round" />
+          <!-- Inner Gold Medallion Ring -->
+          <circle cx="20" cy="16" r="8.5" fill="#f59e0b" stroke="#b45309" stroke-width="1" />
+          <!-- Inner Gold Medallion Fill -->
+          <circle cx="20" cy="16" r="7.2" fill="#fbbf24" />
+          <!-- 100% inside Center -->
+          <text x="20" y="18.2" text-anchor="middle" font-family="'Courier New', monospace" font-size="5.2" font-weight="900" fill="#78350f" letter-spacing="-0.4">100%</text>
         </svg>
-        <span class="font-pixel text-[9px] uppercase tracking-wider">100%</span>
       </button>
 
       <!-- Recent Games Trigger -->
@@ -113,13 +126,10 @@ const { class: className, style } = Astro.props;
         class="recent-btn flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg border-2 bg-overlay text-[#66c0f4] hover:bg-surface transition-all duration-200 cursor-pointer"
         style="--accent:#66c0f4; border-color: rgba(102, 192, 244, 0.45);"
       >
-        <svg class="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="8" y1="6" x2="21" y2="6"></line>
-          <line x1="8" y1="12" x2="21" y2="12"></line>
-          <line x1="8" y1="18" x2="21" y2="18"></line>
-          <line x1="3" y1="6" x2="3.01" y2="6"></line>
-          <line x1="3" y1="12" x2="3.01" y2="12"></line>
-          <line x1="3" y1="18" x2="3.01" y2="18"></line>
+        <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="18" x2="20" y2="18"></line>
         </svg>
       </button>
     </div>
@@ -138,14 +148,13 @@ const { class: className, style } = Astro.props;
   <div
     class="relative z-10 w-full max-w-xl bg-surface border-2 border-highlight-med rounded-xl shadow-2xl shadow-black/80 max-h-[85vh] flex flex-col overflow-hidden animate-fade-in"
   >
-    <!-- Top BIOS / Cabinet Header -->
+    <!-- Modal Header -->
     <div class="flex items-center justify-between px-4 sm:px-5 py-3 border-b border-highlight-med/50 bg-surface-dim/90">
-      <div class="flex items-center gap-2.5">
-        <span class="inline-flex items-center gap-1.5 font-pixel text-[9px] uppercase tracking-widest text-text-muted bg-overlay px-2 py-0.5 rounded border border-highlight-med/60">
-          <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-          SYS // STEAM_VAULT
-        </span>
-        <span class="font-mono text-xs text-text-muted/70 hidden sm:inline">
+      <div class="flex items-center gap-2">
+        <svg class="w-4 h-4 text-[#66c0f4]" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.605 0 11.979 0z"/>
+        </svg>
+        <span class="font-mono text-xs text-text-muted/90 font-medium">
           gamingchimera
         </span>
       </div>
@@ -584,9 +593,15 @@ const { class: className, style } = Astro.props;
           ${games.map((g) => {
             const achText = `${g.achievements.unlocked}/${g.achievements.total}`;
             const playtime = g.playtime && g.playtime !== 'Played' && g.playtime !== '100%' ? g.playtime : null;
-            const appid = g.appid || g.id;
+            const appid = Number(g.appid || g.id);
             const achievementsUrl = `https://steamcommunity.com/id/gamingchimera/stats/${appid}/?tab=achievements`;
-            const imgSrc = g.image || `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${appid}/header.jpg`;
+            const KNOWN_IMG_OVERRIDES = {
+              2483190: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2483190/c53fe3362cc3267a5d34aca3e796b90963e0e23f/header_alt_assets_6.jpg?t=1793894652",
+              4796160: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4796160/3dd47ea7113f34c01e6301639cc11ec9b6f58019/header.jpg?t=1791545817"
+            };
+            const imgSrc = KNOWN_IMG_OVERRIDES[appid] || g.image || `https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${appid}/header.jpg`;
+            const capsuleSrc = g.capsule || '';
+            const fallbackLetter = gaEscape((g.name || '').slice(0, 3));
 
             return `
               <a href="${gaEscape(achievementsUrl)}" target="_blank" rel="noopener noreferrer"
@@ -597,7 +612,7 @@ const { class: className, style } = Astro.props;
                     alt=""
                     class="w-full h-full object-cover select-none"
                     loading="lazy"
-                    onerror="this.parentElement.innerHTML='<div class=\\'w-full h-full flex items-center justify-center bg-overlay\\'><span class=\\'font-pixel text-[8px] text-text-muted/60 uppercase\\'>${gaEscape((g.name||'').slice(0,3))}</span></div>'"
+                    onerror="if(!this.dataset.retry && '${capsuleSrc}'){this.dataset.retry='1';this.src='${gaEscape(capsuleSrc)}';}else{this.parentElement.innerHTML='<div class=\\'w-full h-full flex items-center justify-center bg-overlay\\'><span class=\\'font-pixel text-[8px] text-text-muted/60 uppercase\\'>${fallbackLetter}</span></div>';}"
                   />
                 </div>
                 <div class="flex-1 min-w-0">

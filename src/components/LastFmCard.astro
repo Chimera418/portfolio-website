@@ -92,16 +92,13 @@ const LASTFM_LOGO =
         type="button"
         aria-label="Show recent tracks"
         title="Recent tracks"
-        class="recent-btn flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg border-2 bg-overlay text-[var(--accent)] hover:bg-surface transition-[background-color,border-color,transform] duration-200 motion-reduce:transform-none"
+        class="recent-btn flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg border-2 bg-overlay text-[var(--accent)] hover:bg-surface transition-[background-color,border-color,transform] duration-200 motion-reduce:transform-none cursor-pointer"
         style={`--accent: ${ACCENT}; border-color: color-mix(in srgb, ${ACCENT} 45%, transparent);`}
       >
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="8" y1="6" x2="21" y2="6"></line>
-          <line x1="8" y1="12" x2="21" y2="12"></line>
-          <line x1="8" y1="18" x2="21" y2="18"></line>
-          <line x1="3" y1="6" x2="3.01" y2="6"></line>
-          <line x1="3" y1="12" x2="3.01" y2="12"></line>
-          <line x1="3" y1="18" x2="3.01" y2="18"></line>
+        <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="4" y1="6" x2="20" y2="6"></line>
+          <line x1="4" y1="12" x2="20" y2="12"></line>
+          <line x1="4" y1="18" x2="20" y2="18"></line>
         </svg>
       </button>
     </div>

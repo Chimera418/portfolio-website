@@ -20,21 +20,69 @@ interface PerfectGame {
 let inMemoryCache: { games: PerfectGame[]; timestamp: number } | null = null;
 const CACHE_TTL_MS = 1000 * 60 * 60; // 1 hour
 
-// Known candidate games with playtime on record
+// Known candidate games with verified image paths and playtime on record
 const KNOWN_CANDIDATES = [
-  { appid: 2483190, name: "Forza Horizon 6", playtime: "31.0 hrs" },
-  { appid: 1817070, name: "Marvel’s Spider-Man Remastered", playtime: "69.1 hrs" },
-  { appid: 752590,  name: "A Plague Tale: Innocence", playtime: "15.2 hrs" },
-  { appid: 2592160, name: "Dispatch", playtime: "24.2 hrs" },
-  { appid: 4796160, name: "Print I Love U", playtime: "Played" },
-  { appid: 1111030, name: "Hentai Bad Girls", playtime: "Played" },
-  { appid: 1849000, name: "SEX with HITLER", playtime: "Played" },
+  {
+    appid: 2483190,
+    name: "Forza Horizon 6",
+    playtime: "31.0 hrs",
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2483190/c53fe3362cc3267a5d34aca3e796b90963e0e23f/header_alt_assets_6.jpg?t=1793894652",
+    capsule: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2483190/d0e851e9a3d316fb587984f22d81e6288b2f1485/capsule_231x87_alt_assets_6.jpg?t=1793894652"
+  },
+  {
+    appid: 1817070,
+    name: "Marvel’s Spider-Man Remastered",
+    playtime: "69.1 hrs",
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1817070/header.jpg?t=1787838689",
+    capsule: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1817070/capsule_231x87.jpg?t=1787838689"
+  },
+  {
+    appid: 752590,
+    name: "A Plague Tale: Innocence",
+    playtime: "15.2 hrs",
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/752590/header.jpg?t=1784712345",
+    capsule: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/752590/capsule_231x87.jpg?t=1784712345"
+  },
+  {
+    appid: 2592160,
+    name: "Dispatch",
+    playtime: "24.2 hrs",
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2592160/header.jpg?t=1792683942",
+    capsule: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2592160/925ffa7e3699d5c9c1369be5d4c3369f0e907e00/capsule_231x87.jpg?t=1792683942"
+  },
+  {
+    appid: 4796160,
+    name: "Print I Love U",
+    playtime: "Played",
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4796160/3dd47ea7113f34c01e6301639cc11ec9b6f58019/header.jpg?t=1791545817",
+    capsule: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4796160/83730f8b1691d56512d4692c052772f003d9ad26/capsule_231x87.jpg?t=1791545817"
+  },
+  {
+    appid: 1111030,
+    name: "Hentai Bad Girls",
+    playtime: "Played",
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1111030/header.jpg?t=1777667815",
+    capsule: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1111030/capsule_231x87.jpg?t=1777667815"
+  },
+  {
+    appid: 1849000,
+    name: "SEX with HITLER",
+    playtime: "Played",
+    image: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1849000/header.jpg?t=1740693153",
+    capsule: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1849000/capsule_231x87.jpg?t=1740693153"
+  },
 ];
 
 /**
  * Verify a single Steam game's achievement completion via public Steam stats XML.
  */
-async function verifyGameAchievements(appid: number, defaultName?: string, defaultPlaytime?: string): Promise<PerfectGame | null> {
+async function verifyGameAchievements(
+  appid: number,
+  defaultName?: string,
+  defaultPlaytime?: string,
+  defaultImage?: string,
+  defaultCapsule?: string
+): Promise<PerfectGame | null> {
   try {
     const statsUrl = `https://steamcommunity.com/id/gamingchimera/stats/${appid}/?tab=achievements&xml=1`;
     const res = await fetch(statsUrl, {
@@ -54,13 +102,28 @@ async function verifyGameAchievements(appid: number, defaultName?: string, defau
 
     // Strict 100% check: game MUST have achievements (> 0) and ALL must be unlocked
     if (total > 0 && closed === total) {
+      let finalImage = defaultImage;
+      let finalCapsule = defaultCapsule;
+
+      // If we don't have a known image URL, query Steam store API dynamically
+      if (!finalImage) {
+        try {
+          const storeRes = await fetch(`https://store.steampowered.com/api/appdetails?appids=${appid}`);
+          const storeData = await storeRes.json();
+          if (storeData?.[appid]?.success) {
+            finalImage = storeData[appid].data?.header_image;
+            finalCapsule = storeData[appid].data?.capsule_image;
+          }
+        } catch {}
+      }
+
       return {
         appid,
         name,
         achievements: { unlocked: closed, total },
         playtime: defaultPlaytime || "100%",
-        image: `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${appid}/header.jpg`,
-        capsule: `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${appid}/capsule_184x69.jpg`,
+        image: finalImage || `https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${appid}/header.jpg`,
+        capsule: finalCapsule || `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${appid}/capsule_184x69.jpg`,
         url: `https://steamcommunity.com/id/gamingchimera/stats/${appid}/?tab=achievements`,
         badge: "100% Complete"
       };
@@ -76,11 +139,11 @@ async function verifyGameAchievements(appid: number, defaultName?: string, defau
  * Dynamically discover and verify all 100% games from the user's Steam profile & candidate registry.
  */
 async function fetchAndVerifyAllPerfectGames(): Promise<PerfectGame[]> {
-  const candidateMap = new Map<number, { name?: string; playtime?: string }>();
+  const candidateMap = new Map<number, { name?: string; playtime?: string; image?: string; capsule?: string }>();
 
   // 1. Seed with known candidate list
   for (const c of KNOWN_CANDIDATES) {
-    candidateMap.set(c.appid, { name: c.name, playtime: c.playtime });
+    candidateMap.set(c.appid, { name: c.name, playtime: c.playtime, image: c.image, capsule: c.capsule });
   }
 
   // 2. Discover recent games from public profile page
@@ -105,7 +168,7 @@ async function fetchAndVerifyAllPerfectGames(): Promise<PerfectGame[]> {
 
   // 3. Verify all candidates in parallel
   const checkPromises = Array.from(candidateMap.entries()).map(([id, info]) =>
-    verifyGameAchievements(id, info.name, info.playtime)
+    verifyGameAchievements(id, info.name, info.playtime, info.image, info.capsule)
   );
 
   const results = await Promise.all(checkPromises);
@@ -138,7 +201,7 @@ export const GET: APIRoute = async (ctx) => {
 
   if (!forceRefresh && UPSTASH_URL && UPSTASH_TOKEN) {
     try {
-      const res = await fetch(`${UPSTASH_URL}/get/perfect_games`, {
+      const res = await fetch(`${UPSTASH_URL}/get/perfect_games_v3`, {
         headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` }
       });
       const data = await res.json();
@@ -170,7 +233,7 @@ export const GET: APIRoute = async (ctx) => {
       // Save to Upstash Redis with 24-hour expiration (86400s)
       if (UPSTASH_URL && UPSTASH_TOKEN) {
         try {
-          await fetch(`${UPSTASH_URL}/set/perfect_games?ex=86400`, {
+          await fetch(`${UPSTASH_URL}/set/perfect_games_v3?ex=86400`, {
             method: 'POST',
             headers: {
               Authorization: `Bearer ${UPSTASH_TOKEN}`,
@@ -201,8 +264,8 @@ export const GET: APIRoute = async (ctx) => {
     name: c.name,
     achievements: { unlocked: 100, total: 100 },
     playtime: c.playtime,
-    image: `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${c.appid}/header.jpg`,
-    capsule: `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${c.appid}/capsule_184x69.jpg`,
+    image: c.image || `https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/${c.appid}/header.jpg`,
+    capsule: c.capsule || `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${c.appid}/capsule_184x69.jpg`,
     url: `https://steamcommunity.com/id/gamingchimera/stats/${c.appid}/?tab=achievements`,
     badge: "100% Complete"
   }));

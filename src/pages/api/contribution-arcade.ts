@@ -96,17 +96,30 @@ export const GET: APIRoute = async (ctx) => {
       // Theme empty cells to Catppuccin surface-container (#181825) across static fill & animate values
       svg = svg.replace(/#ebedf0/gi, '#181825');
 
-      // Theme contribution squares to vibrant Catppuccin green/teal hues across static fill & animate values
-      svg = svg.replace(/#40c463/gi, '#a6e3a1');
-      svg = svg.replace(/#9be9a8/gi, '#89dceb');
-      svg = svg.replace(/#30a14e/gi, '#94e2d5');
-      svg = svg.replace(/#216e39/gi, '#74c7ec');
+      // Theme contribution squares to vibrant Catppuccin secondary teal at different density levels
+      // Level 1 (least): subtle teal-dark
+      svg = svg.replace(/#9be9a8/gi, '#2a4a5a');
+      // Level 2: medium teal
+      svg = svg.replace(/#40c463/gi, '#3a7a8e');
+      // Level 3: brighter teal
+      svg = svg.replace(/#30a14e/gi, '#56b6c8');
+      // Level 4 (most): full secondary teal
+      svg = svg.replace(/#216e39/gi, '#89dceb');
 
-      // Append styles for light borders around day cells and crisp font rendering
+      // Inject stroke attributes directly onto each day-cell rect (works in <img> context unlike CSS)
+      // This adds visible borders between squares without relying on injected <style>
+      svg = svg.replace(
+        /<rect id="c-([^"]+)"/g,
+        '<rect stroke="rgba(205,214,244,0.14)" stroke-width="1" id="c-$1"'
+      );
+
+      // Make other text colors visible (replace fill attributes directly on text elements)
+      svg = svg.replace(/(<text[^>]*?)fill="#24292e"/g, '$1fill="#cdd6f4"');
+
+      // Inject style only for image-rendering (works in some contexts)
       const arcadeCustomCss = `
         image { image-rendering: pixelated; image-rendering: -moz-crisp-edges; }
-        text { fill: #cdd6f4 !important; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-weight: 600; }
-        rect[id^="c-"] { stroke: rgba(255, 255, 255, 0.18) !important; stroke-width: 1px !important; }
+        text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-weight: 600; }
       `;
 
       if (svg.includes('</style>')) {

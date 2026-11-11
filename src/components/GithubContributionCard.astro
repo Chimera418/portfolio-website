@@ -74,11 +74,12 @@ const { class: className } = Astro.props;
         class="w-full overflow-x-auto no-scrollbar flex items-center justify-center p-2.5 sm:p-3 bg-[#0d1117]"
       >
         <img
-          src="/api/contribution-history"
+          id="github-contribution-img"
+          src={`/api/contribution-history?accent=mauve&v=${Math.floor(Date.now() / (1000 * 300))}`}
           alt="Chimera418 GitHub Contribution History"
           loading="lazy"
           decoding="async"
-          class="commits-img w-full min-w-[580px] md:min-w-0 h-auto object-contain select-none"
+          class="commits-img w-full min-w-[580px] md:min-w-0 h-auto object-contain select-none transition-opacity duration-200"
           onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/Chimera418/Chimera418/main/assets/contribution-game.svg';"
         />
       </div>
@@ -94,6 +95,56 @@ const { class: className } = Astro.props;
     </div>
   </div>
 </BentoCard>
+
+<script>
+  function getStoredAccent(): string {
+    return localStorage.getItem('secondaryAccentColor') || 'mauve';
+  }
+
+  function updateContributionGraph(newAccent?: string) {
+    const img = document.getElementById('github-contribution-img') as HTMLImageElement;
+    if (!img) return;
+
+    const accent = (newAccent || getStoredAccent()).trim();
+    const cacheBucket = Math.floor(Date.now() / (1000 * 300));
+    const targetUrl = `/api/contribution-history?accent=${encodeURIComponent(accent)}&v=${cacheBucket}`;
+
+    const currentSrc = img.getAttribute('src') || '';
+    if (currentSrc === targetUrl) return;
+
+    // Smoothly preload new themed SVG in background before replacing src to eliminate white flash
+    const preload = new Image();
+    preload.onload = () => {
+      img.src = targetUrl;
+    };
+    preload.onerror = () => {
+      img.src = targetUrl;
+    };
+    preload.src = targetUrl;
+  }
+
+  // Initial sync immediately upon script execution
+  updateContributionGraph();
+
+  // Listen for real-time accent updates from ThemeDrawer
+  window.addEventListener('accent-updated', ((e: CustomEvent) => {
+    if (e.detail) {
+      updateContributionGraph(e.detail);
+    }
+  }) as EventListener);
+
+  // Sync across tabs
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'secondaryAccentColor' && e.newValue) {
+      updateContributionGraph(e.newValue);
+    }
+  });
+
+  // Re-run on Astro view transitions
+  document.addEventListener('astro:after-swap', () => {
+    updateContributionGraph();
+  });
+</script>
 
 <style>
   .commits-img {

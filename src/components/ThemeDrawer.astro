@@ -141,6 +141,7 @@ const isActive = (href: string) => {
           document.documentElement.style.setProperty('--primary', `var(--${colorName})`);
           document.documentElement.style.setProperty('--secondary', `var(--${colorName})`);
           localStorage.setItem('secondaryAccentColor', colorName);
+          window.dispatchEvent(new CustomEvent('accent-updated', { detail: colorName }));
           
           accentBtns.forEach(b => {
             b.classList.remove('outline', 'outline-2', 'outline-offset-2', 'outline-text-primary', 'border-transparent', 'scale-110');

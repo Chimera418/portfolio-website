@@ -507,11 +507,11 @@
       if (guesses[guesses.length - 1] === targetWord) {
         gameOver(false, "You guessed the word! You lose.");
       } else if (guesses.length >= ROWS) {
-        // Survived
+        // Survived all rows without hitting target
         gameOver(true, `You survived! The word was ${targetWord}.`);
-      } else if (validWords.length === 1 && validWords[0] === targetWord) {
-        // Cornered the word
-        gameOver(true, `You cornered the word in ${guesses.length} guesses!`);
+      } else if (undosLeft === 0 && (validWords.length === 0 || (validWords.length === 1 && validWords[0] === targetWord))) {
+        // Trapped with no safe words and out of undos
+        gameOver(false, `Trapped! No safe words left to play. The word was ${targetWord}.`);
       }
     }
 

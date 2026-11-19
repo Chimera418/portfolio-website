@@ -1,3 +1,10 @@
+import validAnswersRaw from "./valid_answers.txt?raw";
+
+export const ANSWER_WORDS: string[] = validAnswersRaw
+  .split(/\r?\n/)
+  .map((w) => w.trim().toLowerCase())
+  .filter((w) => w.length === 5);
+
 // prettier-ignore
 export const VALID_WORDS: string[] = [
   "rossa", "jetty", "wizzo", "cuppa", "cohoe", "gurks", "squad", "beisa", "shrug", "fossa",
@@ -1488,5 +1495,6 @@ export const VALID_WORDS: string[] = [
   "dunny", "decal", "fungs", "cadgy", "jalap",
 ];
 export function getRandomTarget(): string {
-  return VALID_WORDS[Math.floor(Math.random() * VALID_WORDS.length)];
+  const pool = ANSWER_WORDS.length > 0 ? ANSWER_WORDS : VALID_WORDS;
+  return pool[Math.floor(Math.random() * pool.length)];
 }

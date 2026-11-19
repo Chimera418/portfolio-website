@@ -151,8 +151,9 @@
 </style>
 
 <script>
-  import { VALID_WORDS } from '../../data/words';
+  import { VALID_WORDS, ANSWER_WORDS } from '../../data/words';
   let dictionary: string[] = VALID_WORDS.map(w => w.toUpperCase());
+  let answers: string[] = (ANSWER_WORDS && ANSWER_WORDS.length > 0 ? ANSWER_WORDS : VALID_WORDS).map(w => w.toUpperCase());
 
   const container = document.getElementById('dw-container');
   if (container) {
@@ -216,7 +217,7 @@
     ];
 
     function initGame() {
-      targetWord = dictionary[Math.floor(Math.random() * dictionary.length)];
+      targetWord = answers[Math.floor(Math.random() * answers.length)];
       guesses = [];
       currentGuess = "";
       validWords = [...dictionary];

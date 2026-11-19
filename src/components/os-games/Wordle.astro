@@ -272,7 +272,7 @@ import { VALID_WORDS } from "../../data/words";
 </style>
 
 <script>
-  import { VALID_WORDS } from "../../data/words";
+  import { VALID_WORDS, ANSWER_WORDS } from "../../data/words";
 
   const container = document.getElementById("wordle-container");
 
@@ -296,6 +296,7 @@ import { VALID_WORDS } from "../../data/words";
     const ROWS = 6;
     const COLS = 5;
     const dictionary = VALID_WORDS.map((w) => w.toUpperCase());
+    const answers = (ANSWER_WORDS && ANSWER_WORDS.length > 0 ? ANSWER_WORDS : VALID_WORDS).map((w) => w.toUpperCase());
 
     const KEY_ROWS = [
       ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
@@ -365,11 +366,11 @@ import { VALID_WORDS } from "../../data/words";
       let hash = 0;
       for (let i = 0; i < seed.length; i++)
         hash = (Math.imul(31, hash) + seed.charCodeAt(i)) | 0;
-      return dictionary[Math.abs(hash) % dictionary.length];
+      return answers[Math.abs(hash) % answers.length];
     }
 
     function getRandomWord() {
-      return dictionary[Math.floor(Math.random() * dictionary.length)];
+      return answers[Math.floor(Math.random() * answers.length)];
     }
 
     // ── Grid Update ────────────────────────────────────────────────────────
